@@ -1,0 +1,383 @@
+body{
+    font-family: 'Arial', sans-serif;
+    color: #003366;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #F0F8FF, #e6e6e6);
+    min-height: 100vh;
+}
+
+input{
+    padding: 8px;
+    margin: 2px 0;
+    box-sizing: border-box;
+    border: 1px solid #BCD4EF;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+input[type="search"] {
+    width: 40%;
+    border-radius: 20px;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+select {
+    background: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    font-size: 14px;
+    color: #2C3E50;
+    cursor: pointer;
+    margin-right: 20px;
+    transition: border-color 0.3s ease;
+}
+select:hover {
+    border-color: #003366;
+}
+
+.menu {
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+li {
+    padding: 5px 0;
+}
+.menu a {
+    text-decoration: none;
+    color: #003366;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+.menu a:hover {
+    background-color: #003366;
+    color: white;
+}
+.active{
+    background-color: #003366;
+    color: white !important; 
+}
+/* jQuery UI Datepicker */
+/* Kalendář jako celek */
+.ui-datepicker {
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 15px !important;
+    width: 300px !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+    font-family: 'Segoe UI', Tahoma, sans-serif !important;
+}
+
+/* Název měsíce */
+.ui-datepicker-title {
+    font-weight: 600 !important;
+}
+
+/* Šipky */
+.ui-datepicker-prev, .ui-datepicker-next {
+    background: transparent !important;
+    border: none !important;
+    font-size: 18px !important;
+    cursor: pointer !important;
+    transition: opacity 0.2s !important;
+}
+.ui-datepicker-prev:hover, .ui-datepicker-next:hover {
+    opacity: 0.7 !important;
+}
+
+/* Nadpisy dní v týdnu */
+.ui-datepicker-calendar th {
+    color: #003366 !important;
+    font-weight: 500 !important;
+    padding-bottom: 5px !important;
+    font-size: 0.9em !important;
+}
+
+/* Č. týdnu */
+.ui-datepicker-calendar td {
+    text-align: center !important;
+    padding: 0 !important;
+}
+
+/* Každý den */
+.ui-datepicker-calendar .ui-state-default {
+    background: none !important;
+    border: none !important;
+    padding: 6px !important;
+    border-radius: 6px !important;
+    color: #003366 !important;
+    font-weight: 500 !important;
+    transition: background 0.2s ease !important;
+}
+.ui-datepicker-calendar .ui-state-default:hover {
+    background: rgba(0, 51, 102, 0.08) !important;
+    cursor: pointer !important;
+}
+
+/* Dnešní den */
+.ui-datepicker-calendar .ui-state-highlight {
+    font-weight: bold !important;
+    border-bottom: 1px solid #003366 !important;
+}
+
+/* Vybraný den */
+.ui-datepicker-calendar .ui-state-active {
+    background: #003366 !important;
+    color: white !important;
+    border-radius: 6px !important;
+}
+
+/* Neděle */
+.ui-datepicker-calendar tr td:last-child a {
+    color: #d40000 !important;
+}
+.ui-datepicker-calendar tr td:last-child .ui-state-active {
+    background: #d40000 !important;
+    color: white !important;
+}
+.ui-datepicker-calendar tr th:last-child {
+    color: #d40000 !important;
+}
+
+/* jQuery UI Slider */
+.ui-slider {
+    background: #e6ecf2 !important;
+    border: none !important;
+    height: 6px !important;
+}
+.ui-slider .ui-slider-handle {
+    width: 18px !important;
+    height: 18px !important;
+    background: #2196F3 !important;
+    border: 1px solid #ffffff !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    margin-top: -2px !important;
+    transition: transform 0.2s ease !important;
+}
+.ui-slider .ui-slider-handle:hover {
+    transform: scale(1.1) !important;
+}
+
+/* Tooltip container */
+.ui-tooltip {   
+    background: #003366 !important;
+    color: white !important;
+    border: none !important;
+    padding: 6px 9px !important;
+    border-radius: 4px !important;
+    font-size: 14px !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+    max-width: 120px !important;
+}
+
+/* Tooltip arrow */
+.ui-tooltip:before {
+    content: '' !important;
+    position: absolute !important;
+    top: 100% !important;
+    left: 50% !important;
+    margin-left: -5px !important;
+    border-width: 5px !important;
+    border-style: solid !important;
+    border-color: #003366 transparent transparent !important;
+}
+
+.header{
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.headerB{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.uziv{
+    display: inline-flex;
+    align-items: center;
+}
+.uziv_inf p{
+    white-space: nowrap;
+    text-align: left;
+    margin: 0;
+    padding: 1% 0;
+}
+.logo{
+    margin-left: 1%; 
+    max-width: 200px;
+} 
+
+.footer{
+    justify-content: center;
+    background: #FFFFFF;
+    padding: 1% 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.modal {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    transition: 0.3s;
+}
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: row-reverse;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+.modal-header h2 {
+    font-size: 18px;
+    color: #333;
+}
+.modal-body {
+    padding: 15px 0;
+    background: #f9f9f9;
+    border-radius: 10px;
+    text-align: center;
+}
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+}
+.label {
+    font-weight: bold;
+    color: #333;
+}
+.modal-body .info-row:last-child {
+    border-bottom: none;
+}
+.modal-body .obsah{
+    text-align: right;
+    width: 65%;
+}
+.close {
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    color: #888;
+}
+.close:hover {
+    color: #000;
+}
+.modal-footer {
+    display: flex;
+    justify-content: space-evenly;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.defButt {
+    background: #003366; 
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+.defButt:hover {
+    background: #5d99a3;
+}
+.defButt:active{
+    box-shadow: 0 4px 8px rgba(0, 51, 102, 0.3);
+}
+
+.defButt.edit {
+    background: #f39c12;
+}
+.defButt.edit:hover {
+    background: #e67e22;
+}
+
+.defButt.print {
+    background: #3498db;
+}
+.defButt.print:hover {
+    background: #2980b9;
+}
+
+.defButt.extend {
+    background: #2ecc71;
+}
+.defButt.extend:hover {
+    background: #27ae60;
+}
+
+
+@media (max-width: 660px) {
+    .header {
+        flex-direction: column;
+        align-items: center;
+    }
+    .footer{
+        display: flex;  
+    }
+    .logo {
+        display: none;
+    }
+    h1 {
+        margin: 5% 0;
+        font-size: 1.5em;
+    }
+    .menu ul {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 1px;
+    }
+    .menu li {
+        width: calc(50% - 1px); /* 50% width minus gap */
+        text-align: center;
+    }
+    .menu a {
+        display: block;
+        padding: 10px 5px;
+        font-size: 14px;
+    }
+}
