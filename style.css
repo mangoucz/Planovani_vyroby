@@ -229,6 +229,17 @@ li {
 .logo{
     margin-left: 1%; 
     max-width: 200px;
+}
+
+.setting {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    margin: 20px auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 } 
 
 .footer{

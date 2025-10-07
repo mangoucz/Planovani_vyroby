@@ -85,7 +85,7 @@
             <option value="2">Staré stroje + Barmag</option>
             <option value="3">Nové stroje</option>
         </select>
-        <button type="button" class="defButt">Nová specifikace</button>
+            <button type="button" class="defButt" onclick="window.location.href = 'spec_form.php'">Nová specifikace</button>
     </div>
     <table>
         <thead>
@@ -107,10 +107,46 @@
                 <td data-label="Skup. strojů">3</td>
                 <td data-label="Vytvořeno">27.9.2025</td>
                 <td data-label="Výrobek">Nevybrán</td>
-                <td data-label="info"><img src="info.png" class="info-icon" alt="Info"></td>
+                <td data-label="info"><img src="info.png" alt="Podrobnosti" class="info-icon link" id=""></td>
             </tr>
         </tbody>
     </table>
+    <div class="modal">
+        <div class="modal-content" style="width: 500px;">
+            <div class="modal-header">
+                <span id="closeBtn" class="close">&times;</span>
+                <h2>Specifikace č. </h2>
+            </div>
+            <div class="modal-body">
+                <div class="info-row"><span class="label">Titr:</span><span class="titr obsah"></span></div>
+                <div class="info-row"><span class="label">Skupina titrů:</span><span class="sk_titr obsah"></span></div>
+                <div class="info-row"><span class="label">Skupina strojů:</span><span class="sk_stroj obsah"></span></div>
+                <div class="info-row"><span class="label">Zadal:</span><span class="zadal obsah"></span></div>
+                <div class="info-row"><span class="label">Vytvořeno:</span><span class="vytvoreno obsah"></span></div>
+                <div class="info-row"><span class="label">Upraveno:</span><span class="upraveno obsah"></span></div>
+                <div class="info-row"><span class="label">Poznámka:</span><span class="poznamka obsah"></span></div>
+            </div>
+            <div class="modal-footer">
+                <form action="nove.php" method="post">
+                    <input type="submit" name="subEdit" id="subEdit" class="defButt edit" value="Editovat" title="Editace specifikace">
+                    <input type="hidden" name="id" value="">
+                </form>
+                <form action="print_form.php" method="post" target="printFrame">
+                    <input type="submit" name="subTisk" class="defButt print" id="subTisk" value="Tisk" title="Tisk specifikace">
+                    <input type="hidden" name="id" value="">
+                </form>
+                <form action="print_form.php" method="post">
+                    <input type="submit" name="subTisk" class="defButt print" id="subNahl" value="Zobrazit" title="Zobrazení celé specifikace">
+                    <input type="hidden" name="id" value="">
+                </form>
+                <iframe id="frame" name="printFrame" style="display: none;"></iframe>
+                <form action="" method="post">
+                    <input type="submit" value="Odstranit" name="subDel" id="subDel" class="defButt extend" title="Odstraní specifikaci z databáze">
+                    <input type="hidden" name="id" value="">
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="footer">
         <img src="Indorama.png" width="200px">
     </div>
@@ -159,15 +195,7 @@
         }
         
         .setting {
-            display: flex;
-            justify-content: space-between;
-            border: 1px solid #ddd;
-            border-radius: 15px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            margin: 20px auto;
             max-width: 900px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         select {
             max-width: 300px;
