@@ -205,4 +205,18 @@ $(document).ready(function() {
         else if(value.length == 1)
             $(this).val("0" + value + ":00");
     });
+
+    $(document).on('change', '#stroj', function() {
+        const stroj = $(this).val();
+        switch(stroj) {
+            case "1": 
+                $(".barmag").show();
+                break;
+            case "2":
+                $(".barmag").hide();
+                break;
+            default:
+                break;
+        }
+    });
 });

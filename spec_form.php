@@ -80,7 +80,7 @@
     </div>
     <form action="" method="post" id="spec_form">
         <div class="setting">
-            <select name="stroj">
+            <select name="stroj" id="stroj" required>
                 <option value="1">Staré stroje</option>
                 <option value="2">Staré stroje + Barmag</option>
                 <option value="3">Nové stroje</option>
@@ -99,11 +99,11 @@
                 <span class="jednotka">g/10 000 m</span>
             </div>
             <div class="radek">
-                    <label for="titr_skup">Skupina titrů</label>
-                    <input type="text" id="titr_skup" name="titr_skup" required>
-                    <span class="jednotka">g/10 000 m</span>
-                </div>
+                <label for="titr_skup">Skupina titrů</label>
+                <input type="text" id="titr_skup" name="titr_skup" required>
+                <span class="jednotka">g/10 000 m</span>
             </div>
+        </div>
         </div>
         <div class="double" id="kotouče">
             <div class="table">

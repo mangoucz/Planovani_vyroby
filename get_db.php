@@ -12,9 +12,9 @@
                         CONCAT(z.jmeno, ' ', z.prijmeni) as 'zadal',
                         s.vytvoreno, 
                         s.upraveno,
-                        s.poznamka,
+                        s.poznamka
                     FROM (Specifikace AS s JOIN Zamestnanci as z on s.id_zam = z.id_zam)
-                    WHERE p.id_spec = ?;";
+                    WHERE s.id_spec = ?;";
             $params = [$id];
             $result = sqlsrv_query($conn, $sql, $params);
 
