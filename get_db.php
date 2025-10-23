@@ -9,11 +9,13 @@
                         s.c_spec,
                         s.titr,
                         s.titr_skup,
-                        CONCAT(z.jmeno, ' ', z.prijmeni) as 'zadal',
+                        s.id_zam,
+                        CONCAT(z.jmeno, ' ', z.prijmeni) as 'vytvoril',
                         s.vytvoreno, 
                         s.upraveno,
+                        v.vyrobek,
                         s.poznamka
-                    FROM (Specifikace AS s JOIN Zamestnanci as z on s.id_zam = z.id_zam)
+                    FROM (Specifikace as s LEFT JOIN Vyrobky as v ON s.id_vyr = v.id_vyr) LEFT JOIN Zamestnanci as z ON s.id_zam = z.id_zam 
                     WHERE s.id_spec = ?;";
             $params = [$id];
             $result = sqlsrv_query($conn, $sql, $params);
@@ -29,8 +31,20 @@
             $zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
             
             if ($zaznam) {
-                $zaznam["vytvoreno"] = $zaznam["vytvoreno"]->format("d.m.Y H:i");
+                $zaznam["vytvoreno"] = $zaznam["vytvoreno"]->format("d.m.Y");
                 $zaznam["upraveno"] = isset($zaznam["upraveno"]) ? $zaznam["upraveno"]->format("d.m.Y H:i") : "Ne";
+
+                switch ($zaznam['id_zam']) {
+                        case '3':
+                            $zaznam['vytvoril'] = "Martin Vocásek";
+                            break;
+                        case '5':
+                            $zaznam['vytvoril'] = "Uršula Löwyová"; 
+                            break;
+                        default:
+                            $zaznam['vytvoril'] = $zaznam['vytvoril'];
+                            break;
+                    }
                 
                 echo json_encode([
                     "success" => true,
@@ -43,6 +57,10 @@
                 exit;
             }
             sqlsrv_free_stmt($result);
+        }
+        else {
+            echo json_encode(["success" => false, "message" => "Chybí ID specifikace"]);
+            exit;
         }
     }
 ?>

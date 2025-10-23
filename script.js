@@ -170,9 +170,10 @@ $(document).ready(function() {
                     $(".modal .titr").text("<strong>" + response.data.titr + "</strong>");
                     $(".modal .sk_titr").text("<strong>" + response.data.titr_skup + "</strong>");
                     $(".modal .sk_stroj").text("<strong>" + response.data.sk_stroj + "</strong>");
-                    $(".modal .zadal").html("<strong>" + response.data.zadal + "</strong>");
+                    $(".modal .vytvoril").html("<strong>" + response.data.vytvoril + "</strong>");
                     $(".modal .vytvoreno").text(response.data.vytvoreno);
                     $(".modal .upraveno").text(response.data.upraveno);
+                    $(".modal .vyrobek").text(response.data.vyrobek || "Nevybrán");
                     $(".modal .poznamka").text(response.data.poznamka || "Žádná");
                     $(".modal input[type='hidden']").val(id);
                     $(".modal").fadeIn(200).css("display", "flex");
@@ -183,6 +184,8 @@ $(document).ready(function() {
             },
             error: function() {
                 alert("Chyba komunikace se serverem!");
+                alert(xhr.responseText);
+                alert(message);
             }
         });        
     }); 
@@ -211,9 +214,19 @@ $(document).ready(function() {
         switch(stroj) {
             case "1": 
                 $(".barmag").show();
+                $(".stare").show();
+                $(".nove").hide();
                 break;
             case "2":
+                $(".barmag").show();
+                $(".stare").hide();
+                $(".nove").hide();
+                break;
+            case "3":
                 $(".barmag").hide();
+                $(".stare").hide();
+                $(".nove").show();
+                //vg2 required
                 break;
             default:
                 break;

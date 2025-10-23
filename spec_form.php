@@ -80,7 +80,7 @@
     </div>
     <form action="" method="post" id="spec_form">
         <div class="setting">
-            <select name="stroj" id="stroj" required>
+            <select name="stroj" id="stroj">
                 <option value="1">Staré stroje</option>
                 <option value="2">Staré stroje + Barmag</option>
                 <option value="3">Nové stroje</option>
@@ -91,43 +91,43 @@
             <h3>Specifikace</h3>
             <div class="radek">
                 <label for="c_spec">Číslo specifikace</label>
-                <input type="text" id="c_spec" name="c_spec" required>
+                <input type="text" id="c_spec" name="c_spec">
             </div>
             <div class="radek">
                 <label for="titr">Titr</label>
-                <input type="text" id="titr" name="titr" required>
+                <input type="text" id="titr" name="titr">
                 <span class="jednotka">g/10 000 m</span>
             </div>
             <div class="radek">
                 <label for="titr_skup">Skupina titrů</label>
-                <input type="text" id="titr_skup" name="titr_skup" required>
+                <input type="text" id="titr_skup" name="titr_skup">
                 <span class="jednotka">g/10 000 m</span>
             </div>
         </div>
         </div>
-        <div class="double" id="kotouče">
+        <div class="double barmag" id="kotouče">
             <div class="table">
                 <h3>Kotouče</h3>
                 <div class="radek">
                     <label for="hnaci_motor">Hnací motor</label>
-                    <input type="text" id="hnaci_motor" name="hnaci_motor" required>
+                    <input type="text" id="hnaci_motor" name="hnaci_motor">
                     <span class="jednotka">ot/min</span>
                 </div>
                 <div class="radek">
                     <label for="zs1">Kotouč ZS1</label>
-                    <input type="text" id="zs1" name="zs1" required><span class="jednotka">mm</span>
+                    <input type="text" id="zs1" name="zs1"><span class="jednotka">mm</span>
                 </div>
                 <div class="radek">
                     <label for="zs2">Kotouč ZS2</label>
-                    <input type="text" id="zs2" name="zs2" required><span class="jednotka">mm</span>
+                    <input type="text" id="zs2" name="zs2"><span class="jednotka">mm</span>
                 </div>
                 <div class="radek">
                     <label for="kotouc3">Kotouč 3</label>
-                    <input type="text" id="kotouc3" name="kotouc3" required><span class="jednotka">mm</span>
+                    <input type="text" id="kotouc3" name="kotouc3"><span class="jednotka">mm</span>
                 </div>
                 <div class="radek">
                     <label for="kotouc4">Kotouč 4</label>
-                    <input type="text" id="kotouc4" name="kotouc4" required><span class="jednotka">mm</span>
+                    <input type="text" id="kotouc4" name="kotouc4"><span class="jednotka">mm</span>
                 </div>
             </div>
             <div class="table">
@@ -146,31 +146,33 @@
                 <h3>Galety</h3>
                 <div class="radek">
                     <label for="galety">Galety Ø</label>
-                    <input type="text" id="galety" name="galety" required><span class="jednotka">mm</span>
+                    <input type="text" id="galety" name="galety"><span class="jednotka">mm</span>
                 </div>
-                <div class="radek">
-                    <label for="Z13">Z13</label>
-                    <input type="text" id="Z13" name="Z13" required>
-                </div>
-                <div class="radek">
-                    <label for="Z14">Z14</label>
-                    <input type="text" id="Z14" name="Z14" required>
-                </div>
-                <div class="radek">
-                    <label for="Z15">Z15</label>
-                    <input type="text" id="Z15" name="Z15" required>
-                </div>
-                <div class="radek">
-                    <label for="Z16">Z16</label>
-                    <input type="text" id="Z16" name="Z16" required>
-                </div>
-                <div class="radek">
-                    <label for="Z30">Z30</label>
-                    <input type="text" id="Z30" name="Z30" required>
-                </div>
-                <div class="radek">
-                    <label for="Z32">Z32</label>
-                    <input type="text" id="Z32" name="Z32" required>
+                <div class="barmag">
+                    <div class="radek">
+                        <label for="Z13">Z13</label>
+                        <input type="text" id="Z13" name="Z13">
+                    </div>
+                    <div class="radek">
+                        <label for="Z14">Z14</label>
+                        <input type="text" id="Z14" name="Z14">
+                    </div>
+                    <div class="radek">
+                        <label for="Z15">Z15</label>
+                        <input type="text" id="Z15" name="Z15">
+                    </div>
+                    <div class="radek">
+                        <label for="Z16">Z16</label>
+                        <input type="text" id="Z16" name="Z16">
+                    </div>
+                    <div class="radek">
+                        <label for="Z30">Z30</label>
+                        <input type="text" id="Z30" name="Z30">
+                    </div>
+                    <div class="radek">
+                        <label for="Z32">Z32</label>
+                        <input type="text" id="Z32" name="Z32">
+                    </div>
                 </div>
             </div>
             <div class="table">
@@ -197,23 +199,25 @@
                 <h3>Prací válce</h3>
                 <div class="radek">
                     <label for="praci_valce">Prací válce Ø</label>
-                    <input type="text" id="praci_valce" name="praci_valce" required><span class="jednotka">mm</span>
+                    <input type="text" id="praci_valce" name="praci_valce"><span class="jednotka">mm</span>
                 </div>
-                <div class="radek">
-                    <label for="Z9">Z9</label>
-                    <input type="text" id="Z9" name="Z9" required>
-                </div>
-                <div class="radek">
-                    <label for="Z10">Z10</label>
-                    <input type="text" id="Z10" name="Z10" required>
-                </div>
-                <div class="radek">
-                    <label for="Z11">Z11</label>
-                    <input type="text" id="Z11" name="Z11" required>
-                </div>
-                <div class="radek">
-                    <label for="Z12">Z12</label>
-                    <input type="text" id="Z12" name="Z12" required>
+                <div class="barmag">
+                    <div class="radek">
+                        <label for="Z9">Z9</label>
+                        <input type="text" id="Z9" name="Z9">
+                    </div>
+                    <div class="radek">
+                        <label for="Z10">Z10</label>
+                        <input type="text" id="Z10" name="Z10">
+                    </div>
+                    <div class="radek">
+                        <label for="Z11">Z11</label>
+                        <input type="text" id="Z11" name="Z11">
+                    </div>
+                    <div class="radek">
+                        <label for="Z12">Z12</label>
+                        <input type="text" id="Z12" name="Z12">
+                    </div>
                 </div>
             </div>
             <div class="table">
@@ -232,23 +236,25 @@
                 <h3>Sušící válce</h3>
                 <div class="radek">
                     <label for="susici_valec">Sušicí válec Ø</label>
-                    <input type="text" id="susici_valec" name="susici_valec" required><span class="jednotka">mm</span>
+                    <input type="text" id="susici_valec" name="susici_valec"><span class="jednotka">mm</span>
                 </div>
-                <div class="radek">
-                    <label for="Z17">Z17</label>
-                    <input type="text" id="Z17" name="Z17" required>
-                </div>
-                <div class="radek">
-                    <label for="Z18">Z18</label>
-                    <input type="text" id="Z18" name="Z18" required>
-                </div>
-                <div class="radek">
-                    <label for="Z19">Z19</label>
-                    <input type="text" id="Z19" name="Z19" required>
-                </div>
-                <div class="radek">
-                    <label for="Z20">Z20</label>
-                    <input type="text" id="Z20" name="Z20" required>
+                <div class="barmag">
+                    <div class="radek">
+                        <label for="Z17">Z17</label>
+                        <input type="text" id="Z17" name="Z17">
+                    </div>
+                    <div class="radek">
+                        <label for="Z18">Z18</label>
+                        <input type="text" id="Z18" name="Z18">
+                    </div>
+                    <div class="radek">
+                        <label for="Z19">Z19</label>
+                        <input type="text" id="Z19" name="Z19">
+                    </div>
+                    <div class="radek">
+                        <label for="Z20">Z20</label>
+                        <input type="text" id="Z20" name="Z20">
+                    </div>
                 </div>
             </div>
             <div class="table">
@@ -262,19 +268,19 @@
                 </div>
             </div>
         </div>
-        <div class="double" id="navijeni">
+        <div class="double barmag" id="navijeni">
             <div class="table">
                 <h3>Navíjení</h3>
                 <div class="radek">
                     <label for="navijeci_valec">Navíjecí válec Ø</label>
-                    <input type="text" id="navijeci_valec" name="navijeci_valec" required><span class="jednotka">mm</span>
+                    <input type="text" id="navijeci_valec" name="navijeci_valec"><span class="jednotka">mm</span>
                 </div>
-                <div class="radek barmag">
+                <div class="radek stare">
                     <label for="dlouzeni">Dloužení</label>
-                    <input type="text" id="dlouzeni" name="dlouzeni" required><span class="jednotka">%</span>
+                    <input type="text" id="dlouzeni" name="dlouzeni"><span class="jednotka">%</span>
                 </div>
             </div>
-            <div class="table barmag">
+            <div class="table stare">
                 <div class="radek">
                     <label for="v_navijeni">v navíjení</label>
                     <input type="text" id="v_navijeni" name="v_navijeni" disabled><span class="jednotka">m/min</span>
@@ -294,31 +300,33 @@
                 <h3>Spřádací čerpadlo</h3>
                 <div class="radek">
                     <label for="spradaci_cerpadlo">Spřádací čerpadlo</label>
-                    <input type="text" id="spradaci_cerpadlo" name="spradaci_cerpadlo" required><span class="jednotka">cm³/U</span>
+                    <input type="text" id="spradaci_cerpadlo" name="spradaci_cerpadlo"><span class="jednotka">cm³/U</span>
                 </div>
                 <div class="radek">
                     <label for="pocet_sprad_mist">Počet spřádacích míst</label>
-                    <input type="text" id="pocet_sprad_mist" name="pocet_sprad_mist" required>
+                    <input type="text" id="pocet_sprad_mist" name="pocet_sprad_mist">
                 </div>
                 <div class="radek">
                     <label for="korekce">korekce</label>
-                    <input type="text" id="korekce" name="korekce" required><span class="jednotka">%</span>
+                    <input type="text" id="korekce" name="korekce"><span class="jednotka">%</span>
                 </div>
-                <div class="radek">
-                    <label for="Z21">Z21</label>
-                    <input type="text" id="Z21" name="Z21" required>
-                </div>
-                <div class="radek">
-                    <label for="Z22">Z22</label>
-                    <input type="text" id="Z22" name="Z22" required>
-                </div>
-                <div class="radek">
-                    <label for="Z23">Z23</label>
-                    <input type="text" id="Z23" name="Z23" required>
-                </div>
-                <div class="radek">
-                    <label for="Z24">Z24</label>
-                    <input type="text" id="Z24" name="Z24" required>
+                <div class="barmag">
+                    <div class="radek">
+                        <label for="Z21">Z21</label>
+                        <input type="text" id="Z21" name="Z21">
+                    </div>
+                    <div class="radek">
+                        <label for="Z22">Z22</label>
+                        <input type="text" id="Z22" name="Z22">
+                    </div>
+                    <div class="radek">
+                        <label for="Z23">Z23</label>
+                        <input type="text" id="Z23" name="Z23">
+                    </div>
+                    <div class="radek">
+                        <label for="Z24">Z24</label>
+                        <input type="text" id="Z24" name="Z24">
+                    </div>
                 </div>
             </div>
             <div class="table">
@@ -341,18 +349,22 @@
                 <h3>Ukládání</h3>
                 <div class="radek">
                     <label for="motor">Motor</label>
-                    <input type="text" id="motor" name="motor" required>
+                    <input type="text" id="motor" name="motor">
                 </div>
-                <div class="radek">
+                <div class="radek stare">
                     <label for="rs3">Řemenice M. (RS3)</label>
-                    <input type="text" id="rs3" name="rs3" required><span class="jednotka">ot/min</span>
+                    <input type="text" id="rs3" name="rs3"><span class="jednotka">ot/min</span>
                 </div>
-                <div class="radek">
+                <div class="radek stare">
                     <label for="rs4">Řemenice G. (RS4)</label>
-                    <input type="text" id="rs4" name="rs4" required><span class="jednotka">mm</span>
+                    <input type="text" id="rs4" name="rs4"><span class="jednotka">mm</span>
+                </div>
+                <div class="radek nove">
+                    <label for="faktor">Faktor Viskóza/Produkt</label>
+                    <input type="text" id="faktor" name="faktor">
                 </div>
             </div>
-            <div class="table">
+            <div class="table stare">
                 <div class="radek">
                     <label for="ipohon">i pohon 1:30</label>
                     <input type="text" id="ipohon" name="ipohon" disabled>
@@ -363,7 +375,7 @@
                 </div>
             </div>
         </div>
-        <div class="table" id="dlouzeni">
+        <div class="table nove" id="dlouzeni">
             <h3>Dloužení</h3>
             <div class="radek">
                 <label for="SG1-G2">SG1-G2</label>
@@ -381,7 +393,12 @@
                 <label for="Sges">Sges</label>
                 <input type="text" id="Sges" name="Sges" disabled><span class="jednotka">%</span>
             </div>
+        </div>
+        <div class="table nove" id="Produkce">
+            <h3>Produkce</h3>
+            <div class="radek">
                 
+            </div>
         </div>
         <div class="table">
             <h3>Poznámky</h3>

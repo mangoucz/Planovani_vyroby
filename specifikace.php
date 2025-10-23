@@ -39,6 +39,13 @@
     }
     if ($admin) 
         $_SESSION['admin'] = true;
+
+    $sql = "SELECT id_spec, c_spec, titr, titr_skup, s.id_typ_stroje, v.vyrobek, s.id_zam, CONCAT(z.jmeno, ' ', z.prijmeni) as vytvoril, vytvoreno 
+            FROM (Specifikace as s LEFT JOIN Vyrobky as v ON s.id_vyr = v.id_vyr) LEFT JOIN Zamestnanci as z ON s.id_zam = z.id_zam 
+            ORDER BY c_spec;";
+    $result = sqlsrv_query($conn, $sql);
+    if ($result === FALSE)
+        die(print_r(sqlsrv_errors(), true));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -94,21 +101,48 @@
                 <th>Titr</th>
                 <th>Skup. titrů</th>
                 <th>Skup. strojů</th>
+                <th>Vytvořil</th>
                 <th>Vytvořeno</th>
                 <th>Výrobek</th>
                 <th>info</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td data-label="Č. spec.">25001</td>
-                <td data-label="Titr">1220</td>
-                <td data-label="Skup. titrů">1220</td>
-                <td data-label="Skup. strojů">3</td>
-                <td data-label="Vytvořeno">27.9.2025</td>
-                <td data-label="Výrobek">Nevybrán</td>
-                <td data-label="info"><img src="info.png" alt="Podrobnosti" class="info-icon link" id=""></td>
-            </tr>
+            <?php
+                while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                    $id_spec = $zaznam['id_spec'];
+                    $c_spec = $zaznam['c_spec'];
+                    $titr = $zaznam['titr'];
+                    $titr_skup = $zaznam['titr_skup'];
+                    $id_typ_stroje = $zaznam['id_typ_stroje'];
+                    $vytvoreno = $zaznam['vytvoreno']->format('d.m.Y');
+                    $vyrobek = isset($zaznam['vyrobek']) ? $zaznam['vyrobek'] : 'Nevybrán';
+
+                    switch ($zaznam['id_zam']) {
+                        case '3':
+                            $vytvoril = "Martin Vocásek";
+                            break;
+                        case '5':
+                            $vytvoril = "Uršula Löwyová"; 
+                            break;
+                        default:
+                            $vytvoril = $zaznam['vytvoril'];
+                            break;
+                    }
+
+                    echo "<tr>
+                            <td data-label='Č. spec.'>$c_spec</td>
+                            <td data-label='Titr'>$titr</td>
+                            <td data-label='Skup. titrů'>$titr_skup</td>
+                            <td data-label='Skup. strojů'>$id_typ_stroje</td>
+                            <td data-label='Vytvořil'>$vytvoril</td>
+                            <td data-label='Vytvořeno'>$vytvoreno</td>
+                            <td data-label='Výrobek'>$vyrobek</td>
+                            <td data-label='info'><img src='info.png' alt='Podrobnosti' class='info-icon link' id='$id_spec'></td>
+                        </tr>";
+                }
+                sqlsrv_free_stmt($result);
+            ?>
         </tbody>
     </table>
     <div class="modal">
@@ -121,9 +155,10 @@
                 <div class="info-row"><span class="label">Titr:</span><span class="titr obsah"></span></div>
                 <div class="info-row"><span class="label">Skupina titrů:</span><span class="sk_titr obsah"></span></div>
                 <div class="info-row"><span class="label">Skupina strojů:</span><span class="sk_stroj obsah"></span></div>
-                <div class="info-row"><span class="label">Zadal:</span><span class="zadal obsah"></span></div>
+                <div class="info-row"><span class="label">Vytvořil:</span><span class="vytvoril obsah"></span></div>
                 <div class="info-row"><span class="label">Vytvořeno:</span><span class="vytvoreno obsah"></span></div>
                 <div class="info-row"><span class="label">Upraveno:</span><span class="upraveno obsah"></span></div>
+                <div class="info-row"><span class="label">Výrobek:</span><span class="vyrobek obsah"></span></div>
                 <div class="info-row"><span class="label">Poznámka:</span><span class="poznamka obsah"></span></div>
             </div>
             <div class="modal-footer">
