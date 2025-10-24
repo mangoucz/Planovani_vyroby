@@ -140,7 +140,7 @@ $(document).ready(function() {
         $.ajax({
             url: "sub_povoleni.php",
             type: "POST", 
-            data: formData, 
+            data: {data: formData}, 
             dataType: "json",
             success: function(response) {
                 if (response.success) {
@@ -167,14 +167,14 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     $(".modal h2").text("Specifikace č. " + response.data.c_spec);
-                    $(".modal .titr").text("<strong>" + response.data.titr + "</strong>");
-                    $(".modal .sk_titr").text("<strong>" + response.data.titr_skup + "</strong>");
-                    $(".modal .sk_stroj").text("<strong>" + response.data.sk_stroj + "</strong>");
+                    $(".modal .titr").html("<strong>" + response.data.titr + "</strong>");
+                    $(".modal .sk_titr").html("<strong>" + response.data.titr_skup + "</strong>");
+                    $(".modal .sk_stroj").html("<strong>" + response.data.sk_stroj + "</strong>");
                     $(".modal .vytvoril").html("<strong>" + response.data.vytvoril + "</strong>");
                     $(".modal .vytvoreno").text(response.data.vytvoreno);
                     $(".modal .upraveno").text(response.data.upraveno);
                     $(".modal .vyrobek").text(response.data.vyrobek || "Nevybrán");
-                    $(".modal .poznamka").text(response.data.poznamka || "Žádná");
+                    $(".modal .poznamka").text(response.data.poznamka || "-");
                     $(".modal input[type='hidden']").val(id);
                     $(".modal").fadeIn(200).css("display", "flex");
                 } else {
@@ -231,5 +231,57 @@ $(document).ready(function() {
             default:
                 break;
         }
+    });
+
+    $(document).on('change', '#selectStroj', function() {
+        const id_stroj = $(this).val();
+        window.location.href = 'specifikace.php?stroj=' + id_stroj;
+    });
+
+    $(document).on('click', '.vyr', function() {
+        const id_spec = $(this).attr("data-id_spec");
+        const id_vyr = $(this).attr("id");
+        const select = `<select name='id_vyr' id='selectVyr' data-id_spec='${id_spec}' style='padding: 7px'></select>`;
+        $(this).replaceWith(select);
+        $.ajax({
+            url: "get_db.php",
+            type: "POST",
+            data: {get_vyrobky: true},
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    response.data.forEach(function(vyrobek) {
+                        $("#selectVyr").append("<option value='" + vyrobek.id_vyr + "'" + (vyrobek.id_vyr == id_vyr ? ' selected' : '') + ">" + vyrobek.vyrobek + "</option>");
+                    }); 
+                    $("#selectVyr").append("<option value='0'" + (id_vyr == 0 ? 'selected' : '') + ">-- Nevybrán --</option>");
+                    $("#selectVyr").focus();
+                } else {
+                    alert("Chyba při načítání výrobků: " + (response.message || "Neznámá chyba"));
+                }
+            },
+            error: function() {
+                alert("Chyba komunikace se serverem při načítání výrobků!");
+            }
+        });
+    });
+
+    $(document).on('change', '#selectVyr', function() {
+        const id_spec = $(this).attr("data-id_spec");
+        const selectedId = $(this).val();
+        $.ajax({
+            url: "sub_db.php",
+            type: "POST",
+            data: { id_spec: id_spec, id_vyr: selectedId },
+            dataType: "json",
+            success: function(updateResponse) {
+                if (updateResponse.success) 
+                    location.reload();
+                else 
+                    alert("Chyba při aktualizaci výrobku: " + (updateResponse.message || "Neznámá chyba"));
+            },
+            error: function() {
+                alert("Chyba komunikace se serverem při aktualizaci výrobku!");
+            }
+        });
     });
 });

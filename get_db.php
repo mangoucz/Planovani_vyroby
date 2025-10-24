@@ -10,6 +10,7 @@
                         s.titr,
                         s.titr_skup,
                         s.id_zam,
+                        s.id_typ_stroje as sk_stroj,
                         CONCAT(z.jmeno, ' ', z.prijmeni) as 'vytvoril',
                         s.vytvoreno, 
                         s.upraveno,
@@ -57,6 +58,28 @@
                 exit;
             }
             sqlsrv_free_stmt($result);
+        }
+        elseif(isset($_POST['get_vyrobky'])){
+            $sql = "SELECT id_vyr, vyrobek FROM Vyrobky;";
+            $result = sqlsrv_query($conn, $sql);
+            if ($result === FALSE) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Chyba SQL dotazu pro získání výrobků!",
+                    "error" => sqlsrv_errors()
+                ]);
+                exit;
+            }
+            $vyrobky = [];
+            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                $vyrobky[] = $row;
+            }
+            sqlsrv_free_stmt($result);
+            echo json_encode([
+                "success" => true,
+                "data" => $vyrobky
+            ]);
+            exit;
         }
         else {
             echo json_encode(["success" => false, "message" => "Chybí ID specifikace"]);

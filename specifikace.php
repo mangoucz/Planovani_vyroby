@@ -40,10 +40,26 @@
     if ($admin) 
         $_SESSION['admin'] = true;
 
-    $sql = "SELECT id_spec, c_spec, titr, titr_skup, s.id_typ_stroje, v.vyrobek, s.id_zam, CONCAT(z.jmeno, ' ', z.prijmeni) as vytvoril, vytvoreno 
-            FROM (Specifikace as s LEFT JOIN Vyrobky as v ON s.id_vyr = v.id_vyr) LEFT JOIN Zamestnanci as z ON s.id_zam = z.id_zam 
-            ORDER BY c_spec;";
+    $sql = "SELECT * FROM Typ_stroje;";
     $result = sqlsrv_query($conn, $sql);
+    if ($result === FALSE)
+        die(print_r(sqlsrv_errors(), true));
+    $typ_stroje = [];
+    while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+        $typ_stroje[$zaznam['id_typ']] = $zaznam['nazev'];
+    }
+    sqlsrv_free_stmt($result);
+
+    $id_stroje = isset($_GET['stroj']) ? $_GET['stroj'] : 0;
+    $sql = "SELECT id_spec, s.id_vyr, c_spec, titr, titr_skup, s.id_typ_stroje, v.vyrobek, s.id_zam, CONCAT(z.jmeno, ' ', z.prijmeni) as vytvoril, vytvoreno 
+            FROM (Specifikace as s LEFT JOIN Vyrobky as v ON s.id_vyr = v.id_vyr) LEFT JOIN Zamestnanci as z ON s.id_zam = z.id_zam 
+            " . ($id_stroje != 0 ? "WHERE s.id_typ_stroje = ?" : "") . "
+            ORDER BY c_spec;";
+    $params = $id_stroje != 0 ? [$id_stroje] : [];
+    if ($id_stroje != 0)
+        $result = sqlsrv_query($conn, $sql, $params);
+    else
+        $result = sqlsrv_query($conn, $sql);
     if ($result === FALSE)
         die(print_r(sqlsrv_errors(), true));
 ?>
@@ -86,13 +102,14 @@
         </ul>
     </div>
     <div class="setting">
-        <select name="stroj">
+        <select name="stroj" id="selectStroj">
             <option value="0">Všechny specifikace</option>
-            <option value="1">Staré Stroje</option>
-            <option value="2">Staré stroje + Barmag</option>
-            <option value="3">Nové stroje</option>
-        </select>
-            <button type="button" class="defButt" onclick="window.location.href = 'spec_form.php'">Nová specifikace</button>
+            <?php
+                foreach ($typ_stroje as $id => $typ): ?>
+                    <option value="<?= $id ?>" <?= ($id == $id_stroje) ? 'selected' : '' ?>><?= $typ ?></option>
+            <?php endforeach; ?>
+        </select>    
+        <button type="button" class="defButt" onclick="window.location.href = 'spec_form.php'">Nová specifikace</button>
     </div>
     <table>
         <thead>
@@ -116,6 +133,7 @@
                     $titr_skup = $zaznam['titr_skup'];
                     $id_typ_stroje = $zaznam['id_typ_stroje'];
                     $vytvoreno = $zaznam['vytvoreno']->format('d.m.Y');
+                    $id_vyr = $zaznam['id_vyr'];
                     $vyrobek = isset($zaznam['vyrobek']) ? $zaznam['vyrobek'] : 'Nevybrán';
 
                     switch ($zaznam['id_zam']) {
@@ -137,7 +155,7 @@
                             <td data-label='Skup. strojů'>$id_typ_stroje</td>
                             <td data-label='Vytvořil'>$vytvoril</td>
                             <td data-label='Vytvořeno'>$vytvoreno</td>
-                            <td data-label='Výrobek'>$vyrobek</td>
+                            <td data-label='Výrobek'><span class='vyr' id='$id_vyr' data-id_spec='$id_spec'>$vyrobek</span></td>
                             <td data-label='info'><img src='info.png' alt='Podrobnosti' class='info-icon link' id='$id_spec'></td>
                         </tr>";
                 }
@@ -234,6 +252,10 @@
         }
         select {
             max-width: 300px;
+        }
+        .vyr {
+            cursor: pointer;
+            text-decoration: underline;
         }
 
         .footer{
