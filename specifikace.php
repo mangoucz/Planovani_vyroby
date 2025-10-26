@@ -206,7 +206,7 @@
     <style>
         table {
             width: 100%;
-            max-width: 1200px;
+            max-width: 80vw;
             margin: 20px auto;
             border-collapse: collapse;
             background: white;
@@ -234,6 +234,15 @@
         }
         tbody tr:hover {
             background-color: #f8f9fa;
+        }
+        h2::after {
+            content: "";
+            display: block;
+            width: 25%;
+            height: 3px; 
+            background: #d40000; 
+            margin-top: 5px;
+            border-radius: 2px;
         }
         .info-icon {
             width: 20px;

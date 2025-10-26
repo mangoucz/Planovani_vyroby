@@ -47,8 +47,6 @@
 
     $schval = sqlsrv_has_rows($result);
     sqlsrv_free_stmt($result);
-
-    $sql = 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -91,6 +89,7 @@
     <table>
         <thead>
             <th>Název stroje</th>
+            <th>Skup. strojů</th>
             <th>Skup. titrů</th>
             <th>Specifikace</th>
             <th>Spotřeba viskózy <br>[l/hod]</th>
@@ -109,7 +108,7 @@
     <style>
         table {
             width: 100%;
-            max-width: 1200px;
+            max-width: 80vw;
             margin: 20px auto;
             border-collapse: collapse;
             background: white;
