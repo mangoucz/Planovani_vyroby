@@ -39,6 +39,17 @@
     }
     if ($admin) 
         $_SESSION['admin'] = true;
+
+    $sql = "SELECT * FROM Typ_stroje;";
+    $result = sqlsrv_query($conn, $sql);
+    if ($result === FALSE)
+        die(print_r(sqlsrv_errors(), true));
+    $typ_stroje = [];
+    while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+        $typ_stroje[$zaznam['id_typ']] = $zaznam['nazev'];
+    }
+    $id_stroje = isset($_GET['stroj']) ? $_GET['stroj'] : 0;
+    sqlsrv_free_stmt($result);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -80,11 +91,12 @@
     </div>
     <form action="" method="post" id="spec_form">
         <div class="setting">
-            <select name="stroj" id="stroj">
-                <option value="1">Staré stroje</option>
-                <option value="2">Staré stroje + Barmag</option>
-                <option value="3">Nové stroje</option>
-            </select>
+            <select name="stroj" id="selectStroj">
+            <?php
+                foreach ($typ_stroje as $id => $typ): ?>
+                    <option value="<?= $id ?>" <?= ($id == $id_stroje) ? 'selected' : '' ?>><?= $typ ?></option>
+            <?php endforeach; ?>
+        </select>
         </div>
         <h2>Výpočet specifikace spřádacího stroje</h2>
         <div class="table" id="specifikace">
@@ -455,7 +467,6 @@
         }
         .radek input {
             padding: 6px;
-            border: 1px solid #aaa;
             border-radius: 4px;
             width: 70%;
         }

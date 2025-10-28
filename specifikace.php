@@ -48,9 +48,9 @@
     while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
         $typ_stroje[$zaznam['id_typ']] = $zaznam['nazev'];
     }
+    $id_stroje = isset($_GET['stroj']) ? $_GET['stroj'] : 0;
     sqlsrv_free_stmt($result);
 
-    $id_stroje = isset($_GET['stroj']) ? $_GET['stroj'] : 0;
     $sql = "SELECT id_spec, s.id_vyr, c_spec, titr, titr_skup, s.id_typ_stroje, v.vyrobek, s.id_zam, CONCAT(z.jmeno, ' ', z.prijmeni) as vytvoril, vytvoreno 
             FROM (Specifikace as s LEFT JOIN Vyrobky as v ON s.id_vyr = v.id_vyr) LEFT JOIN Zamestnanci as z ON s.id_zam = z.id_zam 
             " . ($id_stroje != 0 ? "WHERE s.id_typ_stroje = ?" : "") . "
@@ -108,7 +108,8 @@
                 foreach ($typ_stroje as $id => $typ): ?>
                     <option value="<?= $id ?>" <?= ($id == $id_stroje) ? 'selected' : '' ?>><?= $typ ?></option>
             <?php endforeach; ?>
-        </select>    
+        </select>
+        <input type="search" name="searchSpec" id="searchSpec" placeholder="Hledat specifikaci...">    
         <button type="button" class="defButt" onclick="window.location.href = 'spec_form.php'">Nová specifikace</button>
     </div>
     <table>
@@ -124,7 +125,7 @@
                 <th>info</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="body_spec">
             <?php
                 while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                     $id_spec = $zaznam['id_spec'];
@@ -149,14 +150,14 @@
                     }
 
                     echo "<tr>
-                            <td data-label='Č. spec.'>$c_spec</td>
-                            <td data-label='Titr'>$titr</td>
-                            <td data-label='Skup. titrů'>$titr_skup</td>
-                            <td data-label='Skup. strojů'>$id_typ_stroje</td>
-                            <td data-label='Vytvořil'>$vytvoril</td>
-                            <td data-label='Vytvořeno'>$vytvoreno</td>
-                            <td data-label='Výrobek'><span class='vyr' id='$id_vyr' data-id_spec='$id_spec'>$vyrobek</span></td>
-                            <td data-label='info'><img src='info.png' alt='Podrobnosti' class='info-icon link' id='$id_spec'></td>
+                            <td data-label='Č. spec.' id='c_spec'>$c_spec</td>
+                            <td data-label='Titr' id='titr'>$titr</td>
+                            <td data-label='Skup. titrů' id='skup_titr'>$titr_skup</td>
+                            <td data-label='Skup. strojů' id='skup_stroj'>$id_typ_stroje</td>
+                            <td data-label='Vytvořil' id='vytvoril'>$vytvoril</td>
+                            <td data-label='Vytvořeno' id='vytvoreno'>$vytvoreno</td>
+                            <td data-label='Výrobek' id='vyrobek'><span class='vyr' id='$id_vyr' data-id_spec='$id_spec'>$vyrobek</span></td>
+                            <td data-label='info' id='info'><img src='info.png' alt='Podrobnosti' class='info-icon link' id='$id_spec'></td>
                         </tr>";
                 }
                 sqlsrv_free_stmt($result);
@@ -257,7 +258,7 @@
         }
         
         .setting {
-            max-width: 900px;
+            width: 60vw;
         }
         select {
             max-width: 300px;
@@ -272,9 +273,9 @@
         }
 
 
-        @media (max-width: 660px) {
+        @media (max-width: 710px) {
             table {
-                margin: 10px;
+                margin: 10px auto;
             }
             table, thead, tbody, th, td, tr {
                 display: block;
@@ -313,10 +314,10 @@
             .setting {
                 flex-direction: column;
                 gap: 10px;
-                margin: 10px;
+                margin: 10px auto;
                 padding: 15px;
             }
-            .setting select {
+            .setting select, .setting input[type="search"] {
                 max-width: 100%;
             }
             .setting button {

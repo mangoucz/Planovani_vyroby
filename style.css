@@ -11,14 +11,16 @@ input{
     padding: 8px;
     margin: 2px 0;
     box-sizing: border-box;
-    border: 1px solid #BCD4EF;
+    border: 1px solid #aaa;
     font-size: 14px;
     outline: none;
     transition: border-color 0.2s ease;
 }
 input[type="search"] {
-    width: 40%;
-    border-radius: 20px;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 5px;
+    margin-right: 20px;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -360,16 +362,10 @@ li {
 }
 
 
-@media (max-width: 660px) {
+@media (max-width: 710px) {
     .header {
         flex-direction: column;
         align-items: center;
-    }
-    .footer{
-        display: flex;  
-    }
-    .logo {
-        display: none;
     }
     h1 {
         margin: 5% 0;
@@ -390,5 +386,16 @@ li {
         display: block;
         padding: 10px 5px;
         font-size: 14px;
+    }
+}
+@media (max-width: 920px) {
+    .header{
+        justify-content: space-around;
+    }
+    .footer{
+        display: flex !important;  
+    }
+    .logo {
+        display: none;
     }
 }

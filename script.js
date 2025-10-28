@@ -98,6 +98,30 @@ $(document).ready(function() {
         });
     }
 
+    if($("#selectStroj").length) { //nová spec.
+        const stroj = $("#selectStroj").val();
+        switch(stroj) {
+            case "1": 
+                $(".barmag").show();
+                $(".stare").show();
+                $(".nove").hide();
+                break;
+            case "2":
+                $(".barmag").show();
+                $(".stare").hide();
+                $(".nove").hide();
+                break;
+            case "3":
+                $(".barmag").hide();
+                $(".stare").hide();
+                $(".nove").show();
+                //vg2 required
+                break;
+            default:
+                break;
+        }
+    }
+
     $(document).on('click', '#closeBtn', closeModal);
 
     $(document).on('click', '#logout', function() {
@@ -210,32 +234,14 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '#stroj', function() {
-        const stroj = $(this).val();
-        switch(stroj) {
-            case "1": 
-                $(".barmag").show();
-                $(".stare").show();
-                $(".nove").hide();
-                break;
-            case "2":
-                $(".barmag").show();
-                $(".stare").hide();
-                $(".nove").hide();
-                break;
-            case "3":
-                $(".barmag").hide();
-                $(".stare").hide();
-                $(".nove").show();
-                //vg2 required
-                break;
-            default:
-                break;
-        }
+        
     });
 
     $(document).on('change', '#selectStroj', function() {
         const id_stroj = $(this).val();
-        window.location.href = 'specifikace.php?stroj=' + id_stroj;
+        const url = new URL(window.location.href);
+        url.searchParams.set('stroj', id_stroj);
+        window.location.href = url.toString();
     });
 
     $(document).on('click', '.vyr', function() {
@@ -281,6 +287,49 @@ $(document).ready(function() {
             },
             error: function() {
                 alert("Chyba komunikace se serverem při aktualizaci výrobku!");
+            }
+        });
+    });
+
+    $(document).on('input', '#searchSpec', function() {
+        const search = $(this).val();
+        const typ_stroje = $("#selectStroj").val();
+
+        $.ajax({
+            url: "get_db.php",
+            type: "POST",
+            data: { search: search, typ: typ_stroje },
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    const tbody = $("#body_spec");
+                    tbody.empty();
+
+                    response.data.forEach(function(spec) {
+                        const rowHtml = `
+                            <tr>
+                                <td data-label='Č. spec.' id='c_spec'>${spec.c_spec}</td>
+                                <td data-label='Titr' id='titr'>${spec.titr}</td>
+                                <td data-label='Skup. titrů' id='skup_titr'>${spec.titr_skup}</td>
+                                <td data-label='Skup. strojů' id='skup_stroj'>${spec.id_typ_stroje}</td>
+                                <td data-label='Vytvořil' id='vytvoril'>${spec.vytvoril}</td>
+                                <td data-label='Vytvořeno' id='vytvoreno'>${spec.vytvoreno}</td>
+                                <td data-label='Výrobek' id='vyrobek'>
+                                    <span class='vyr' id='${spec.id_vyr}' data-id_spec='${spec.id_spec}'>${spec.vyrobek}</span>
+                                </td>
+                                <td data-label='info' id='info'>
+                                    <img src='info.png' alt='Podrobnosti' class='info-icon link' id='${spec.id_spec}'>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.append(rowHtml);
+                    });
+                } else {
+                    alert("Chyba při vyhledávání spec.: " + (response.message || "Neznámá chyba") + (response.error || ""));
+                }
+            },
+            error: function() {
+                $("#body_spec").empty();
             }
         });
     });

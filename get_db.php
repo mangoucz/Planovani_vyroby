@@ -81,6 +81,53 @@
             ]);
             exit;
         }
+        elseif(isset($_POST['search'])){
+            $search = $_POST['search'];
+            $typ = isset($_POST['typ']) ? intval($_POST['typ']) : 0;
+
+            $sql = "SELECT 
+                        id_spec, s.id_vyr, c_spec, titr, titr_skup, s.id_typ_stroje, 
+                        v.vyrobek, s.id_zam, CONCAT(z.jmeno, ' ', z.prijmeni) as vytvoril, vytvoreno
+                    FROM Specifikace AS s
+                    LEFT JOIN Vyrobky AS v ON s.id_vyr = v.id_vyr
+                    LEFT JOIN Zamestnanci AS z ON s.id_zam = z.id_zam
+                    WHERE " . ($typ != 0 ? "s.id_typ_stroje = ? AND " : "") . "
+                        (c_spec LIKE ? OR titr LIKE ? OR titr_skup LIKE ? OR v.vyrobek LIKE ?)
+                    ORDER BY c_spec;";
+
+            $params = $typ != 0 ? [$typ, "%$search%", "%$search%", "%$search%", "%$search%"] : ["%$search%", "%$search%", "%$search%", "%$search%"];
+            $result = sqlsrv_query($conn, $sql, $params);
+            if ($result === FALSE) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Chyba SQL dotazu pro hledání specifikací!",
+                    "error" => sqlsrv_errors()
+                ]);
+                exit;
+            }
+            while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                $zaznam["vytvoreno"] = $zaznam["vytvoreno"]->format("d.m.Y");
+                $zaznam["vyrobek"] = $zaznam["vyrobek"] ?? "Nevybrán";
+                switch ($zaznam['id_zam']) {
+                    case '3':
+                        $zaznam['vytvoril'] = "Martin Vocásek";
+                        break;
+                    case '5':
+                        $zaznam['vytvoril'] = "Uršula Löwyová"; 
+                        break;
+                    default:
+                        $zaznam['vytvoril'] = $zaznam['vytvoril'];
+                        break;
+                }
+                $results[] = $zaznam;
+            }
+            sqlsrv_free_stmt($result);
+            echo json_encode([
+                "success" => true,
+                "data" => $results
+            ]);
+            exit;
+        }
         else {
             echo json_encode(["success" => false, "message" => "Chybí ID specifikace"]);
             exit;
