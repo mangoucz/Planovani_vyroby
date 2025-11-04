@@ -1,4 +1,19 @@
 <?php
+    function GenCisSpec($conn) : int {
+        $c_spec = (int)date("y") * 1000;
+
+        $sql = "SELECT MAX(c_spec) AS c_spec FROM Specifikace WHERE c_spec >= ? AND c_spec < ?";
+        $params = [$c_spec, $c_spec + 1000];
+        $result = sqlsrv_query($conn, $sql, $params);
+        if ($result === FALSE)
+            die(print_r(sqlsrv_errors(), true));
+        $zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)['c_spec'];         
+        sqlsrv_free_stmt($result);
+            
+        if ($zaznam !== null) 
+            return $c_spec = $zaznam + 1;   
+        return $c_spec + 1;
+    }
     session_start();
     if (isset($_SESSION['uziv']))
         $uziv = $_SESSION['uziv'];
@@ -89,21 +104,21 @@
             <?php if($admin): ?><li><a href="administrace.php">Administrace</a></li><?php endif; ?>
         </ul>
     </div>
-    <form action="" method="post" id="spec_form">
+    <form action="" method="post" id="form">
         <div class="setting">
-            <select name="stroj" id="selectStroj">
-            <?php
-                foreach ($typ_stroje as $id => $typ): ?>
-                    <option value="<?= $id ?>" <?= ($id == $id_stroje) ? 'selected' : '' ?>><?= $typ ?></option>
-            <?php endforeach; ?>
-        </select>
+            <select name="id_typ_stroje" id="selectStroj">
+                <?php
+                    foreach ($typ_stroje as $id => $typ): ?>
+                        <option value="<?= $id ?>" <?= ($id == $id_stroje) ? 'selected' : '' ?>><?= $typ ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
         <h2>Výpočet specifikace spřádacího stroje</h2>
         <div class="table" id="specifikace">
             <h3>Specifikace</h3>
             <div class="radek">
                 <label for="c_spec">Číslo specifikace</label>
-                <input type="text" id="c_spec" name="c_spec">
+                <input type="text" id="c_spec" name="c_spec" value="<?= GenCisSpec($conn); ?>">
             </div>
             <div class="radek">
                 <label for="titr">Titr</label>
@@ -116,8 +131,7 @@
                 <span class="jednotka">g/10 000 m</span>
             </div>
         </div>
-        </div>
-        <div class="double barmag" id="kotouče">
+        <div class="double barmag" id="kotouce_div">
             <div class="table">
                 <h3>Kotouče</h3>
                 <div class="radek">
@@ -127,11 +141,11 @@
                 </div>
                 <div class="radek">
                     <label for="zs1">Kotouč ZS1</label>
-                    <input type="text" id="zs1" name="zs1"><span class="jednotka">mm</span>
+                    <input type="text" id="kotouc1" name="kotouc1"><span class="jednotka">mm</span>
                 </div>
                 <div class="radek">
                     <label for="zs2">Kotouč ZS2</label>
-                    <input type="text" id="zs2" name="zs2"><span class="jednotka">mm</span>
+                    <input type="text" id="kotouc2" name="kotouc2"><span class="jednotka">mm</span>
                 </div>
                 <div class="radek">
                     <label for="kotouc3">Kotouč 3</label>
@@ -153,7 +167,7 @@
                 </div>
             </div>
         </div>
-        <div class="double" id="galety">
+        <div class="double" id="galety_div">
             <div class="table">
                 <h3>Galety</h3>
                 <div class="radek">
@@ -206,7 +220,7 @@
                 </div>
             </div>
         </div>
-        <div class="double" id="praci_valce">
+        <div class="double" id="praci_valce_div">
             <div class="table">
                 <h3>Prací válce</h3>
                 <div class="radek">
@@ -243,7 +257,7 @@
                 </div>
             </div>
         </div>
-        <div class="double" id="susici_valce">
+        <div class="double" id="susici_valce_div">
             <div class="table">
                 <h3>Sušící válce</h3>
                 <div class="radek">
@@ -280,7 +294,7 @@
                 </div>
             </div>
         </div>
-        <div class="double barmag" id="navijeni">
+        <div class="double barmag" id="navijeni_div">
             <div class="table">
                 <h3>Navíjení</h3>
                 <div class="radek">
@@ -307,12 +321,12 @@
                 </div>
             </div>
         </div>
-        <div class="double" id="cerpadlo">
+        <div class="double" id="cerpadlo_div">
             <div class="table">
                 <h3>Spřádací čerpadlo</h3>
                 <div class="radek">
-                    <label for="spradaci_cerpadlo">Spřádací čerpadlo</label>
-                    <input type="text" id="spradaci_cerpadlo" name="spradaci_cerpadlo"><span class="jednotka">cm³/U</span>
+                    <label for="cerpadlo">Spřádací čerpadlo</label>
+                    <input type="text" id="cerpadlo" name="cerpadlo"><span class="jednotka">cm³/U</span>
                 </div>
                 <div class="radek">
                     <label for="pocet_sprad_mist">Počet spřádacích míst</label>
@@ -356,7 +370,7 @@
                 </div>
             </div>
         </div>
-        <div class="double barmag" id="ukladani">     
+        <div class="double barmag" id="ukladani_div">     
             <div class="table">
                 <h3>Ukládání</h3>
                 <div class="radek">
@@ -409,7 +423,12 @@
         <div class="table nove" id="Produkce">
             <h3>Produkce</h3>
             <div class="radek">
-                
+                <label for="produkce_1_misto">Produkce 1 místo</label>
+                <input type="text" id="produkce_1_misto" name="produkce_1_misto"><span class="jednotka">kg/h</span>
+            </div>
+            <div class="radek">
+                <label for="produkce_stroj">Produkce stroj</label>
+                <input type="text" id="produkce_stroj" name="produkce_stroj"><span class="jednotka">kg/h</span>
             </div>
         </div>
         <div class="table">
@@ -417,7 +436,7 @@
             <textarea name="poznamky" rows="10"></textarea>
         </div>
         <div class="submit-container">
-            <input type="button" class="add" id="ulozit" value="Uložit specifikaci" name="subUloz" style="font-size: 16px;">
+            <input type="button" class="add" id="odeslat" value="Uložit specifikaci" name="subUloz" style="font-size: 16px;">
         </div>
     </form>
     <style>

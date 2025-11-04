@@ -145,7 +145,7 @@ $(document).ready(function() {
 
     $(document).on('click', '#odeslat', function() {
         const form = document.querySelector("#form");
-
+        
         if (!form.checkValidity()) {
             form.reportValidity(); 
             return;
@@ -162,17 +162,21 @@ $(document).ready(function() {
         
         const formData = $("#form").serializeArray();
         $.ajax({
-            url: "sub_povoleni.php",
+            url: "sub_db.php",
             type: "POST", 
-            data: {data: formData}, 
+            data: formData, 
             dataType: "json",
             success: function(response) {
                 if (response.success) {
-                    $("#modalOdeslano h2").text("Povolení č. " + response.data.ev_cislo);
-                    $("#modalOdeslano input[type=hidden]").val(response.data.id);
-                    $("#modalOdeslano").fadeIn(200).css("display", "flex");
+                    // $("#modalOdeslano h2").text("Povolení č. " + response.data.ev_cislo);
+                    // $("#modalOdeslano input[type=hidden]").val(response.data.id);
+                    // $("#modalOdeslano").fadeIn(200).css("display", "flex");
+                    alert("Specifikace byla úspěšně uložena.");
                 } else {
-                    alert("Chyba při odesílání povolení: " + (response.message || "Neznámá chyba") + response.error);
+                    alert("Chyba při odesílání specifikace:\n" +
+                        (response.message || "Neznámá chyba") + "\n\n" +
+                        JSON.stringify(response.error, null, 2)
+                    );
                 }
             },
             error: function(xhr, status, error) {
@@ -332,5 +336,65 @@ $(document).ready(function() {
                 $("#body_spec").empty();
             }
         });
+    });
+
+    $(document).on('input', '#kotouce_div input', function() {
+        const hnaci_motor = $("#hnaci_motor").val();
+        const kotouc1 = $("#kotouc1").val();
+        const kotouc2 = $("#kotouc2").val();
+        const kotouc3 = $("#kotouc3").val();
+        const kotouc4 = $("#kotouc4").val();
+        
+
+    });
+    $(document).on('input', '#galety_div input', function() {
+        const galety = $("#galety").val();
+        const Z13 = $("#Z13").val();
+        const Z14 = $("#Z14").val();
+        const Z15 = $("#Z15").val();
+        const Z16 = $("#Z16").val();
+        const Z30 = $("#Z30").val();
+        const Z32 = $("#Z32").val();        
+    });
+    $(document).on('input', '#praci_valce_div input', function() {
+        const praci_valce = $("#praci_valce").val();
+        const Z9 = $("#Z9").val();
+        const Z10 = $("#Z10").val();
+        const Z11 = $("#Z11").val();
+        const Z12 = $("#Z12").val();
+        
+
+    });
+    $(document).on('input', '#susici_valce_div input', function() {
+        const susici_valec = $("#susici_valec").val();
+        const Z17 = $("#Z17").val();
+        const Z18 = $("#Z18").val();
+        const Z19 = $("#Z19").val();
+        const Z20 = $("#Z20").val();
+        
+
+    });
+    $(document).on('input', '#navijeni_div input', function() {
+        const navijeci_valec = $("#navijeci_valec").val();
+        const dlouzeni = $("#dlouzeni").val();
+
+    });
+    $(document).on('input', '#ukladani_div input', function() {
+        const cerpadlo = $("#cerpadlo").val();
+        const pocet_sprad_mist = $("#pocet_sprad_mist").val();
+        const korekce = $("#korekce").val();
+        const Z21 = $("#Z21").val();
+        const Z22 = $("#Z22").val();
+        const Z23 = $("#Z23").val();
+        const Z24 = $("#Z24").val();        
+    });
+    $(document).on('input', '#praci_valce_div input', function() {
+        const motor = $("#motor").val();
+        const rs3 = $("#rs3").val();
+        const rs4 = $("#rs4").val();
+        const faktor = $("#faktor").val();
+        const Z12 = $("#Z12").val();
+        
+
     });
 });

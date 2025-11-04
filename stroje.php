@@ -108,12 +108,6 @@
         die(print_r(sqlsrv_errors(), true));
     $stroje = [];
     while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-        $stroje['nazev'][] = $zaznam['nazev_L'] . $zaznam['nazev_p'];
-        $stroje['skup_stroju'][] = $zaznam['typ_stroje'];
-        $stroje['skup_titru'][] = $zaznam['titr_skup'];
-        $stroje['specifikace'][] = $zaznam['c_spec'];
-        $stroje['doba'][] = $zaznam['doba'];
-        $stroje['odtah'][] = $zaznam['konec'];
         if($zaznam['typ_stroje'] == 1){
             //stare
             $hnacimotor = $zaznam['hnaci_motor'];
@@ -155,10 +149,18 @@
 
             $spotreba = $vg2 * 60 / 10000 * $titr / 1000 / $faktor * $korekce * $pocetmist;
         }
-        $stroje['spotreba'][] = round($spotreba, 2);
         $rychlost_hod = $spotreba * 0.08674 * 0.97;
-        $stroje['rychlost_hod'][] = round($rychlost_hod, 1);
-        $stroje['rychlost_den'][] = round($rychlost_hod * 24, 1);
+        $stroje[] = [
+            'nazev' => $zaznam['nazev_L'] . $zaznam['nazev_p'],
+            'skup_stroju' => $zaznam['typ_stroje'],
+            'skup_titru' => $zaznam['titr_skup'],
+            'specifikace' => $zaznam['c_spec'],
+            'doba' => $zaznam['doba'],
+            'odtah' => $zaznam['konec'],
+            'spotreba' => round($spotreba, 2),
+            'rychlost_hod' => round($rychlost_hod, 1),
+            'rychlost_den' => round($rychlost_hod * 24, 1)
+        ];
     }
     //stare = hnacimotor * kotouc1 / kotouc2 * z3 / z4 * z21 / z22 * z23 / z24 * z40 / z41 * z42 / z43 * z44 / z45 * z46 / z47*(1+dbl_korekce) * cerpadlo * 60 / 1000 * pocetmist;
     //barmag = hnacimotor * kotouc1 / kotouc2 * z3 / z4 * z21 / z22 * z23 / z24 * z40 / z41 * z42 / z43 * z44 / z45 * z46 / z47*(1+dbl_korekce) * cerpadlo * 60 / 1000 * pocetmist;
@@ -215,27 +217,42 @@
             <th>Příští odtah</th>
         </thead>
         <tbody>
-            <?php for ($i = 0; $i < count($stroje['nazev']); $i++): ?>
+            <?php foreach ($stroje as $stroj): ?>
                 <tr>
-                    <td data-label="Název stroje"><?= $stroje['nazev'][$i]; ?></td>
-                    <td data-label="Skup. strojů"><?= $stroje['skup_stroju'][$i]; ?></td>
-                    <td data-label="Skup. titrů"><?= $stroje['skup_titru'][$i]; ?></td>
-                    <td data-label="Specifikace"><?= $stroje['specifikace'][$i]; ?></td>
-                    <td data-label="Spotřeba viskózy [l/hod]"><?= $stroje['spotreba'][$i]; ?></td>
-                    <td data-label="Rychlost výr. [kg/hod]"><?= $stroje['rychlost_hod'][$i]; ?></td>
-                    <td data-label="Rychlost výr. [kg/den]"><?= $stroje['rychlost_den'][$i]; ?></td>
-                    <td data-label="Doba návinu"><?= $stroje['doba'][$i]->format('H:i'); ?></td>
-                    <td data-label="Příští odtah"><?= $stroje['odtah'][$i]->format('d.m.Y H:i'); ?></td>
+                    <td data-label="Název stroje"><?= $stroj['nazev']; ?></td>
+                    <td data-label="Skup. strojů"><?= $stroj['skup_stroju']; ?></td>
+                    <td data-label="Skup. titrů"><?= $stroj['skup_titru']; ?></td>
+                    <td data-label="Specifikace"><?= $stroj['specifikace']; ?></td>
+                    <td data-label="Spotřeba viskózy [l/hod]"><?= $stroj['spotreba']; ?></td>
+                    <td data-label="Rychlost výr. [kg/hod]"><?= $stroj['rychlost_hod']; ?></td>
+                    <td data-label="Rychlost výr. [kg/den]"><?= $stroj['rychlost_den']; ?></td>
+                    <td data-label="Doba návinu"><?= is_object($stroj['doba']) ? $stroj['doba']->format('H:i') : $stroj['doba']; ?></td>
+                    <td data-label="Příští odtah"><?= is_object($stroj['odtah']) ? $stroj['odtah']->format('d.m.Y H:i') : $stroj['odtah']; ?></td>
                 </tr>
-            <?php endfor; ?>
+            <?php endforeach; ?>
             <tr style="text-align: center; font-weight: bold; background-color: #f1f1f1;">
                 <td>Celkem:</td>
-                <td><?= count($stroje['nazev']); ?> strojů</td>
+                <td><?= count($stroje); ?> strojů</td>
                 <td>-</td>
                 <td>-</td>
-                <td><?= array_sum($stroje['spotreba']); ?> l/hod <br> <?= round(array_sum($stroje['spotreba'])/1000, 2); ?> m3/hod</td>
-                <td><?= array_sum($stroje['rychlost_hod']); ?> kg/hod</td>
-                <td><?= array_sum($stroje['rychlost_den']); ?> kg/den</td>
+                <td>
+                    <?php
+                        $sum_spotreba = array_sum(array_column($stroje, 'spotreba'));
+                        echo $sum_spotreba . ' l/hod <br> ' . round($sum_spotreba/1000, 2) . ' m3/hod';
+                    ?>
+                </td>
+                <td>
+                    <?php
+                        $sum_rychlost_hod = array_sum(array_column($stroje, 'rychlost_hod'));
+                        echo $sum_rychlost_hod . ' kg/hod';
+                    ?>
+                </td>
+                <td>
+                    <?php
+                        $sum_rychlost_den = array_sum(array_column($stroje, 'rychlost_den'));
+                        echo $sum_rychlost_den . ' kg/den';
+                    ?>
+                </td>
                 <td>-</td>
                 <td>-</td>
             </tr>
