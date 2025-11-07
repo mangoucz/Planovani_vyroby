@@ -8,6 +8,21 @@
     }
     require_once 'server.php';
 
+    if($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if(isset($_POST['subDel'])){
+            $id_spec = $_POST['id'];
+            $sql = "DELETE FROM Spec_stare WHERE id_spec = ?;
+                    DELETE FROM Specifikace WHERE id_spec = ?;";
+            $params = [$id_spec, $id_spec];
+            $result = sqlsrv_query($conn, $sql, $params);
+            if ($result === FALSE)
+                die(print_r(sqlsrv_errors(), true));
+            sqlsrv_free_stmt($result);
+            header("Location: " . $_SERVER['REQUEST_URI']);
+            exit();
+        }
+    }
+
     $sql = "SELECT
                 CONCAT(z.jmeno, ' ', z.prijmeni) AS jmeno,
                 z.funkce,
@@ -181,7 +196,7 @@
                 <div class="info-row"><span class="label">Poznámka:</span><span class="poznamka obsah"></span></div>
             </div>
             <div class="modal-footer">
-                <form action="nove.php" method="post">
+                <form action="spec_form.php" method="post">
                     <input type="submit" name="subEdit" id="subEdit" class="defButt edit" value="Editovat" title="Editace specifikace">
                     <input type="hidden" name="id" value="">
                 </form>

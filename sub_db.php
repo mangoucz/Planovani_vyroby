@@ -172,7 +172,12 @@
                 }
                 sqlsrv_free_stmt($result);
             }
-            echo json_encode(["success" => true, "message" => "Záznam byl úspěšně vložen."]);
+            echo json_encode(["success" => true, 
+                                "data" => [
+                                    "id_spec" => $id_spec,
+                                    "c_spec" => $c_spec
+                                ]
+                            ]);
             exit;
         }
         elseif (isset($_POST['id_vyr'])) {

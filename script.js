@@ -26,6 +26,9 @@ const z59 = 14;
 const ipohon = 1/30;
 
 let nA;
+let vg1;
+let vg2;
+let vw;
 let vWT;
 //#endregion
 
@@ -45,7 +48,11 @@ $(document).ready(function() {
     }
     function closeModal() {
         if($(".modal").is(":visible")) {
-            $(".modal").fadeOut(200).css("display", "none");
+            if(window.location.href.includes("spec_form.php")){
+                window.location.replace("specifikace.php");
+                return;
+            }
+            $(".modal").fadeOut(200);
         }
     }
     function initializeDatepicker(selector) {
@@ -199,10 +206,9 @@ $(document).ready(function() {
             dataType: "json",
             success: function(response) {
                 if (response.success) {
-                    // $("#modalOdeslano h2").text("Povolení č. " + response.data.ev_cislo);
-                    // $("#modalOdeslano input[type=hidden]").val(response.data.id);
-                    // $("#modalOdeslano").fadeIn(200).css("display", "flex");
-                    alert("Specifikace byla úspěšně uložena.");
+                    $("#modalOdeslano h2").text("Specifikace č. " + response.data.c_spec);
+                    $("#modalOdeslano input[type=hidden]").val(response.data.id_spec);
+                    $("#modalOdeslano").fadeIn(200).css("display", "flex");
                 } else {
                     alert("Chyba při odesílání specifikace:\n" +
                         (response.message || "Neznámá chyba") + "\n\n" +
@@ -391,8 +397,9 @@ $(document).ready(function() {
         const z32 = $("#Z32").val();   
         const ng2 = nA * z13 / z14 * z15 / z16 * z33 / z34 * z53 / z52;
         const ng1 = ng2 * z30 / z32;
-        const vg2 = ng2 * galety / 1000 * Math.PI;
-        const vg1 = ng1 * galety / 1000 * Math.PI;
+        vg2 = ng2 * galety / 1000 * Math.PI;
+        vg1 = ng1 * galety / 1000 * Math.PI;
+        const sg1g2 = (ng2 - ng1) / ng1 * 100;
 
         if(!isNaN(ng2) && ng2 !== Infinity){
             $("#nG2").val(ng2.toFixed(2));
@@ -402,6 +409,9 @@ $(document).ready(function() {
             $("#nG1").val(ng1.toFixed(2));
             $("#vG1").val(vg1.toFixed(2));
         }
+        if(!isNaN(sg1g2) && sg1g2 !== Infinity){
+            $("#SG1-G2").val(sg1g2.toFixed(2));
+        }
     });
     $(document).on('input', '#praci_valce_div input', function() {
         const praci_valce = $("#praci_valce").val();
@@ -410,11 +420,15 @@ $(document).ready(function() {
         const Z11 = $("#Z11").val();
         const Z12 = $("#Z12").val();
         const nw = nA * Z9 / Z10 * Z11 / Z12 * z25 / z26 * z59 / z58;
-        const vw = nw * praci_valce / 1000 * Math.PI;
+        vw = nw * praci_valce / 1000 * Math.PI;
+        const sg2w = (vw - vg2) / vg2 * 100;
 
         if(!isNaN(nw) && nw !== Infinity){
             $("#nW").val(nw.toFixed(2));
             $("#vW").val(vw.toFixed(2));
+        }
+        if(!isNaN(sg2w) && sg2w !== Infinity){
+            $("#SG2-W").val(sg2w.toFixed(2));
         }
     });
     $(document).on('input', '#susici_valce_div input', function() {
@@ -426,44 +440,51 @@ $(document).ready(function() {
         
         const nWT = nA * Z17 / Z18 * Z19 / Z20 * z38 / z39 * z55 / z54;
         vWT = nWT * susici_valec / 1000 * Math.PI;
+        const sWT = (vWT - vw) / vw * 100;
 
         if(!isNaN(nWT) && nWT !== Infinity){
             $("#nWT").val(nWT.toFixed(2));
             $("#vWT").val(vWT.toFixed(2));
         }
+        if(!isNaN(sWT) && sWT !== Infinity){
+            $("#SW-T").val(sWT.toFixed(2));
+        }
     });
     $(document).on('input', '#navijeni_div input', function() {
         const navijeci_valec = $("#navijeci_valec").val();
-        const dlouzeni = $("#dlouzeni").val();
+        const dlouzeni = parseFloat($("#dlouzeni").val()) / 100 || 0;
         const vnavijeni = vWT * (1 + dlouzeni);
         const nnavijeni = vnavijeni / (navijeci_valec / 1000 * Math.PI);
         const n1pohon = nnavijeni * z49 / z48;
+        const sges = (vnavijeni - vg1) / vg1 * 100;
 
         if(!isNaN(vnavijeni)){
             $("#v_navijeni").val(vnavijeni.toFixed(2));
-        }
+        } 
         if(!isNaN(nnavijeni) && nnavijeni !== Infinity){
             $("#n_navijeni").val(nnavijeni.toFixed(2));
             $("#1_pohon").val(n1pohon.toFixed(2));
+        }
+        if(!isNaN(sges) && sges !== Infinity){
+            $("#Sges").val(sges.toFixed(2));
         }
     });
     $(document).on('input', '#cerpadlo_div input', function() {
         const cerpadlo = $("#cerpadlo").val();
         const pocet_sprad_mist = $("#pocet_sprad_mist").val();
-        const korekce = $("#korekce").val();
+        const korekce = parseFloat($("#korekce").val()) / 100 || 0;
         const Z21 = $("#Z21").val();
         const Z22 = $("#Z22").val();
         const Z23 = $("#Z23").val();
         const Z24 = $("#Z24").val();    
         const nsp = nA * Z21 / Z22 * Z23 / Z24 * z40 / z41 * z42 / z43 * z44 / z45 * z46 / z47 * (1 + korekce);
         const spotreba_misto = nsp * cerpadlo * 60 / 1000;
-        const spotreba_stroj = v * pocet_sprad_mist;
-        alert(cerpadlo);
-        // if(!isNaN(nsp)){
+        const spotreba_stroj = spotreba_misto * pocet_sprad_mist;
+        if(!isNaN(nsp) && nsp !== Infinity){
             $("#nSp").val(nsp.toFixed(2));
             $("#spotr_misto").val(spotreba_misto.toFixed(2));
             $("#spotr_stroj").val(spotreba_stroj.toFixed(2));
-        // }
+        }
     });
     $(document).on('input', '#ukladani_div input', function() {
         const motor = $("#motor").val();
