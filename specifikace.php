@@ -199,6 +199,7 @@
                 <form action="spec_form.php" method="post">
                     <input type="submit" name="subEdit" id="subEdit" class="defButt edit" value="Editovat" title="Editace specifikace">
                     <input type="hidden" name="id" value="">
+                    <input type="hidden" name="typ_stroje" value="">
                 </form>
                 <form action="print_form.php" method="post" target="printFrame">
                     <input type="submit" name="subTisk" class="defButt print" id="subTisk" value="Tisk" title="Tisk specifikace">

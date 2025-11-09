@@ -1,44 +1,61 @@
-//#region Proměnné pro výpočty
-const z3 = 19;
-const z4 = 28;
-const z25 = 10;
-const z26 = 30;
-const z33 = 10;
-const z34 = 30;
-const z38 = 10;
-const z39 = 30;
-const z40 = 10;
-const z41 = 30;
-const z42 = 22;
-const z43 = 44;
-const z44 = 22;
-const z45 = 44;
-const z46 = 29;
-const z47 = 58;
-const z48 = 10;
-const z49 = 30;
-const z52 = 18;
-const z53 = 18;
-const z54 = 21;
-const z55 = 14;
-const z58 = 21;
-const z59 = 14;
-const ipohon = 1/30;
-
-let nA;
-let vg1;
-let vg2;
-let vw;
-let vWT;
-//#endregion
-
 $(document).ready(function() {
+    //#region Proměnné pro výpočty
+    const z3 = 19;
+    const z4 = 28;
+    const z25 = 10;
+    const z26 = 30;
+    const z33 = 10;
+    const z34 = 30;
+    const z38 = 10;
+    const z39 = 30;
+    const z40 = 10;
+    const z41 = 30;
+    const z42 = 22;
+    const z43 = 44;
+    const z44 = 22;
+    const z45 = 44;
+    const z46 = 29;
+    const z47 = 58;
+    const z48 = 10;
+    const z49 = 30;
+    const z52 = 18;
+    const z53 = 18;
+    const z54 = 21;
+    const z55 = 14;
+    const z58 = 21;
+    const z59 = 14;
+    const ipohon = 1/30;
+    
+    let typ_stroje = $("#selectStroj").val();
+    let nA;
+    let vg1;
+    let vg2;
+    let vw;
+    let vWT;
+    let sg1g2;
+    let sg2w;
+    let sWT;
+    let korekce;
+    let produkce_1;
+    //#endregion
     function ochrana(){
         window.addEventListener('pageshow', function(event) {
             if (event.persisted || (window.performance && window.performance.getEntriesByType("navigation")[0].type === 'back_forward')) {
                 window.location.reload();
             }
         });
+    }
+    function isValidNumber(value) {
+        return typeof value === "number" && !isNaN(value) && value !== Infinity && value !== -Infinity;
+    }
+    function pocitej(){
+        $('#kotouce_div input').trigger('input');
+        $('#galety_div input').trigger('input');
+        $('#praci_valce_div input').trigger('input');
+        $('#susici_valce_div input').trigger('input');
+        $('#navijeni_div input').trigger('input');
+        $('#cerpadlo_div input').trigger('input');
+        $('#ukladani_div input').trigger('input');
     }
     function vytvorRadek(rowClass, index, html) {
         return $("<tr>")
@@ -240,7 +257,8 @@ $(document).ready(function() {
                     $(".modal .upraveno").text(response.data.upraveno);
                     $(".modal .vyrobek").text(response.data.vyrobek || "Nevybrán");
                     $(".modal .poznamka").text(response.data.poznamka || "-");
-                    $(".modal input[type='hidden']").val(id);
+                    $(".modal input[name='id']").val(id);
+                    $(".modal input[name='typ_stroje']").val(response.data.sk_stroj);
                     $(".modal").fadeIn(200).css("display", "flex");
                 } else {
                     alert("Chyba při načítání dat!");
@@ -382,7 +400,7 @@ $(document).ready(function() {
         const npohon = hnaci_motor * kotouc1 / kotouc2;
         nA = npohon * z3 / z4;
 
-        if(!isNaN(npohon) && npohon !== Infinity){
+        if(isValidNumber(npohon)){
             $("#npohon").val(npohon.toFixed(2));
             $("#nA").val(nA.toFixed(2));
         }
@@ -394,24 +412,45 @@ $(document).ready(function() {
         const z15 = $("#Z15").val();
         const z16 = $("#Z16").val();
         const z30 = $("#Z30").val();
-        const z32 = $("#Z32").val();   
-        const ng2 = nA * z13 / z14 * z15 / z16 * z33 / z34 * z53 / z52;
-        const ng1 = ng2 * z30 / z32;
-        vg2 = ng2 * galety / 1000 * Math.PI;
-        vg1 = ng1 * galety / 1000 * Math.PI;
-        const sg1g2 = (ng2 - ng1) / ng1 * 100;
+        const z32 = $("#Z32").val();
+        let ng1, ng2;
+        
+        if(typ_stroje == "3"){
+            vg2 = parseFloat($("#vg2").val());
+            sg1g2 = parseFloat($("#SG1-G2").val())/100;
+            const titr = $("#titr").val();
+            const pocet_sprad_mist = $("#pocet_sprad_mist").val();
+            ng2 = vg2 / (galety / 1000 * Math.PI);
+            ng1 = ng2 / (1 + sg1g2)
+            vg1 = ng1 * galety / 1000 * Math.PI;
+            produkce_1 = vg2 * 60 / 10000 * titr / 1000;
+            const produkce_stroj = produkce_1 * pocet_sprad_mist;
 
-        if(!isNaN(ng2) && ng2 !== Infinity){
-            $("#nG2").val(ng2.toFixed(2));
-            $("#vG2").val(vg2.toFixed(2));
+            if(isValidNumber(ng2)){
+                $("#nG2").val(ng2.toFixed(2));
+            }
+            $("#produkce_1_misto").val(produkce_1.toFixed(2));
+            $("#produkce_stroj").val(produkce_stroj.toFixed(2));
+        }else{
+            ng2 = nA * z13 / z14 * z15 / z16 * z33 / z34 * z53 / z52;
+            ng1 = ng2 * z30 / z32;
+            vg2 = ng2 * galety / 1000 * Math.PI;
+            vg1 = ng1 * galety / 1000 * Math.PI;
+            sg1g2 = (ng2 - ng1) / ng1 * 100;
+            
+            if(isValidNumber(ng2)){
+                $("#nG2").val(ng2.toFixed(2));
+                $("#vG2").val(vg2.toFixed(2));
+            }
+            if(isValidNumber(sg1g2)){
+                $("#SG1-G2").val(sg1g2.toFixed(2));
+            }
         }
-        if(!isNaN(ng1) && ng1 !== Infinity){
+        if(isValidNumber(ng1)){
             $("#nG1").val(ng1.toFixed(2));
             $("#vG1").val(vg1.toFixed(2));
         }
-        if(!isNaN(sg1g2) && sg1g2 !== Infinity){
-            $("#SG1-G2").val(sg1g2.toFixed(2));
-        }
+
     });
     $(document).on('input', '#praci_valce_div input', function() {
         const praci_valce = $("#praci_valce").val();
@@ -419,16 +458,29 @@ $(document).ready(function() {
         const Z10 = $("#Z10").val();
         const Z11 = $("#Z11").val();
         const Z12 = $("#Z12").val();
-        const nw = nA * Z9 / Z10 * Z11 / Z12 * z25 / z26 * z59 / z58;
-        vw = nw * praci_valce / 1000 * Math.PI;
-        const sg2w = (vw - vg2) / vg2 * 100;
+        
+        if(typ_stroje == "3"){
+            sg2w = parseFloat($("#SG2-W").val())/100;
+            vw = vg2 * (1 + sg2w);
+            const nw = vw / (praci_valce / 1000 * Math.PI);
 
-        if(!isNaN(nw) && nw !== Infinity){
-            $("#nW").val(nw.toFixed(2));
-            $("#vW").val(vw.toFixed(2));
+            if(isValidNumber(nw)){
+                $("#nW").val(nw.toFixed(2));
+                $("#vW").val(vw.toFixed(2));
+            }
         }
-        if(!isNaN(sg2w) && sg2w !== Infinity){
-            $("#SG2-W").val(sg2w.toFixed(2));
+        else{
+            const nw = nA * Z9 / Z10 * Z11 / Z12 * z25 / z26 * z59 / z58;
+            vw = nw * praci_valce / 1000 * Math.PI;
+            sg2w = (vw - vg2) / vg2 * 100;
+            
+            if(isValidNumber(nw)){
+                $("#nW").val(nw.toFixed(2));
+                $("#vW").val(vw.toFixed(2));
+            }
+            if(isValidNumber(sg2w)){
+                $("#SG2-W").val(sg2w.toFixed(2));
+            }
         }
     });
     $(document).on('input', '#susici_valce_div input', function() {
@@ -437,17 +489,30 @@ $(document).ready(function() {
         const Z18 = $("#Z18").val();
         const Z19 = $("#Z19").val();
         const Z20 = $("#Z20").val();
-        
-        const nWT = nA * Z17 / Z18 * Z19 / Z20 * z38 / z39 * z55 / z54;
-        vWT = nWT * susici_valec / 1000 * Math.PI;
-        const sWT = (vWT - vw) / vw * 100;
 
-        if(!isNaN(nWT) && nWT !== Infinity){
-            $("#nWT").val(nWT.toFixed(2));
-            $("#vWT").val(vWT.toFixed(2));
-        }
-        if(!isNaN(sWT) && sWT !== Infinity){
-            $("#SW-T").val(sWT.toFixed(2));
+        if(typ_stroje == "3"){
+            sWT = parseFloat($("#SW-T").val())/100;
+            vWT = vw * (1 + sWT);
+            const nWT = vWT / (susici_valec / 1000 * Math.PI);
+            const Sges = (vWT - vg1) / vg1 * 100;
+
+            if(isValidNumber(nWT)){
+                $("#nWT").val(nWT.toFixed(2));
+                $("#vWT").val(vWT.toFixed(2));
+                $("#Sges").val((Sges).toFixed(2));
+            }
+        }else{
+            const nWT = nA * Z17 / Z18 * Z19 / Z20 * z38 / z39 * z55 / z54;
+            vWT = nWT * susici_valec / 1000 * Math.PI;
+            sWT = (vWT - vw) / vw * 100;
+    
+            if(isValidNumber(vWT)){
+                $("#nWT").val(nWT.toFixed(2));
+                $("#vWT").val(vWT.toFixed(2));
+            }
+            if(isValidNumber(sWT)){
+                $("#SW-T").val(sWT.toFixed(2));
+            }
         }
     });
     $(document).on('input', '#navijeni_div input', function() {
@@ -458,32 +523,48 @@ $(document).ready(function() {
         const n1pohon = nnavijeni * z49 / z48;
         const sges = (vnavijeni - vg1) / vg1 * 100;
 
-        if(!isNaN(vnavijeni)){
+        if(isValidNumber(vnavijeni)){
             $("#v_navijeni").val(vnavijeni.toFixed(2));
         } 
-        if(!isNaN(nnavijeni) && nnavijeni !== Infinity){
+        if(isValidNumber(nnavijeni)){
             $("#n_navijeni").val(nnavijeni.toFixed(2));
             $("#1_pohon").val(n1pohon.toFixed(2));
         }
-        if(!isNaN(sges) && sges !== Infinity){
+        if(isValidNumber(sges)){
             $("#Sges").val(sges.toFixed(2));
         }
     });
     $(document).on('input', '#cerpadlo_div input', function() {
         const cerpadlo = $("#cerpadlo").val();
         const pocet_sprad_mist = $("#pocet_sprad_mist").val();
-        const korekce = parseFloat($("#korekce").val()) / 100 || 0;
+        korekce = parseFloat($("#korekce").val()) / 100 || 0;
         const Z21 = $("#Z21").val();
         const Z22 = $("#Z22").val();
         const Z23 = $("#Z23").val();
-        const Z24 = $("#Z24").val();    
-        const nsp = nA * Z21 / Z22 * Z23 / Z24 * z40 / z41 * z42 / z43 * z44 / z45 * z46 / z47 * (1 + korekce);
-        const spotreba_misto = nsp * cerpadlo * 60 / 1000;
-        const spotreba_stroj = spotreba_misto * pocet_sprad_mist;
-        if(!isNaN(nsp) && nsp !== Infinity){
-            $("#nSp").val(nsp.toFixed(2));
-            $("#spotr_misto").val(spotreba_misto.toFixed(2));
-            $("#spotr_stroj").val(spotreba_stroj.toFixed(2));
+        const Z24 = $("#Z24").val(); 
+        
+        if(typ_stroje == "3"){
+            const faktor = parseFloat($("#faktor").val());
+            const spotreba_misto = produkce_1 / faktor * (1 + korekce); 
+            const spotreba_stroj = spotreba_misto * pocet_sprad_mist;
+            const nsp = spotreba_misto * 1000 / 60 / cerpadlo; 
+            const produkce_stroj = produkce_1 * pocet_sprad_mist;
+
+            if(isValidNumber(nsp)){
+                $("#nSp").val(nsp.toFixed(2));
+                $("#spotr_misto").val(spotreba_misto.toFixed(2));
+                $("#spotr_stroj").val(spotreba_stroj.toFixed(2));
+            }
+            $("#produkce_stroj").val(produkce_stroj.toFixed(2));
+        }else{
+            const nsp = nA * Z21 / Z22 * Z23 / Z24 * z40 / z41 * z42 / z43 * z44 / z45 * z46 / z47 * (1 + korekce);
+            const spotreba_misto = nsp * cerpadlo * 60 / 1000;
+            const spotreba_stroj = spotreba_misto * pocet_sprad_mist;
+            if(isValidNumber(nsp)){
+                $("#nSp").val(nsp.toFixed(2));
+                $("#spotr_misto").val(spotreba_misto.toFixed(2));
+                $("#spotr_stroj").val(spotreba_stroj.toFixed(2));
+            }
         }
     });
     $(document).on('input', '#ukladani_div input', function() {
@@ -493,9 +574,12 @@ $(document).ready(function() {
         const faktor = $("#faktor").val();
 
         const zdvihy = (motor * rs3 / rs4) * ipohon;
-        if(!isNaN(zdvihy) && zdvihy !== Infinity){
+        if(isValidNumber(zdvihy)){
             $("#dvojite_zdvihy").val(zdvihy.toFixed(2));
         }
         $("#ipohon").val(ipohon.toFixed(5));
     });
+    
+    if(window.location.href.includes("spec_form.php"))
+        pocitej();
 });

@@ -73,13 +73,13 @@
             $z23 = $_POST['z23'] ?? null;
             $z24 = $_POST['z24'] ?? null;
             $z30 = $_POST['z30'] ?? null;
-            $z32 = $_POST['z30'] ?? null;
+            $z32 = $_POST['z32'] ?? null;
             //Nove
-            $faktor = $_POST['faktor'] ?? null;
-            $sg1_g2 = $_POST['sg1_g2'] ?? null;
-            $sg2_w = $_POST['sg2_w'] ?? null;
-            $sw_t = $_POST['sw_t'] ?? null;
-            $vg2 = $_POST['vg2'] ?? null;
+            $faktor = inputCheck($_POST['faktor']);
+            $sg1_g2 = inputCheck($_POST['sg1_g2']);
+            $sg2_w = inputCheck($_POST['sg2_w']);
+            $sw_t = inputCheck($_POST['sw_t']);
+            $vg2 = inputCheck($_POST['vg2']);
             $z1g1 = $_POST['z1g1'] ?? null; 
             $z2g1 = $_POST['z2g1'] ?? null;
             $z1g2 = $_POST['z1g2'] ?? null;
@@ -92,7 +92,81 @@
             $z2sp = $_POST['z2sp'] ?? null;
     
             //EDIT
-            if ($id_spec != null) {
+            if ($id_spec != null) { //id_zam který? + c_spec lze měnit?
+                $sql = "UPDATE Specifikace 
+                        SET c_spec = ?, id_typ_stroje = ?, titr = ?, titr_skup = ?, poznamka = ?, upraveno = GETDATE(), id_zam = ?, galety = ?, praci_valce = ?, susici_valec = ?, cerpadlo = ?, pocet_mist = ?, korekce = ? 
+                        WHERE id_spec = ?;";
+                $params = [$c_spec, $id_typ_stroje, $titr, $titr_skup, $poznamka, $uziv, $galety, $praci_valce, $susici_valec, $cerpadlo, $pocet_mist, $korekce, $id_spec];
+                $result = sqlsrv_query($conn, $sql, $params);
+                if ($result === false) {
+                    echo json_encode([
+                        "success" => false,
+                        "message" => "Chyba SQL dotazu pro UPDATE Specifikace!",
+                        "error" => sqlsrv_errors()
+                    ]);     
+                    exit;
+                }
+
+                if($id_typ_stroje == 1){
+                    $sql = "UPDATE Spec_stare 
+                            SET hnaci_motor = ?, kotouc1 = ?, kotouc2 = ?, kotouc3 = ?, kotouc4 = ?, navijeci_valec = ?, dlouzeni = ?, ukladani_motor = ?, remenice_m = ?, remenice_g = ?,
+                                z9 = ?, z10 = ?, z11 = ?, z12 = ?, z13 = ?, z14 = ?, z15 = ?, z16 = ?, z17 = ?, z18 = ?, z19 = ?, z20 = ?, z21 = ?, z22 = ?, z23 = ?, z24 = ?, z30 = ?, z32 = ?
+                            WHERE id_spec = ?;";
+                    $params = [$hnaci_motor, $kotouc1, $kotouc2, $kotouc3, $kotouc4, $navijeci_valec, $dlouzeni, $ukladani_motor, $remenice_m, $remenice_g,
+                               $z9, $z10, $z11, $z12, $z13, $z14, $z15, $z16, $z17, $z18, $z19, $z20, $z21, $z22, $z23, $z24, $z30, $z32,
+                               $id_spec];
+                    $result = sqlsrv_query($conn, $sql, $params);
+                    if ($result === false) {
+                        echo json_encode([
+                            "success" => false,
+                            "message" => "Chyba SQL dotazu pro UPDATE Spec_stare!",
+                            "error" => sqlsrv_errors()
+                        ]);     
+                        exit;
+                    }
+                }
+                else if ($id_typ_stroje == 2){
+                    $sql = "UPDATE Spec_barmag 
+                            SET hnaci_motor = ?, kotouc1 = ?, kotouc2 = ?, kotouc3 = ?, kotouc4 = ?, navijeci_valec = ?,
+                                z9 = ?, z10 = ?, z11 = ?, z12 = ?, z13 = ?, z14 = ?, z15 = ?, z16 = ?, z17 = ?, z18 = ?, z19 = ?, z20 = ?, z21 = ?, z22 = ?, z23 = ?, z24 = ?, z30 = ?, z32 = ?
+                            WHERE id_spec = ?;";
+                    $params = [$hnaci_motor, $kotouc1, $kotouc2, $kotouc3, $kotouc4, $navijeci_valec,
+                               $z9, $z10, $z11, $z12, $z13, $z14, $z15, $z16, $z17, $z18, $z19, $z20, $z21, $z22, $z23, $z24, $z30, $z32,
+                               $id_spec];
+                    $result = sqlsrv_query($conn, $sql, $params);
+                    if ($result === false) {
+                        echo json_encode([
+                            "success" => false,
+                            "message" => "Chyba SQL dotazu pro UPDATE Spec_barmag!",
+                            "error" => sqlsrv_errors()
+                        ]);     
+                        exit;
+                    }
+                }
+                else if ($id_typ_stroje == 3){
+                    $sql = "UPDATE Spec_nove 
+                            SET faktor = ?, sg1_g2 = ?, sg2_w = ?, sw_t = ?, vg2 = ?, z1g1 = ?, z2g1 = ?, z1g2 = ?, z2g2 = ?, z1w = ?, z2w = ?, z1t = ?, z2t = ?, z1sp = ?, z2sp = ?
+                            WHERE id_spec = ?;";
+                    $params = [$faktor, $sg1_g2, $sg2_w, $sw_t, $vg2, $z1g1, $z2g1, $z1g2, $z2g2, $z1w, $z2w, $z1t, $z2t, $z1sp, $z2sp,
+                               $id_spec];
+                    $result = sqlsrv_query($conn, $sql, $params);
+                    if ($result === false) {
+                        echo json_encode([
+                            "success" => false,
+                            "message" => "Chyba SQL dotazu pro UPDATE Spec_nove!",
+                            "error" => sqlsrv_errors()
+                        ]);     
+                        exit;
+                    }
+                }
+                sqlsrv_free_stmt($result);
+                echo json_encode(["success" => true, 
+                                    "data" => [
+                                        "id_spec" => $id_spec,
+                                        "c_spec" => $c_spec
+                                    ]
+                                ]);
+                exit;
     
             }//INSERT
             else{
