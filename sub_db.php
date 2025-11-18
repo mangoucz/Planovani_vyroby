@@ -44,13 +44,15 @@
             $susici_valec = $_POST['susici_valec'] ?? null;
             $cerpadlo = inputCheck($_POST['cerpadlo']);
             $pocet_mist = $_POST['pocet_mist'] ?? null;
-            $korekce = inputCheck($_POST['korekce']) ?? null;
+            $korekce_barmag = inputCheck($_POST['korekce_barmag']);
+            $korekce_nove = inputCheck($_POST['korekce_nove']);
+            $korekce = $korekce_barmag ?? $korekce_nove;
             //Stare + Barmag
             $hnaci_motor = $_POST['hnaci_motor'] ?? null;
             $kotouc1 = $_POST['kotouc1'] ?? null;
             $kotouc2 = $_POST['kotouc2'] ?? null;
             $kotouc3 = $_POST['kotouc3'] ?? null;
-            $kotouc4 = $_POST['kotouc4'] ?? null;
+            $kotouc4 = $_POST['kotouc4'] ?? null;   
             $navijeci_valec = $_POST['navijeci_valec'] ?? null;
             $dlouzeni = inputCheck($_POST['dlouzeni']);
             $ukladani_motor = $_POST['ukladani_motor'] ?? null;

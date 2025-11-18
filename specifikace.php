@@ -11,7 +11,23 @@
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
         if(isset($_POST['subDel'])){
             $id_spec = $_POST['id'];
-            $sql = "DELETE FROM Spec_stare WHERE id_spec = ?;
+            $typ_stroje = $_POST['typ_stroje'];
+
+            switch ($typ_stroje) {
+                case '1':
+                    $table = 'Spec_barmag';
+                    break;
+                case '2':
+                    $table = 'Spec_stare';
+                    break;
+                case '3':
+                    $table = 'Spec_nove';
+                    break;
+                default:
+                    $table = '';
+                    break;
+            }
+            $sql = "DELETE FROM $table WHERE id_spec = ?;
                     DELETE FROM Specifikace WHERE id_spec = ?;";
             $params = [$id_spec, $id_spec];
             $result = sqlsrv_query($conn, $sql, $params);
@@ -201,18 +217,21 @@
                     <input type="hidden" name="id" value="">
                     <input type="hidden" name="typ_stroje" value="">
                 </form>
-                <form action="print_form.php" method="post" target="printFrame">
+                <form action="print_form.php" method="post">
                     <input type="submit" name="subTisk" class="defButt print" id="subTisk" value="Tisk" title="Tisk specifikace">
                     <input type="hidden" name="id" value="">
+                    <input type="hidden" name="typ_stroje" value="">
                 </form>
                 <form action="print_form.php" method="post">
                     <input type="submit" name="subTisk" class="defButt print" id="subNahl" value="Zobrazit" title="Zobrazení celé specifikace">
                     <input type="hidden" name="id" value="">
+                    <input type="hidden" name="typ_stroje" value="">
                 </form>
                 <iframe id="frame" name="printFrame" style="display: none;"></iframe>
                 <form action="" method="post">
                     <input type="submit" value="Odstranit" name="subDel" id="subDel" class="defButt extend" title="Odstraní specifikaci z databáze">
                     <input type="hidden" name="id" value="">
+                    <input type="hidden" name="typ_stroje" value="">
                 </form>
             </div>
         </div>

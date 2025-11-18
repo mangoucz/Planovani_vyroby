@@ -35,7 +35,8 @@ $(document).ready(function() {
     let sg1g2;
     let sg2w;
     let sWT;
-    let korekce;
+    let korekce_nove;
+    let korekce_barmag;
     let produkce_1;
     //#endregion
     function ochrana(){
@@ -329,7 +330,6 @@ $(document).ready(function() {
             }
         });
     });
-
     $(document).on('change', '#selectVyr', function() {
         const id_spec = $(this).attr("data-id_spec");
         const selectedId = $(this).val();
@@ -348,6 +348,9 @@ $(document).ready(function() {
                 alert("Chyba komunikace se serverem při aktualizaci výrobku!");
             }
         });
+    });
+    $(document).on('blur', '#selectVyr', function() {
+        location.reload();
     });
 
     $(document).on('input', '#searchSpec', function() {
@@ -414,10 +417,9 @@ $(document).ready(function() {
         const z30 = $("#Z30").val();
         const z32 = $("#Z32").val();
         let ng1, ng2;
-        
         if(typ_stroje == "3"){
             vg2 = parseFloat($("#vg2").val());
-            sg1g2 = parseFloat($("#SG1-G2").val())/100;
+            sg1g2 = parseFloat($("#dlouzeni_div_nove #SG1-G2").val())/100;
             const titr = $("#titr").val();
             const pocet_sprad_mist = $("#pocet_sprad_mist").val();
             ng2 = vg2 / (galety / 1000 * Math.PI);
@@ -437,13 +439,14 @@ $(document).ready(function() {
             vg2 = ng2 * galety / 1000 * Math.PI;
             vg1 = ng1 * galety / 1000 * Math.PI;
             sg1g2 = (ng2 - ng1) / ng1 * 100;
+            console.log(sg1g2);
             
             if(isValidNumber(ng2)){
                 $("#nG2").val(ng2.toFixed(2));
                 $("#vG2").val(vg2.toFixed(2));
             }
             if(isValidNumber(sg1g2)){
-                $("#SG1-G2").val(sg1g2.toFixed(2));
+                $("#dlouzeni_div_stare #SG1-G2").val(sg1g2.toFixed(2));
             }
         }
         if(isValidNumber(ng1)){
@@ -460,7 +463,7 @@ $(document).ready(function() {
         const Z12 = $("#Z12").val();
         
         if(typ_stroje == "3"){
-            sg2w = parseFloat($("#SG2-W").val())/100;
+            sg2w = parseFloat($("#dlouzeni_div_nove #SG2-W").val())/100;
             vw = vg2 * (1 + sg2w);
             const nw = vw / (praci_valce / 1000 * Math.PI);
 
@@ -479,7 +482,7 @@ $(document).ready(function() {
                 $("#vW").val(vw.toFixed(2));
             }
             if(isValidNumber(sg2w)){
-                $("#SG2-W").val(sg2w.toFixed(2));
+                $("#dlouzeni_div_stare #SG2-W").val(sg2w.toFixed(2));
             }
         }
     });
@@ -491,7 +494,7 @@ $(document).ready(function() {
         const Z20 = $("#Z20").val();
 
         if(typ_stroje == "3"){
-            sWT = parseFloat($("#SW-T").val())/100;
+            sWT = parseFloat($("#dlouzeni_div_nove #SW-T").val())/100;
             vWT = vw * (1 + sWT);
             const nWT = vWT / (susici_valec / 1000 * Math.PI);
             const Sges = (vWT - vg1) / vg1 * 100;
@@ -499,7 +502,7 @@ $(document).ready(function() {
             if(isValidNumber(nWT)){
                 $("#nWT").val(nWT.toFixed(2));
                 $("#vWT").val(vWT.toFixed(2));
-                $("#Sges").val((Sges).toFixed(2));
+                $("#dlouzeni_div_nove #Sges").val((Sges).toFixed(2));
             }
         }else{
             const nWT = nA * Z17 / Z18 * Z19 / Z20 * z38 / z39 * z55 / z54;
@@ -511,11 +514,11 @@ $(document).ready(function() {
                 $("#vWT").val(vWT.toFixed(2));
             }
             if(isValidNumber(sWT)){
-                $("#SW-T").val(sWT.toFixed(2));
+                $("#dlouzeni_div_stare #SW-T").val(sWT.toFixed(2));
             }
         }
     });
-    $(document).on('input', '#navijeni_div input', function() {
+    $(document).on('input', '#navijeni_div input', function() { 
         const navijeci_valec = $("#navijeci_valec").val();
         const dlouzeni = parseFloat($("#dlouzeni").val()) / 100 || 0;
         const vnavijeni = vWT * (1 + dlouzeni);
@@ -531,13 +534,14 @@ $(document).ready(function() {
             $("#1_pohon").val(n1pohon.toFixed(2));
         }
         if(isValidNumber(sges)){
-            $("#Sges").val(sges.toFixed(2));
+            $("#dlouzeni_div_stare #Sges").val(sges.toFixed(2));
         }
     });
     $(document).on('input', '#cerpadlo_div input', function() {
         const cerpadlo = $("#cerpadlo").val();
         const pocet_sprad_mist = $("#pocet_sprad_mist").val();
-        korekce = parseFloat($("#korekce").val()) / 100 || 0;
+        korekce_nove = parseFloat($("#korekce_nove").val()) / 100 || 0;
+        korekce_barmag = parseFloat($("#korekce_barmag").val()) / 100 || 0;
         const Z21 = $("#Z21").val();
         const Z22 = $("#Z22").val();
         const Z23 = $("#Z23").val();
@@ -545,7 +549,7 @@ $(document).ready(function() {
         
         if(typ_stroje == "3"){
             const faktor = parseFloat($("#faktor").val());
-            const spotreba_misto = produkce_1 / faktor * (1 + korekce); 
+            const spotreba_misto = produkce_1 / faktor * (1 + korekce_nove); 
             const spotreba_stroj = spotreba_misto * pocet_sprad_mist;
             const nsp = spotreba_misto * 1000 / 60 / cerpadlo; 
             const produkce_stroj = produkce_1 * pocet_sprad_mist;
@@ -557,7 +561,7 @@ $(document).ready(function() {
             }
             $("#produkce_stroj").val(produkce_stroj.toFixed(2));
         }else{
-            const nsp = nA * Z21 / Z22 * Z23 / Z24 * z40 / z41 * z42 / z43 * z44 / z45 * z46 / z47 * (1 + korekce);
+            const nsp = nA * Z21 / Z22 * Z23 / Z24 * z40 / z41 * z42 / z43 * z44 / z45 * z46 / z47 * (1 + korekce_barmag);
             const spotreba_misto = nsp * cerpadlo * 60 / 1000;
             const spotreba_stroj = spotreba_misto * pocet_sprad_mist;
             if(isValidNumber(nsp)){

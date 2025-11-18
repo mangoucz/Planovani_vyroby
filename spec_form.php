@@ -199,7 +199,7 @@
                 </div>
             </div>
         </div>
-        <div class="double nove" id="dlouzeni_div">
+        <div class="double nove" id="dlouzeni_div_nove">
             <div class="table1">
                 <h3>Dloužení</h3>
                 <div class="radek">
@@ -218,8 +218,8 @@
                     <span class="jednotka">%</span>
                 </div>
                 <div class="radek">
-                    <label for="korekce">Korekce</label>
-                    <input type="number" id="korekce" name="korekce" step="0.01" value="<?= (float)$zaznam['korekce'] ?? '' ?>">
+                    <label for="korekce_nove">Korekce</label>
+                    <input type="number" id="korekce_nove" name="korekce_nove" step="0.01" value="<?= (float)$zaznam['korekce'] ?? '' ?>">
                     <span class="jednotka">%</span>
                 </div>
             </div>
@@ -243,6 +243,22 @@
                     <label for="vg2">vG2</label>
                     <input type="number" id="vg2" name="vg2" step="0.01" value="<?= (float)$zaznam['vg2'] ?? '' ?>">
                     <span class="jednotka">ot/min</span>
+                </div>
+                <div class="radek nove">
+                    <label for="z1g1">Horní (G1) Z1</label>
+                    <input type="number" id="z1g1" name="z1g1" value="<?= $zaznam['z1g1'] ?? '' ?>">
+                </div>
+                <div class="radek nove">
+                    <label for="z2g1">Horní (G1) Z2</label>
+                    <input type="number" id="z2g1" name="z2g1" value="<?= $zaznam['z2g1'] ?? '' ?>">
+                </div>
+                <div class="radek nove">
+                    <label for="z1g2">Dolní (G2) Z1</label>
+                    <input type="number" id="z1g2" name="z1g2" value="<?= $zaznam['z1g2'] ?? '' ?>">
+                </div>
+                <div class="radek nove">
+                    <label for="z2g2">Dolní (G2) Z2</label>
+                    <input type="number" id="z2g2" name="z2g2" value="<?= $zaznam['z2g2'] ?? '' ?>">
                 </div>
                 <div class="barmag">
                     <div class="radek">
@@ -302,6 +318,14 @@
                     <input type="number" id="praci_valce" name="praci_valce" value="<?= $zaznam['praci_valce'] ?? '' ?>">
                     <span class="jednotka">mm</span>
                 </div>
+                <div class="radek nove">
+                    <label for="z1w">Prací válce (W) Z1</label>
+                    <input type="number" id="z1w" name="z1w" value="<?= $zaznam['z1w'] ?? '' ?>">
+                </div>
+                <div class="radek nove">
+                    <label for="z2w">Prací válce (W) Z2</label>
+                    <input type="number" id="z2w" name="z2w" value="<?= $zaznam['z2w'] ?? '' ?>">
+                </div>
                 <div class="barmag">
                     <div class="radek">
                         <label for="Z9">Z9</label>
@@ -336,12 +360,20 @@
         </div>
         <div class="double" id="susici_valce_div">
             <div class="table1">
-                <h3>Sušící válce</h3>
+                <h3>Sušící válec</h3>
                 <div class="radek">
                     <label for="susici_valec">Sušicí válec Ø</label>
                     <input type="number" id="susici_valec" name="susici_valec" value="<?= $zaznam['susici_valec'] ?? '' ?>">
                     <span class="jednotka">mm</span>
                 </div>
+                <div class="radek nove">
+                    <label for="z1t">Sušicí válec (T) Z1</label>
+                    <input type="number" id="z1t" name="z1t" value="<?= $zaznam['z1t'] ?? '' ?>">
+                </div>
+                <div class="radek nove">
+                    <label for="z2t">Sušicí válec (T) Z2</label>
+                    <input type="number" id="z2t" name="z2t" value="<?= $zaznam['z2t'] ?? '' ?>">
+                </div>  
                 <div class="barmag">
                     <div class="radek">
                         <label for="Z17">Z17</label>
@@ -419,14 +451,22 @@
                     <input type="number" id="pocet_sprad_mist" name="pocet_mist" value="<?= $zaznam['pocet_mist'] ?? '' ?>">
                 </div>
                 <div class="radek barmag">
-                    <label for="korekce">Korekce</label>
-                    <input type="number" id="korekce" name="korekce" step="0.01" value="<?= (float)$zaznam['korekce'] ?? '' ?>">
+                    <label for="korekce_barmag">Korekce</label>
+                    <input type="number" id="korekce_barmag" name="korekce_barmag" step="0.01" value="<?= (float)$zaznam['korekce'] ?? '' ?>">
                     <span class="jednotka">%</span>
                 </div>
                 <div class="radek nove">
                     <label for="faktor">Faktor Viskóza/Produkt</label>
                     <input type="number" id="faktor" name="faktor" step="0.0001" value="<?= (float)$zaznam['faktor'] ?? '' ?>">
                 </div>
+                <div class="radek nove">
+                    <label for="z1sp">Čerpadla (Sp) Z1</label>
+                    <input type="number" id="z1sp" name="z1sp" value="<?= $zaznam['z1sp'] ?? '' ?>">
+                </div>
+                <div class="radek nove">
+                    <label for="z2sp">Čerpadla (Sp) Z2</label>
+                    <input type="number" id="z2sp" name="z2sp" value="<?= $zaznam['z2sp'] ?? '' ?>">
+                </div>  
                 <div class="barmag">
                     <div class="radek">
                         <label for="Z21">Z21</label>
@@ -491,10 +531,6 @@
                     <input type="number" id="rs4" name="remenice_g" value="<?= $zaznam['remenice_g'] ?? '' ?>">
                     <span class="jednotka">mm</span>
                 </div>
-                <div class="radek nove">
-                    <label for="faktor">Faktor Viskóza/Produkt</label>
-                    <input type="number" id="faktor" name="faktor" value="<?= $zaznam['faktor'] ?? '' ?>">
-                </div>
             </div>
             <div class="table2 stare">
                 <div class="radek">
@@ -508,7 +544,7 @@
                 </div>
             </div>
         </div>
-        <div class="table1 barmag" id="dlouzeni_div">
+        <div class="table1 barmag" id="dlouzeni_div_stare">
             <h3>Dloužení</h3>
             <div class="radek">
                 <label for="SG1-G2">SG1-G2</label>
