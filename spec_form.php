@@ -114,8 +114,8 @@
             <div class="uziv">
                 <img src="user_icon.png" width="28%" style="margin-right: 2%;">
                 <div class="uziv_inf">
-                    <p><?php echo $jmeno; ?></p>
-                    <p style="font-size: 12px; margin-left: 1px;"><?php echo $funkce; ?></p>
+                    <p><?= $jmeno; ?></p>
+                    <p style="font-size: 12px; margin-left: 1px;"><?= $funkce; ?></p>
                 </div>
             </div>
             <a id="logout">

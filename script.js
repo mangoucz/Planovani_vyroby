@@ -584,6 +584,20 @@ $(document).ready(function() {
         $("#ipohon").val(ipohon.toFixed(5));
     });
     
+    if(window.location.href.includes("print_form.php")){
+        $("input").each(function() {
+            const val = parseFloat($(this).val());
+            if (!isNaN(val) && val % 1 !== 0) {
+                $(this).val(val * 100 % 10 === 0 ? val.toFixed(1) : val.toFixed(2));
+            }
+        });
+        if($("#nadpis").attr("data-typ") == "2"){
+            $(".stare").each(function() {
+                $(this).empty();
+            });
+        }
+    }
+    
     if(window.location.href.includes("spec_form.php"))
         pocitej();
 });

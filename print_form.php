@@ -40,74 +40,95 @@
             $zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
             sqlsrv_free_stmt($result);
 
-            if ($typ_stroje == '3'){
-                $ng2 = round($zaznam['vg2'] / ($zaznam['galety'] / 1000 * M_PI), 2);
-                $ng2_n = round($ng2 * $zaznam['z2g2'] / $zaznam['z1g2'], 2);
-                $ng1 = round($ng2 / (1 + $zaznam['sg1_g2'] / 100), 2);
-                $ng1_n = round($ng1 * $zaznam['z2g1'] / $zaznam['z1g1'], 2);
-                $vg1 = round($ng1 * ($zaznam['galety'] / 1000 * M_PI), 2);
-                $vw = round($zaznam['vg2'] * (1 + $zaznam['sg2_w'] / 100), 2);
-                $nw = round($vw / ($zaznam['praci_valce'] / 1000 * M_PI), 2);
-                $nw_n = round($nw * $zaznam['z2w'] / $zaznam['z1w'], 2);
-                $vwt = round($vw * (1 + $zaznam['sw_t'] / 100), 2);
-                $nwt = round($vwt / ($zaznam['susici_valec'] / 1000 * M_PI), 2);
-                $nwt_n = round($nwt * $zaznam['z2t'] / $zaznam['z1t'], 2);
-                $produkce_1 = round($zaznam['vg2'] * 60 / 10000 * $zaznam['titr'] / 1000, 2);
-                $produkce_stroj = round($produkce_1 * $zaznam['pocet_mist'], 2);
-                $spotr_misto = round($produkce_1 / $zaznam['faktor'] * (1 + $zaznam['korekce'] / 100), 2);
-                $spotr_stroj = round($spotr_misto * $zaznam['pocet_mist'], 2);
-                $nsp = round($spotr_misto * 1000 / 60 / $zaznam['cerpadlo'], 2);
-                $nsp_n = round($nsp * $zaznam['z2sp'] / $zaznam['z1sp'], 2);
-                $sges =  round(($vwt - $vg1) / $vg1 * 100,  2);
+            //region konstanty pro výpočty
+            $z3 = 19;
+            $z4 = 28;
+            $z25 = 10;
+            $z26 = 30;
+            $z33 = 10;
+            $z34 = 30;
+            $z38 = 10;
+            $z39 = 30;
+            $z40 = 10;
+            $z41 = 30;
+            $z42 = 22;
+            $z43 = 44;
+            $z44 = 22;
+            $z45 = 44;
+            $z46 = 29;
+            $z47 = 58;
+            $z48 = 10;
+            $z49 = 30;
+            $z52 = 18;
+            $z53 = 18;
+            $z54 = 21;
+            $z55 = 14;
+            $z58 = 21;
+            $z59 = 14;
+            //endregion
+
+            if ($typ_stroje == '1'){
+                $npohon = $zaznam['hnaci_motor'] * $zaznam['kotouc1'] / $zaznam['kotouc2'];
+                $na = $npohon * $z3 / $z4;
+                $ng2 = $na * $zaznam['z13'] / $zaznam['z14'] * $zaznam['z15'] / $zaznam['z16'] * $z33 / $z34 * $z53 / $z52;
+                $ng1 = $ng2 * $zaznam['z30'] / $zaznam['z32'];
+                $vg2 = $ng2 * ($zaznam['galety'] / 1000 * M_PI);
+                $vg1 = $ng1 * ($zaznam['galety'] / 1000 * M_PI);
+                $nw = $na * $zaznam['z9'] / $zaznam['z10'] * $zaznam['z11'] / $zaznam['z12'] * $z25 / $z26 * $z59 / $z58;
+                $vw = $nw * ($zaznam['praci_valce'] / 1000 * M_PI);
+                $nwt = $na * $zaznam['z17'] / $zaznam['z18'] * $zaznam['z19'] / $zaznam['z20'] * $z38 / $z39 * $z55 / $z54;
+                $vwt = $nwt * ($zaznam['susici_valec'] / 1000 * M_PI);
+                $nsp = $na * $zaznam['z21'] / $zaznam['z22'] * $zaznam['z23'] / $zaznam['z24'] * $z40 / $z41 * $z42 / $z43 * $z44 / $z45 * $z46 / $z47 * (1 + $zaznam['korekce']/100);
+                $spotr_misto = $nsp * $zaznam['cerpadlo'] * 60 / 1000;
+                $spotr_stroj = $spotr_misto * $zaznam['pocet_mist'];
+                $vnavijeni = $vwt * (1 + $zaznam['dlouzeni']/100);
+                $nnavijeni = $vnavijeni / ($zaznam['navijeci_valec'] / 1000 * M_PI);
+                $n1pohon = $nnavijeni * $z49 / $z48;
+                $zdvihy = $zaznam['ukladani_motor'] * $zaznam['remenice_m'] / $zaznam['remenice_g'] * 1/30;
+                $sg1_g2 = ($ng2 - $ng1) / $ng1 * 100;
+                $sg2_w = ($vw - $vg2) / $vg2 * 100;
+                $sw_t = ($vwt - $vw) / $vw * 100;
+                $sges =  ($vnavijeni - $vg1) / $vg1 * 100;
+            }
+            elseif($typ_stroje == '2'){
+                $npohon = $zaznam['hnaci_motor'] * $zaznam['kotouc1'] / $zaznam['kotouc2'];
+                $na = $npohon * $z3 / $z4;
+                $ng2 = $na * $zaznam['z13'] / $zaznam['z14'] * $zaznam['z15'] / $zaznam['z16'] * $z33 / $z34 * $z53 / $z52;
+                $ng1 = $ng2 * $zaznam['z30'] / $zaznam['z32'];
+                $vg2 = $ng2 * ($zaznam['galety'] / 1000 * M_PI);
+                $vg1 = $ng1 * ($zaznam['galety'] / 1000 * M_PI);
+                $nw = $na * $zaznam['z9'] / $zaznam['z10'] * $zaznam['z11'] / $zaznam['z12'] * $z25 / $z26 * $z59 / $z58;
+                $vw = $nw * ($zaznam['praci_valce'] / 1000 * M_PI);
+                $nwt = $na * $zaznam['z17'] / $zaznam['z18'] * $zaznam['z19'] / $zaznam['z20'] * $z38 / $z39 * $z55 / $z54;
+                $vwt = $nwt * ($zaznam['susici_valec'] / 1000 * M_PI);
+                $nsp = $na * $zaznam['z21'] / $zaznam['z22'] * $zaznam['z23'] / $zaznam['z24'] * $z40 / $z41 * $z42 / $z43 * $z44 / $z45 * $z46 / $z47 * (1 + $zaznam['korekce']/100);
+                $spotr_misto = $nsp * $zaznam['cerpadlo'] * 60 / 1000;
+                $spotr_stroj = $spotr_misto * $zaznam['pocet_mist'];
+                $sg1_g2 = ($ng2 - $ng1) / $ng1 * 100;
+                $sg2_w = ($vw - $vg2) / $vg2 * 100;
+                $sw_t = ($vwt - $vw) / $vw * 100;
+                $sges =  ($vwt - $vg1) / $vg1 * 100;
+
             }
             else{
-                //region konstanty pro výpočty
-                $z3 = 19;
-                $z4 = 28;
-                $z25 = 10;
-                $z26 = 30;
-                $z33 = 10;
-                $z34 = 30;
-                $z38 = 10;
-                $z39 = 30;
-                $z40 = 10;
-                $z41 = 30;
-                $z42 = 22;
-                $z43 = 44;
-                $z44 = 22;
-                $z45 = 44;
-                $z46 = 29;
-                $z47 = 58;
-                $z48 = 10;
-                $z49 = 30;
-                $z52 = 18;
-                $z53 = 18;
-                $z54 = 21;
-                $z55 = 14;
-                $z58 = 21;
-                $z59 = 14;
-                //endregion
-                $npohon = round($zaznam['hnaci_motor'] * $zaznam['kotouc1'] / $zaznam['kotouc2'], 2);
-                $na = round($npohon * $z3 / $z4, 2);
-                $ng2 = round($na * $zaznam['z13'] / $zaznam['z14'] * $zaznam['z15'] / $zaznam['z16'] * $z33 / $z34 * $z53 / $z52, 2);
-                $ng1 = round($ng2 * $zaznam['z30'] / $zaznam['z32'], 2);
-                $vg2 = round($ng2 * ($zaznam['galety'] / 1000 * M_PI), 2);
-                $vg1 = round($ng1 * ($zaznam['galety'] / 1000 * M_PI), 2);
-                $nw = round($na * $zaznam['z9'] / $zaznam['z10'] * $zaznam['z11'] / $zaznam['z12'] * $z25 / $z26 * $z59 / $z58, 2);
-                $vw = round($nw * ($zaznam['praci_valce'] / 1000 * M_PI), 2);
-                $nwt = round($na * $zaznam['z17'] / $zaznam['z18'] * $zaznam['z19'] / $zaznam['z20'] * $z38 / $z39 * $z55 / $z54, 2);
-                $vwt = round($nwt * ($zaznam['susici_valec'] / 1000 * M_PI), 2);
-                $nsp = round($na * $zaznam['z21'] / $zaznam['z22'] * $zaznam['z23'] / $zaznam['z24'] * $z40 / $z40 / $z41 / $z43 * $z44 / $z45 * $z46 / $z47 * (1 + $zaznam['korekce']/100), 2);
-                $spotr_misto = round($nsp * $zaznam['cerpadlo'] * 60 / 1000, 2);
-                $spotr_stroj = round($spotr_misto * $zaznam['pocet_mist'], 2);
-                $vnavijeni = round($vwt * (1 + $zaznam['dlouzeni']/100), 2);
-                $nnavijeni = round($vnavijeni / ($zaznam['navijeci_valec'] / 1000 * M_PI), 2);
-                $n1pohon = round($nnavijeni * $z49 / $z48, 2);
-                $zdvihy = round($zaznam['ukladani_motor'] * $zaznam['remenice_m'] / $zaznam['remenice_g'] * 1/30, 2);
-                $sg1_g2 = round(($ng2 - $ng1) / $ng1 * 100, 2);
-                $sg2_w = round(($vw - $vg2) / $vg2 * 100, 2);
-                $sw_t = round(($vwt - $vw) / $vw * 100, 2);
-                $sges =  round(($vnavijeni - $vg1) / $vg1 * 100, 2);
+                $ng2 = $zaznam['vg2'] / ($zaznam['galety'] / 1000 * M_PI);
+                $ng2_n = $ng2 * $zaznam['z2g2'] / $zaznam['z1g2'];
+                $ng1 = $ng2 / (1 + $zaznam['sg1_g2'] / 100);
+                $ng1_n = $ng1 * $zaznam['z2g1'] / $zaznam['z1g1'];
+                $vg1 = $ng1 * ($zaznam['galety'] / 1000 * M_PI);
+                $vw = $zaznam['vg2'] * (1 + $zaznam['sg2_w'] / 100);
+                $nw = $vw / ($zaznam['praci_valce'] / 1000 * M_PI);
+                $nw_n = $nw * $zaznam['z2w'] / $zaznam['z1w'];
+                $vwt = $vw * (1 + $zaznam['sw_t'] / 100);
+                $nwt = $vwt / ($zaznam['susici_valec'] / 1000 * M_PI);
+                $nwt_n = $nwt * $zaznam['z2t'] / $zaznam['z1t'];
+                $produkce_1 = $zaznam['vg2'] * 60 / 10000 * $zaznam['titr'] / 1000;
+                $produkce_stroj = $produkce_1 * $zaznam['pocet_mist'];
+                $spotr_misto = $produkce_1 / $zaznam['faktor'] * (1 + $zaznam['korekce'] / 100);
+                $spotr_stroj = $spotr_misto * $zaznam['pocet_mist'];
+                $nsp = $spotr_misto * 1000 / 60 / $zaznam['cerpadlo'];
+                $nsp_n = $nsp * $zaznam['z2sp'] / $zaznam['z1sp'];
+                $sges =  ($vwt - $vg1) / $vg1 * 100;
             }
         }
     }
@@ -119,12 +140,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Systém plánování výroby</title>
+    <script src="jquery-3.7.1.min.js"></script>
+    <script src="jquery-ui-1.14.1/jquery-ui.js"></script>
+    <script src="script.js"></script>
 </head>
 <body>
     <table>
         <thead>
             <tr>
-                <th colspan="11" style="font-size: 14px;">Specifikace spřádacího stroje VISCORD <?= $title ?></th>
+                <th colspan="11" style="font-size: 14px;" id="nadpis" data-typ="<?= $typ_stroje ?>">Specifikace spřádacího stroje VISCORD <?= $title ?></th>
             </tr>
         </thead>
         <tbody id="spec_nove_body">
@@ -151,7 +175,7 @@
             </tr>
             <tr>
                 <td>Skupina titrů</td>
-                <td><input type="text" readonly name="titr_skup" id="titr_skup" value="<?= $zaznam['titr_skup'] ?? '' ?>"></td>
+                <td><input type="number" readonly name="titr_skup" id="titr_skup" value="<?= $zaznam['titr_skup'] ?? '' ?>"></td>
                 <td>g/10 000m</td>
                 <td></td>
                 <td>Prací válce</td>
@@ -259,7 +283,7 @@
                 <td>%</td>
                 <td></td>
                 <td>Spotř. viskózy - <br> místo</td>
-                <td><input type="text" readonly name="spotr_misto" id="spotr_misto" value="<?= $spotr_misto ?? '' ?>"></td>
+                <td><input type="number" readonly name="spotr_misto" id="spotr_misto" value="<?= $spotr_misto ?? '' ?>"></td>
                 <td>l/hod</td>
                 <td></td>
                 <td></td>
@@ -272,7 +296,7 @@
                 <td>%</td>
                 <td></td>
                 <td>Spotř. viskózy - <br> stroj</td>
-                <td><input type="text" readonly name="spotr_stroj" id="spotr_stroj" value="<?= $spotr_stroj ?? '' ?>"></td>
+                <td><input type="number" readonly name="spotr_stroj" id="spotr_stroj" value="<?= $spotr_stroj ?? '' ?>"></td>
                 <td>l/hod</td>
                 <td></td>
                 <td></td>
@@ -333,7 +357,7 @@
             </tr>
             <tr>
                 <td>vG2</td>
-                <td><input type="number" readonly name="vG2" id="vG2" value="<?= round($zaznam['vg2'], 2) ?? '' ?>"></td>
+                <td><input type="number" readonly name="vG2" id="vG2" value="<?= $zaznam['vg2'] ?? '' ?>"></td>
                 <td>ot/min</td>
                 <td></td>
                 <td></td>
@@ -421,7 +445,7 @@
             </tr>
             <tr>
                 <td>Skupina titrů</td>
-                <td><input type="text" readonly name="titr_skup" id="titr_skup" value="<?= $zaznam['titr_skup'] ?? '' ?>"></td>
+                <td><input type="number" readonly name="titr_skup" id="titr_skup" value="<?= $zaznam['titr_skup'] ?? '' ?>"></td>
                 <td>g/10 000m</td>
                 <td></td>
                 <td>n pohon</td>
@@ -576,7 +600,7 @@
                 <td><input type="number" readonly name="z20" id="z20" value="<?= $zaznam['z20'] ?? '' ?>"></td>
             </tr>
             <tr>
-                <td>Navíjení</td>
+                <td class="stare">Navíjení</td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -589,9 +613,9 @@
                 <td><input type="number" readonly name="z21" id="z21" value="<?= $zaznam['z21'] ?? '' ?>"></td>
             </tr>
             <tr>
-                <td>Dloužení</td>
-                <td><input type="number" readonly name="dlouzeni" id="dlouzeni" value="<?= (float)$zaznam['dlouzeni'] ?? '' ?>"></td>
-                <td>%</td>
+                <td class="stare">Dloužení</td>
+                <td class="stare"><input type="number" readonly name="dlouzeni" id="dlouzeni" value="<?= (float)$zaznam['dlouzeni'] ?? '' ?>"></td>
+                <td class="stare">%</td>
                 <td></td>
                 <td>Spřádací čerpadla</td>
                 <td></td>
@@ -602,9 +626,9 @@
                 <td><input type="number" readonly name="z22" id="z22" value="<?= $zaznam['z22'] ?? '' ?>"></td>
             </tr>
             <tr>
-                <td>v navíjení</td>
-                <td><input type="number" readonly name="v_navijeni" id="v_navijeni" value="<?= $vnavijeni ?? '' ?>"></td>
-                <td>m/min</td>
+                <td class="stare">v navíjení</td>
+                <td class="stare"><input type="number" readonly name="v_navijeni" id="v_navijeni" value="<?= $vnavijeni ?? '' ?>"></td>
+                <td class="stare">m/min</td>
                 <td></td>
                 <td>Korekce</td>
                 <td><input type="number" readonly name="korekce" id="korekce" value="<?= (float)$zaznam['korekce'] ?? '' ?>"></td>
@@ -615,9 +639,9 @@
                 <td><input type="number" readonly name="z23" id="z23" value="<?= $zaznam['z23'] ?? '' ?>"></td>
             </tr>
             <tr>
-                <td>n navíjení</td>
-                <td><input type="number" readonly name="n_navijeni" id="n_navijeni" value="<?= $nnavijeni ?? '' ?>"></td>
-                <td>ot/min</td>
+                <td class="stare">n navíjení</td>
+                <td class="stare"><input type="number" readonly name="n_navijeni" id="n_navijeni" value="<?= $nnavijeni ?? '' ?>"></td>
+                <td class="stare">ot/min</td>
                 <td></td>
                 <td>nSp</td>
                 <td><input type="number" readonly name="nSp" id="nSp" value="<?= $nsp ?? '' ?>"></td>
@@ -628,12 +652,12 @@
                 <td><input type="number" readonly name="z24" id="z24" value="<?= $zaznam['z24'] ?? '' ?>"></td>
             </tr>
             <tr>
-                <td>n 1 pohon</td>
-                <td><input type="number" readonly name="n_1pohon" id="n_1pohon" value="<?= $n1pohon ?? '' ?>"></td>
-                <td>ot/min</td>
+                <td class="stare">n 1 pohon</td>
+                <td class="stare"><input type="number" readonly name="n_1pohon" id="n_1pohon" value="<?= $n1pohon ?? '' ?>"></td>
+                <td class="stare">ot/min</td>
                 <td></td>
                 <td>Spotř. viskózy - místo</td>
-                <td><input type="text" readonly name="spotr_misto" id="spotr_misto" value="<?= $spotr_misto ?? '' ?>"></td>
+                <td><input type="number" readonly name="spotr_misto" id="spotr_misto" value="<?= $spotr_misto ?? '' ?>"></td>
                 <td>l/hod</td>
                 <td></td>
                 <td>Galeta</td>
@@ -641,12 +665,12 @@
                 <td><input type="number" readonly name="z30" id="z30" value="<?= $zaznam['z30'] ?? '' ?>"></td>
             </tr>
             <tr>
-                <td>Ukládání</td>
+                <td class="stare">Ukládání</td>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td>Spotř. viskózy - stroj</td>
-                <td><input type="text" readonly name="spotr_stroj" id="spotr_stroj" value="<?= $spotr_stroj ?? '' ?>"></td>
+                <td><input type="number" readonly name="spotr_stroj" id="spotr_stroj" value="<?= $spotr_stroj ?? '' ?>"></td>
                 <td>l/hod</td>
                 <td></td>
                 <td>Galeta</td>
@@ -654,8 +678,8 @@
                 <td><input type="number" readonly name="z32" id="z32" value="<?= $zaznam['z32'] ?? '' ?>"></td>
             </tr>
             <tr>
-                <td>Motor</td>
-                <td><input type="number" readonly name="ukladani_motor" id="ukladani_motor" value="<?= $zaznam['ukladani_motor'] ?? '' ?>"></td>
+                <td class="stare">Motor</td>
+                <td class="stare"><input type="number" readonly name="ukladani_motor" id="ukladani_motor" value="<?= $zaznam['ukladani_motor'] ?? '' ?>"></td>
                 <td></td>
                 <td></td>
                 <td>Dloužení</td>
@@ -667,12 +691,12 @@
                 <td></td>
             </tr>
             <tr>
-                <td>Řemenice M. (RS3)</td>
-                <td><input type="number" readonly name="remenice_m" id="remenice_m" value="<?= $zaznam['remenice_m'] ?? '' ?>"></td>
-                <td>ot/min</td>
+                <td class="stare">Řemenice M. (RS3)</td>
+                <td class="stare"><input type="number" readonly name="remenice_m" id="remenice_m" value="<?= $zaznam['remenice_m'] ?? '' ?>"></td>
+                <td class="stare">ot/min</td>
                 <td></td>
                 <td>SG1-G2</td>
-                <td><input type="number" readonly name="SG1_G2" id="SG1_G2" value="<?= $zaznam['sg1_g2'] ?? '' ?>"></td>
+                <td><input type="number" readonly name="SG1_G2" id="SG1_G2" value="<?= $sg1_g2 ?? '' ?>"></td>
                 <td>%</td>
                 <td></td>
                 <td></td>
@@ -680,12 +704,12 @@
                 <td></td>
             </tr>
             <tr>
-                <td>Řemenice G. (RS4)</td>
-                <td><input type="number" readonly name="remenice_g" id="remenice_g" value="<?= $zaznam['remenice_g'] ?? '' ?>"></td>
-                <td>mm</td>
+                <td class="stare">Řemenice G. (RS4)</td>
+                <td class="stare"><input type="number" readonly name="remenice_g" id="remenice_g" value="<?= $zaznam['remenice_g'] ?? '' ?>"></td>
+                <td class="stare">mm</td>
                 <td></td>
                 <td>SG2-W</td>
-                <td><input type="number" readonly name="SG2_W" id="SG2_W" value="<?= $zaznam['sg2_w'] ?? '' ?>"></td>
+                <td><input type="number" readonly name="SG2_W" id="SG2_W" value="<?= $sg2_w ?? '' ?>"></td>
                 <td>%</td>
                 <td></td>
                 <td></td>
@@ -693,12 +717,12 @@
                 <td></td>
             </tr>
             <tr>
-                <td>i pohon 1:30</td>
-                <td><input type="number" readonly name="i_pohon" id="i_pohon" value="<?= round(1/30, 5) ?>"></td>
+                <td class="stare">i pohon 1:30</td>
+                <td class="stare"><input type="number" readonly name="i_pohon" id="i_pohon" value="<?= 1/30 ?>"></td>
                 <td></td>
                 <td></td>
                 <td>SW-T</td>
-                <td><input type="number" readonly name="SW_T" id="SW_T" value="<?= $zaznam['sw_t'] ?? '' ?>"></td>
+                <td><input type="number" readonly name="SW_T" id="SW_T" value="<?= $sw_t ?? '' ?>"></td>
                 <td>%</td>
                 <td></td>
                 <td></td>
@@ -706,9 +730,9 @@
                 <td></td>
             </tr>
             <tr>
-                <td>Dvojité zdvihy</td>
-                <td><input type="number" readonly name="zdvihy" id="zdvihy" value="<?= $zdvihy ?? '' ?>"></td>
-                <td>DH/min</td>
+                <td class="stare">Dvojité zdvihy</td>
+                <td class="stare"><input type="number" readonly name="zdvihy" id="zdvihy" value="<?= $zdvihy ?? '' ?>"></td>
+                <td class="stare">DH/min</td>
                 <td></td>
                 <td>Sges</td>
                 <td><input type="number" readonly name="Sges" id="Sges" value="<?= $sges ?? '' ?>"></td>
@@ -852,7 +876,7 @@
                 <td colspan="2"><input type="number" readonly name="c_spec_nastaveni" id="c_spec_nastaveni" value="<?= $zaznam['c_spec'] ?? '' ?>"></td>
                 <td colspan="2"><input type="number" readonly name="titr_nastaveni" id="titr_nastaveni" value="<?= $zaznam['titr'] ?? '' ?>"></td>
                 <td colspan="2"><input type="number" readonly name="praci_valce_nastaveni" id="praci_valce_nastaveni" value="<?= $zaznam['praci_valce'] ?? '' ?>"></td>
-                <td colspan="2"><input type="number" readonly name="odtah_nastaveni" id="odtah_nastaveni" value="<?= $vwt ?? '' ?>"></td>
+                <td colspan="2"><input type="number" readonly name="odtah_nastaveni" id="odtah_nastaveni" value="<?= $vnavijeni ?? '' ?>"></td>
                 <td colspan="2"><input type="number" readonly name="cerpadlo_nastaveni" id="cerpadlo_nastaveni" value="<?= (float)$zaznam['cerpadlo'] ?? '' ?>"></td>
                 <td colspan="2"></td>
                 <td colspan="2"></td>
@@ -975,13 +999,13 @@
             </tr>
             <tr>
                 <td colspan="2"></td>
-                <td colspan="2"><input type="number" name="ng1" id="" value=" <?= $ng1 ?? '' ?>"></td>
-                <td colspan="2"><input type="number" name="ng2" id="" value=" <?= $ng2 ?? '' ?>"></td>
-                <td colspan="2"><input type="number" name="nw" id="" value=" <?= $nw ?? '' ?>"></td>
-                <td colspan="2"><input type="number" name="nwt" id="" value=" <?= $nwt ?? '' ?>"></td>
-                <td colspan="2"><input type="number" name="nnavijeni" id="" value=" <?= $nnavijeni ?? '' ?>"></td>
-                <td colspan="2"><input type="number" name="zdvihy" id="" value=" <?= $zdvihy ?? '' ?>"></td>
-                <td colspan="2"><input type="number" name="nsp" id="" value=" <?= $nsp ?? '' ?>"></td>
+                <td colspan="2"><input type="number" name="ng1" id="" value="<?= $ng1 ?? '' ?>"></td>
+                <td colspan="2"><input type="number" name="ng2" id="" value="<?= $ng2 ?? '' ?>"></td>
+                <td colspan="2"><input type="number" name="nw" id="" value="<?= $nw ?? '' ?>"></td>
+                <td colspan="2"><input type="number" name="nwt" id="" value="<?= $nwt ?? '' ?>"></td>
+                <td colspan="2"><input type="number" name="nnavijeni" id="" value="<?= $nnavijeni ?? '' ?>"></td>
+                <td colspan="2"><input type="number" name="zdvihy" id="" value="<?= $zdvihy ?? '' ?>"></td>
+                <td colspan="2"><input type="number" name="nsp" id="" value="<?= $nsp ?? '' ?>"></td>
             </tr>
             <tr>
                 <td colspan="2">&nbsp;</td>
@@ -1077,11 +1101,12 @@
         padding: 1px;
         border: 1px solid #666666;
         text-align: center;
-        background-color: #C0C0C0;
+        background: #C0C0C0;
         color: #000000;
     }
     p{
         font-weight: bold;
+        margin: 1px 0 0 0;
     }
     img {
         width: 180px;
@@ -1093,6 +1118,7 @@
         font-size: inherit;
         padding: 0;
         margin: 0;
+        box-sizing: border-box;
     }
     textarea {
         width: 100%;
@@ -1102,6 +1128,7 @@
         margin: 0;
         resize: none;
         text-align: center;
+        box-sizing: border-box;
     }
     <?php
         if ($typ_stroje == '3'){
