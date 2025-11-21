@@ -8,7 +8,7 @@
         exit();    
     }
     require_once 'server.php';
-
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['subTisk'])) {
             $id_spec = $_POST['id'] ?? null;
@@ -130,6 +130,37 @@
                 $nsp_n = $nsp * $zaznam['z2sp'] / $zaznam['z1sp'];
                 $sges =  ($vwt - $vg1) / $vg1 * 100;
             }
+            $sql = "SELECT
+                        CONCAT(z.jmeno, ' ', z.prijmeni) AS jmeno,
+                        z.funkce,
+                        z.uziv_jmeno
+                    FROM Zamestnanci AS z
+                    WHERE z.id_zam = ?;";
+            $params = [$uziv];
+            $result = sqlsrv_query($conn, $sql, $params);
+            if ($result === FALSE)
+                die(print_r(sqlsrv_errors(), true));
+
+            $zam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
+            sqlsrv_free_stmt($result);
+
+            $jmeno = $zam['jmeno'];
+            $funkce = $zam['funkce'];
+            $uziv_jmeno = $zam['uziv_jmeno'];
+
+            switch ($uziv_jmeno) {
+                case 'admin':
+                    $admin = true;
+                    break;
+                case 'kucera':
+                    $admin = true;
+                    break;
+                default:
+                    $admin = false;
+                    break;
+            }
+            if ($admin) 
+                $_SESSION['admin'] = true;
         }
     }
 
@@ -143,8 +174,39 @@
     <script src="jquery-3.7.1.min.js"></script>
     <script src="jquery-ui-1.14.1/jquery-ui.js"></script>
     <script src="script.js"></script>
+    <?php if($_POST['subTisk'] != "Tisk"): ?>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="jquery-ui-1.14.1/jquery-ui.css">
+    <?php endif; ?>
 </head>
 <body>
+    <?php if($_POST['subTisk'] != "Tisk"): ?>
+        <div class="header">
+            <img src="Indorama.png" class="logo">
+            <h1>SYSTÉM PLÁNOVÁNÍ VÝROBY</h1>
+            <div class="headerB">
+                <div class="uziv">
+                    <img src="user_icon.png" width="28%" style="margin-right: 2%;">
+                    <div class="uziv_inf">
+                        <p><?php echo $jmeno; ?></p>
+                        <p style="font-size: 12px; margin-left: 1px;"><?php echo $funkce; ?></p>
+                    </div>
+                </div>
+                <a id="logout">
+                    <img src="logout_icon.png" width="78%" style="cursor: pointer;">
+                </a>
+            </div>
+        </div>
+        <div class="menu">
+            <ul>
+                <li><a href="odtahy-tyden.php">Odtahy - týden</a></li>
+                <li><a href="odtahy-den.php">Odtahy - den</a></li>
+                <li><a href="specifikace.php" class="active">Specifikace</a></li>
+                <li><a href="stroje.php">Stroje</a></li>
+                <?php if($admin): ?><li><a href="administrace.php">Administrace</a></li><?php endif; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
     <table>
         <thead>
             <tr>
@@ -858,7 +920,7 @@
                 <td colspan="2">Odtah</td>
                 <td colspan="2">Čerpadlo</td>
                 <td colspan="2"></td>
-                <td colspan="2"></td>
+                <?= $typ_stroje == 1 ? '<td colspan="2"></td>' : '' ?>
                 <td colspan="2"></td>
 
             </tr>
@@ -869,17 +931,17 @@
                 <td colspan="2">m/min</td>
                 <td colspan="2">cm3/U</td>
                 <td colspan="2"></td>
-                <td colspan="2"></td>
+                <?= $typ_stroje == 1 ? '<td colspan="2"></td>' : '' ?>
                 <td colspan="2"></td>
             </tr>
             <tr>
                 <td colspan="2"><input type="number" readonly name="c_spec_nastaveni" id="c_spec_nastaveni" value="<?= $zaznam['c_spec'] ?? '' ?>"></td>
                 <td colspan="2"><input type="number" readonly name="titr_nastaveni" id="titr_nastaveni" value="<?= $zaznam['titr'] ?? '' ?>"></td>
                 <td colspan="2"><input type="number" readonly name="praci_valce_nastaveni" id="praci_valce_nastaveni" value="<?= $zaznam['praci_valce'] ?? '' ?>"></td>
-                <td colspan="2"><input type="number" readonly name="odtah_nastaveni" id="odtah_nastaveni" value="<?= $vnavijeni ?? '' ?>"></td>
+                <td colspan="2"><input type="number" readonly name="odtah_nastaveni" id="odtah_nastaveni" value="<?= $vnavijeni ?? $vwt ?? '' ?>"></td>
                 <td colspan="2"><input type="number" readonly name="cerpadlo_nastaveni" id="cerpadlo_nastaveni" value="<?= (float)$zaznam['cerpadlo'] ?? '' ?>"></td>
                 <td colspan="2"></td>
-                <td colspan="2"></td>
+                <?= $typ_stroje == 1 ? '<td colspan="2"></td>' : '' ?>
                 <td colspan="2"></td>
             </tr>
             <tr>
@@ -889,7 +951,7 @@
                 <td colspan="2"></td>
                 <td colspan="2"></td>
                 <td colspan="2"></td>
-                <td colspan="2"></td>
+                <?= $typ_stroje == 1 ? '<td colspan="2"></td>' : '' ?>
                 <td colspan="2"></td>
             </tr>
             <tr>
@@ -899,7 +961,7 @@
                 <td colspan="2">Prací válce</td>
                 <td colspan="2">Sušící válec</td>
                 <td colspan="2">Navíjení</td>
-                <td colspan="2">Ukládání</td>
+                <?= $typ_stroje == 1 ? '<td colspan="2">Ukládání</td>' : '' ?>
                 <td colspan="2">Spř. čepradlo</td>
             </tr>
             <tr>
@@ -908,8 +970,8 @@
                 <td colspan="2">ot/min</td>
                 <td colspan="2">ot/min</td>
                 <td colspan="2">ot/min</td>
-                <td colspan="2">ot/min</td>
-                <td colspan="2">DH/min</td>
+                <td colspan="2"><?= $typ_stroje == 2 ? 'napínání [g]' : 'ot/min' ?></td>
+                <?= $typ_stroje == 1 ? '<td colspan="2">DH/min</td>' : '' ?>
                 <td colspan="2">ot/min</td>
             </tr>
             <tr>
@@ -922,10 +984,9 @@
                 <td><input type="number" readonly name="" id="" value="<?= $zaznam['z9'] ?? '' ?>"></td>
                 <td>Z17</td>
                 <td><input type="number" readonly name="" id="" value="<?= $zaznam['z17'] ?? '' ?>"></td>
-                <td></td>
-                <td></td>
-                <td>KRS3</td>
-                <td><input type="number" readonly name="" id="" value="<?= $zaznam['remenice_m'] ?? '' ?>"></td>
+                <?= $typ_stroje == 2 ? '<td colspan="2">ca 250</td>' : '<td></td><td></td>' ?>
+                <?= $typ_stroje == 1 ? '<td>KRS3</td>' : '' ?>
+                <?= $typ_stroje == 1 ? '<td><input type="number" readonly name="" id="" value="' . ($zaznam['remenice_m'] ?? "") . '"></td>' : '' ?>
                 <td>Z21</td>
                 <td><input type="number" readonly name="" id="" value="<?= $zaznam['z21'] ?? '' ?>"></td>
             </tr>
@@ -939,10 +1000,10 @@
                 <td><input type="number" readonly name="" id="" value="<?= $zaznam['z12'] ?? '' ?>"></td>
                 <td>Z20</td>
                 <td><input type="number" readonly name="" id="" value="<?= $zaznam['z20'] ?? '' ?>"></td>
-                <td>Sa[%]</td>  
-                <td><input type="number" readonly name="" id="" value="<?= (float)$zaznam['dlouzeni'] ?? '' ?>"></td>
-                <td>KRS4</td>
-                <td><input type="number" readonly name="" id="" value="<?= $zaznam['remenice_g'] ?? '' ?>"></td>
+                <td><?= $typ_stroje == 2 ? '' : 'Sa[%]' ?></td>  
+                <td><?= $typ_stroje == 2 ? '' : '<input type="number" readonly name="" id="" value="' . ((float)$zaznam['dlouzeni'] ?? "") . '">'?></td>
+                <?= $typ_stroje == 1 ? '<td>KRS4</td>' : '' ?>
+                <?= $typ_stroje == 1 ? '<td><input type="number" readonly name="" id="" value="' . ($zaznam['remenice_g'] ?? "") . '"></td>' : '' ?>
                 <td>Z24</td>
                 <td><input type="number" readonly name="" id="" value="<?= $zaznam['z24'] ?? '' ?>"></td>
             </tr>
@@ -958,8 +1019,8 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
+                <?= $typ_stroje == 1 ? '<td></td>' : '' ?>
+                <?= $typ_stroje == 1 ? '<td></td>' : '' ?>
                 <td></td>
                 <td></td>
             </tr>
@@ -975,8 +1036,8 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
+                <?= $typ_stroje == 1 ? '<td></td>' : '' ?>
+                <?= $typ_stroje == 1 ? '<td></td>' : '' ?>
                 <td></td>
                 <td></td>
             </tr>
@@ -992,8 +1053,8 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
+                <?= $typ_stroje == 1 ? '<td></td>' : '' ?>
+                <?= $typ_stroje == 1 ? '<td></td>' : '' ?>
                 <td></td>
                 <td></td>
             </tr>
@@ -1003,8 +1064,8 @@
                 <td colspan="2"><input type="number" name="ng2" id="" value="<?= $ng2 ?? '' ?>"></td>
                 <td colspan="2"><input type="number" name="nw" id="" value="<?= $nw ?? '' ?>"></td>
                 <td colspan="2"><input type="number" name="nwt" id="" value="<?= $nwt ?? '' ?>"></td>
-                <td colspan="2"><input type="number" name="nnavijeni" id="" value="<?= $nnavijeni ?? '' ?>"></td>
-                <td colspan="2"><input type="number" name="zdvihy" id="" value="<?= $zdvihy ?? '' ?>"></td>
+                <?= $typ_stroje == 1 ? '<td colspan="2"><input type="number" name="nnavijeni" value="' . ($nnavijeni ?? "") . '"></td>' : '<td></td><td></td>' ?>
+                <?= $typ_stroje == 1 ? '<td colspan="2"><input type="number" readonly name="" id="" value="' . ($zdvihy ?? "") . '"></td>' : '' ?>
                 <td colspan="2"><input type="number" name="nsp" id="" value="<?= $nsp ?? '' ?>"></td>
             </tr>
             <tr>
@@ -1014,7 +1075,7 @@
                 <td colspan="2"></td>
                 <td colspan="2"></td>
                 <td colspan="2"></td>
-                <td colspan="2"></td>
+                <?= $typ_stroje == 1 ? '<td colspan="2"></td>' : '' ?>
                 <td colspan="2"></td>
             </tr>
             <tr>
@@ -1024,14 +1085,14 @@
                 <td colspan="2"></td>
                 <td colspan="2"></td>
                 <td colspan="2">Spotřeba viskózy</td>
-                <td colspan="2"><input type="number" name="spotr_stroj" id="" value="<?= $spotr_stroj ?? '' ?>"></td>
-                <td colspan="2">l/h</td>
+                <td <?= $typ_stroje == 1 ? 'colspan="2"' : '' ?>><input type="number" name="spotr_stroj" id="" value="<?= $spotr_stroj ?? '' ?>"></td>
+                <td <?= $typ_stroje == 1 ? 'colspan="2"' : '' ?>>l/h</td>
             </tr>
             <tr>
                 <td colspan="2">SG1-G2</td>
                 <td colspan="2">SG2-W</td>
                 <td colspan="2">SW-T</td>
-                <td colspan="2">ST-Aw</td>
+                <?= $typ_stroje == 1 ? '<td colspan="2">ST-Aw</td>' : ''?>
                 <td colspan="2">Sges</td>
                 <td colspan="2"></td>
                 <td colspan="2"></td>
@@ -1041,23 +1102,22 @@
                 <td colspan="2"><input type="number" readonly name="" id="" value="<?= $sg1_g2 ?? '' ?>"></td>
                 <td colspan="2"><input type="number" readonly name="" id="" value="<?= $sg2_w ?? '' ?>"></td>
                 <td colspan="2"><input type="number" readonly name="" id="" value="<?= $sw_t ?? '' ?>"></td>
-                <td colspan="2"><input type="number" readonly name="" id="" value="<?= (float)$zaznam['dlouzeni'] ?? '' ?>"></td>
+                <?= $typ_stroje == 1 ? '<td colspan="2"><input type="number" readonly name="" id="" value="' . ((float)$zaznam['dlouzeni'] ?? "") . '"></td>' : ''?>
                 <td colspan="2"><input type="number" readonly name="" id="" value="<?= $sges ?? '' ?>"></td>
-                <td colspan="2"></td>
                 <td colspan="2"></td>
                 <td colspan="2"></td>
             </tr>
         </tbody>
     </table>
     <?php
-        $sql = "SELECT z.id_zam, CONCAT(z.prijmeni, ' ', z.jmeno) AS zodpovedny FROM Zamestnanci as z JOIN Specifikace as s ON z.id_zam = s.id_zam WHERE s.id_spec = ?;";
+        $sql = "SELECT s.id_zam, CONCAT(z.prijmeni, ' ', z.jmeno) AS zodpovedny FROM Zamestnanci as z RIGHT JOIN Specifikace as s ON z.id_zam = s.id_zam WHERE s.id_spec = ?;";
         $params = [$id_spec];
         $result = sqlsrv_query($conn, $sql, $params);
         if ($result === FALSE)
             die(print_r(sqlsrv_errors(), true));
         $zodpovedny = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
         sqlsrv_free_stmt($result);
-
+        
         switch ($zodpovedny['id_zam']) {
             case '3':
                 $zodpovedny['zodpovedny'] = "Vocásek Martin";
@@ -1077,19 +1137,30 @@
             die(print_r(sqlsrv_errors(), true));    
         $uzivatel = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)['uzivatel'];
     ?>
-    <p>Zodpovědná osoba: <?= $zodpovedny['zodpovedny'] ?></p>
-    <p><?= __FILE__ ?></p>
-    <p>Vytištěno: <?= date('d.m.Y H:i:s') ?> uživatelem: <?= $uzivatel ?></p>
+    <div class="docFooter">
+        <p>Zodpovědná osoba: <?= $zodpovedny['zodpovedny'] ?></p>
+        <p><?= __FILE__ ?></p>
+        <p>Vytištěno: <?= date('d.m.Y H:i:s') ?> uživatelem: <?= $uzivatel ?></p>
+    </div>
 </body>
 <style>
     body {
-        font-size: 9pt;
+        background: #fff;
     }
+    <?php if($_POST['subTisk'] != "Tisk"): ?>
+        table{
+            margin: auto;
+            width: 21cm;
+        }
+        .docFooter{
+            margin: auto;
+            width: 21cm;
+        }
+    <?php endif; ?>
     table {
-        width: 100%;
+        font-size: 9pt;
         border-collapse: collapse;
         border: 2px solid black;
-        font-size: inherit;
         text-align: center;
     }
     td {
@@ -1104,12 +1175,10 @@
         background: #C0C0C0;
         color: #000000;
     }
-    p{
+    .docFooter p{
         font-weight: bold;
+        font-size: 9pt;
         margin: 1px 0 0 0;
-    }
-    img {
-        width: 180px;
     }
     input {
         width: 100%;
@@ -1155,4 +1224,11 @@
         }
     }
 </style>
+<script>
+    window.onload = function() {
+        <?php if($_POST['subTisk'] == "Tisk"): ?>
+            window.print();
+        <?php endif; ?>
+    }
+</script>
 </html>
