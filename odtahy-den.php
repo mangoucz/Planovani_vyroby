@@ -86,10 +86,44 @@
             <?php if($admin): ?><li><a href="administrace.php">Administrace</a></li><?php endif; ?>
         </ul>
     </div>
+    <div class="setting">
+        <button type="button" id="setDnes" class="defButt">Dnes</button>
+        <form action="" method="get">
+            <input type="text" id="denOdtahu" name="date" class="date">
+        </form>
+        <form action="print_den.php" method="post" target="printFrame">
+            <input type="submit" name="subTisk" class="defButt print" id="subTisk" value="Tisk" title="Tisk denního plánu odtahů">
+            <input type="hidden" name="den" value="">
+        </form>
+        <iframe id="frame" name="printFrame" style="display: none;"></iframe>
+    </div>
+    <div class="naviny">
+        <?php for($i=0; $i < 3; $i++): ?>
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th><?= $i == 0 ? 'ranní' : ($i == 1 ? 'odpolední' : 'noční') ?></th>
+                    <th><a href="">Tisk (blokovaná výroba)</a></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <?php endfor; ?>
+    </div>
     <div class="footer">
         <img src="Indorama.png" width="200px">
     </div>
     <style>
+        .setting{
+            justify-content: space-around;
+        }
+        .naviny{
+            display: flex;
+        }
         .footer{
             display: none;
         }

@@ -73,6 +73,21 @@ $(document).ready(function() {
             $(".modal").fadeOut(200);
         }
     }
+    function CZToPC(date) {
+        const parts = date.split('.').map(p => p.trim());
+        return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    function PCToCZ(date) {
+        const parts = date.split('-');
+        return `${parts[2]}. ${parts[1]}. ${parts[0]}`;
+    }
+    function DateToString(date){
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${year}-${month}-${day}`;
+    }
+    
     function initializeDatepicker(selector) {
         $('.date').attr('autocomplete', 'off');
         
@@ -171,7 +186,6 @@ $(document).ready(function() {
                 $(".barmag").hide();
                 $(".stare").hide();
                 $(".nove").show();
-                //vg2 required
                 break;
             default:
                 break;
@@ -273,6 +287,10 @@ $(document).ready(function() {
             }
         });        
     }); 
+    $(document).on('click', '#subDel', function (e) {
+        e.preventDefault();
+        confirm("Opravdu chcete smazat tuto specifikaci?") && $("#delForm").submit();
+    });
     
     $(document).on('keydown', function (e) {
         if (e.key === "Escape") { 
@@ -291,10 +309,6 @@ $(document).ready(function() {
             $(this).val(value + ":00");
         else if(value.length == 1)
             $(this).val("0" + value + ":00");
-    });
-
-    $(document).on('change', '#stroj', function() {
-        
     });
 
     $(document).on('change', '#selectStroj', function() {
@@ -584,6 +598,24 @@ $(document).ready(function() {
         $("#ipohon").val(ipohon.toFixed(5));
     });
     
+    $(document).on('click', '#setDnes', function() {
+        const today = DateToString(new Date());
+        window.location.href = `odtahy-den.php?date=${today}`;
+    });
+    $(document).on('change', '#denOdtahu', function(){
+        const val = $('#denOdtahu').val();
+        window.location.href = `odtahy-den.php?date=${CZToPC(val)}`;
+    });
+
+    $(document).on('click', '#setTyden', function() {
+        const date = new Date();
+        const rozdil = date.getDay() == 0 ? 6 : date.getDay() - 1;
+        date.setDate(date.getDate() - rozdil);
+        const den = DateToString(date);
+        window.location.href = `odtahy-tyden.php?date=${den}`;
+    });
+
+
     if(window.location.href.includes("print_form.php")){
         $("input").each(function() {
             const val = parseFloat($(this).val());
@@ -597,7 +629,16 @@ $(document).ready(function() {
             });
         }
     }
-    
     if(window.location.href.includes("spec_form.php"))
         pocitej();
+    if(window.location.href.includes("odtahy-den.php")){
+        if(!window.location.href.includes("odtahy-den.php?date=")){
+            const today = DateToString(new Date());
+            window.location.href = `odtahy-den.php?date=${today}`;
+        }
+        else{
+            const param = new URLSearchParams(window.location.search).get('date');
+            $("#denOdtahu").val(PCToCZ(param));
+        }
+    }
 });

@@ -241,7 +241,7 @@
                 </div>
                 <div class="radek nove">
                     <label for="vg2">vG2</label>
-                    <input type="number" id="vg2" name="vg2" step="0.01" value="<?= (float)$zaznam['vg2'] ?? '' ?>">
+                    <input type="number" id="vg2" name="vg2" step="0.01" <?= $id_spec == 3 ? 'required' : '' ?> value="<?= (float)$zaznam['vg2'] ?? '' ?>">
                     <span class="jednotka">ot/min</span>
                 </div>
                 <div class="radek nove">

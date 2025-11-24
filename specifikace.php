@@ -114,8 +114,8 @@
             <div class="uziv">
                 <img src="user_icon.png" width="28%" style="margin-right: 2%;">
                 <div class="uziv_inf">
-                    <p><?php echo $jmeno; ?></p>
-                    <p style="font-size: 12px; margin-left: 1px;"><?php echo $funkce; ?></p>
+                    <p><?= $jmeno; ?></p>
+                    <p style="font-size: 12px; margin-left: 1px;"><?= $funkce; ?></p>
                 </div>
             </div>
             <a id="logout">
@@ -222,13 +222,13 @@
                     <input type="hidden" name="id" value="">
                     <input type="hidden" name="typ_stroje" value="">
                 </form>
+                <iframe id="frame" name="printFrame" style="display: none;"></iframe>
                 <form action="print_form.php" method="post">
                     <input type="submit" name="subTisk" class="defButt print" id="subNahl" value="Zobrazit" title="Zobrazení celé specifikace">
                     <input type="hidden" name="id" value="">
                     <input type="hidden" name="typ_stroje" value="">
                 </form>
-                <iframe id="frame" name="printFrame" style="display: none;"></iframe>
-                <form action="" method="post">
+                <form action="" method="post" id="delForm">
                     <input type="submit" value="Odstranit" name="subDel" id="subDel" class="defButt extend" title="Odstraní specifikaci z databáze">
                     <input type="hidden" name="id" value="">
                     <input type="hidden" name="typ_stroje" value="">

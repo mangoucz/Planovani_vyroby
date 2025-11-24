@@ -16,7 +16,7 @@ input{
     outline: none;
     transition: border-color 0.2s ease;
 }
-input[type="search"] {
+input[type="search"], .date {
     width: 100%;
     max-width: 300px;
     border-radius: 5px;
@@ -242,6 +242,7 @@ li {
     background: rgba(255, 255, 255, 0.8);
     margin: 20px auto;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 60vw;
 } 
 
 .footer{
