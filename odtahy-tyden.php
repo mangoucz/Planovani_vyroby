@@ -39,14 +39,6 @@
     }
     if ($admin) 
         $_SESSION['admin'] = true;
-
-    $sql = "SELECT s.id_schval FROM Schvalovani as s WHERE s.id_schval = ?;";
-    $result = sqlsrv_query($conn, $sql, $params);
-    if ($result === FALSE)
-        die(print_r(sqlsrv_errors(), true));
-
-    $schval = sqlsrv_has_rows($result);
-    sqlsrv_free_stmt($result);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -87,9 +79,10 @@
         </ul>
     </div>
     <div class="setting">
+        <button type="button" id="novyTydenButt" class="defButt">Vytvořit nový týden</button>
         <button type="button" id="setTyden" class="defButt">Tento týden</button>
         <form action="" method="get">
-            <input type="text" id="denOdtahu" name="date" class="date">
+            <input type="text" id="tydenOdtahu" name="date" class="date">
         </form>
         <form action="print_den.php" method="post" target="printFrame">
             <input type="submit" name="subTisk" class="defButt print" id="subTisk" value="Tisk" title="Tisk denního plánu odtahů">
@@ -100,9 +93,42 @@
     <div class="footer">
         <img src="Indorama.png" width="200px">
     </div>
+    <div class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeBtn" class="close">&times;</span>
+                <h2>Vytvoření nového týdne</h2>
+            </div>
+            <div class="modal-body">
+                <h3>24.11.2025 - 30.11.2025</h3>
+                <h4>Vyber stav strojů v novém týdnu</h4>
+                <form action="sub_db.php" method="post" id="novyTydenForm">
+                    <select name="stav_stroju" id="selectStav" required>
+                    </select>
+                    <input type="hidden" name="pondeli" id="hiPondeli" value="">
+                    <input type="submit" name="novyTyden" value="Vytvořit" class="defButt">
+                </form>
+            </div>
+            <div class="footer">
+
+            </div>
+        </div>
+    </div>
     <style>
+        h2::after {
+            content: "";
+            display: block;
+            width: 25%;
+            height: 3px; 
+            background: #d40000; 
+            margin-top: 5px;
+            border-radius: 2px;
+        }
         .setting{
             justify-content: space-around;
+        }
+        #novyTydenForm{
+            display: flex;
         }
         .footer{
             display: none;

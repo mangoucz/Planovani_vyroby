@@ -7,6 +7,10 @@ body{
     min-height: 100vh;
 }
 
+table{
+    border-collapse: collapse;
+}
+
 input{
     padding: 8px;
     margin: 2px 0;
@@ -71,11 +75,11 @@ li {
     transition: all 0.3s ease;
 }
 .menu a:hover {
-    background-color: #003366;
+    background-color: #5d99a3;
     color: white;
 }
 .active{
-    background-color: #003366;
+    background-color: #5d99a3;
     color: white !important; 
 }
 /* jQuery UI Datepicker */
@@ -325,8 +329,8 @@ li {
 }
 
 .defButt {
-    background: #003366; 
-    color: #FFFFFF;
+    background: #e6e6e6;
+    color: #333333; 
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -335,7 +339,7 @@ li {
     transition: background-color 0.3s ease;
 }
 .defButt:hover {
-    background: #5d99a3;
+    background: #d0d0d0;
 }
 .defButt:active{
     box-shadow: 0 4px 8px rgba(0, 51, 102, 0.3);
@@ -343,23 +347,29 @@ li {
 
 .defButt.edit {
     background: #f39c12;
+    color: #ffffff; 
 }
 .defButt.edit:hover {
     background: #e67e22;
+    color: #ffffff; 
 }
 
 .defButt.print {
     background: #3498db;
+    color: #ffffff; 
 }
 .defButt.print:hover {
     background: #2980b9;
+    color: #ffffff; 
 }
 
 .defButt.extend {
     background: #2ecc71;
+    color: #ffffff; 
 }
 .defButt.extend:hover {
     background: #27ae60;
+    color: #ffffff; 
 }
 
 

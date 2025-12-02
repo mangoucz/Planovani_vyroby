@@ -321,7 +321,7 @@ $(document).ready(function() {
     $(document).on('click', '.vyr', function() {
         const id_spec = $(this).attr("data-id_spec");
         const id_vyr = $(this).attr("id");
-        const select = `<select name='id_vyr' id='selectVyr' data-id_spec='${id_spec}' style='padding: 7px'></select>`;
+        const select = `<select name='id_vyr' id='selectVyr' data-id_spec='${id_spec}'></select>`;
         $(this).replaceWith(select);
         $.ajax({
             url: "get_db.php",
@@ -421,6 +421,10 @@ $(document).ready(function() {
             $("#npohon").val(npohon.toFixed(2));
             $("#nA").val(nA.toFixed(2));
         }
+        else{
+            $("#npohon").val("");
+            $("#nA").val("");
+        }
     });
     $(document).on('input', '#galety_div input', function() {
         const galety = $("#galety").val();
@@ -445,6 +449,9 @@ $(document).ready(function() {
             if(isValidNumber(ng2)){
                 $("#nG2").val(ng2.toFixed(2));
             }
+            else{
+                $("#nG2").val("");
+            }
             $("#produkce_1_misto").val(produkce_1.toFixed(2));
             $("#produkce_stroj").val(produkce_stroj.toFixed(2));
         }else{
@@ -453,19 +460,29 @@ $(document).ready(function() {
             vg2 = ng2 * galety / 1000 * Math.PI;
             vg1 = ng1 * galety / 1000 * Math.PI;
             sg1g2 = (ng2 - ng1) / ng1 * 100;
-            console.log(sg1g2);
             
             if(isValidNumber(ng2)){
                 $("#nG2").val(ng2.toFixed(2));
                 $("#vG2").val(vg2.toFixed(2));
             }
+            else{
+                $("#nG2").val("");
+                $("#vG2").val("");
+            }
             if(isValidNumber(sg1g2)){
                 $("#dlouzeni_div_stare #SG1-G2").val(sg1g2.toFixed(2));
+            }
+            else{
+                $("#dlouzeni_div_stare #SG1-G2").val("");
             }
         }
         if(isValidNumber(ng1)){
             $("#nG1").val(ng1.toFixed(2));
             $("#vG1").val(vg1.toFixed(2));
+        }
+        else{
+            $("#nG1").val("");
+            $("#vG1").val("");
         }
 
     });
@@ -485,6 +502,10 @@ $(document).ready(function() {
                 $("#nW").val(nw.toFixed(2));
                 $("#vW").val(vw.toFixed(2));
             }
+            else{
+                $("#nW").val("");
+                $("#vW").val("");
+            }
         }
         else{
             const nw = nA * Z9 / Z10 * Z11 / Z12 * z25 / z26 * z59 / z58;
@@ -495,8 +516,15 @@ $(document).ready(function() {
                 $("#nW").val(nw.toFixed(2));
                 $("#vW").val(vw.toFixed(2));
             }
+            else{
+                $("#nW").val("");
+                $("#vW").val("");
+            }
             if(isValidNumber(sg2w)){
                 $("#dlouzeni_div_stare #SG2-W").val(sg2w.toFixed(2));
+            }
+            else{
+                $("#dlouzeni_div_stare #SG2-W").val("");
             }
         }
     });
@@ -518,6 +546,11 @@ $(document).ready(function() {
                 $("#vWT").val(vWT.toFixed(2));
                 $("#dlouzeni_div_nove #Sges").val((Sges).toFixed(2));
             }
+            else{
+                $("#nWT").val("");
+                $("#vWT").val("");
+                $("#dlouzeni_div_nove #Sges").val("");
+            }
         }else{
             const nWT = nA * Z17 / Z18 * Z19 / Z20 * z38 / z39 * z55 / z54;
             vWT = nWT * susici_valec / 1000 * Math.PI;
@@ -527,8 +560,15 @@ $(document).ready(function() {
                 $("#nWT").val(nWT.toFixed(2));
                 $("#vWT").val(vWT.toFixed(2));
             }
+            else{
+                $("#nWT").val("");
+                $("#vWT").val("");
+            }
             if(isValidNumber(sWT)){
                 $("#dlouzeni_div_stare #SW-T").val(sWT.toFixed(2));
+            }
+            else{
+                $("#dlouzeni_div_stare #SW-T").val("");
             }
         }
     });
@@ -543,12 +583,22 @@ $(document).ready(function() {
         if(isValidNumber(vnavijeni)){
             $("#v_navijeni").val(vnavijeni.toFixed(2));
         } 
+        else{
+            $("#v_navijeni").val("");
+        }
         if(isValidNumber(nnavijeni)){
             $("#n_navijeni").val(nnavijeni.toFixed(2));
             $("#1_pohon").val(n1pohon.toFixed(2));
         }
+        else{
+            $("#n_navijeni").val("");
+            $("#1_pohon").val("");
+        }
         if(isValidNumber(sges)){
             $("#dlouzeni_div_stare #Sges").val(sges.toFixed(2));
+        }
+        else{
+            $("#dlouzeni_div_stare #Sges").val("");
         }
     });
     $(document).on('input', '#cerpadlo_div input', function() {
@@ -573,6 +623,11 @@ $(document).ready(function() {
                 $("#spotr_misto").val(spotreba_misto.toFixed(2));
                 $("#spotr_stroj").val(spotreba_stroj.toFixed(2));
             }
+            else{
+                $("#nSp").val("");
+                $("#spotr_misto").val("");
+                $("#spotr_stroj").val("");
+            }
             $("#produkce_stroj").val(produkce_stroj.toFixed(2));
         }else{
             const nsp = nA * Z21 / Z22 * Z23 / Z24 * z40 / z41 * z42 / z43 * z44 / z45 * z46 / z47 * (1 + korekce_barmag);
@@ -582,6 +637,11 @@ $(document).ready(function() {
                 $("#nSp").val(nsp.toFixed(2));
                 $("#spotr_misto").val(spotreba_misto.toFixed(2));
                 $("#spotr_stroj").val(spotreba_stroj.toFixed(2));
+            }
+            else{
+                $("#nSp").val("");
+                $("#spotr_misto").val("");
+                $("#spotr_stroj").val("");
             }
         }
     });
@@ -595,12 +655,14 @@ $(document).ready(function() {
         if(isValidNumber(zdvihy)){
             $("#dvojite_zdvihy").val(zdvihy.toFixed(2));
         }
+        else{
+            $("#dvojite_zdvihy").val("");
+        }
         $("#ipohon").val(ipohon.toFixed(5));
     });
     
     $(document).on('click', '#setDnes', function() {
-        const today = DateToString(new Date());
-        window.location.href = `odtahy-den.php?date=${today}`;
+        window.location.href = `odtahy-den.php?date=${DateToString(new Date())}`;
     });
     $(document).on('change', '#denOdtahu', function(){
         const val = $('#denOdtahu').val();
@@ -611,8 +673,89 @@ $(document).ready(function() {
         const date = new Date();
         const rozdil = date.getDay() == 0 ? 6 : date.getDay() - 1;
         date.setDate(date.getDate() - rozdil);
-        const den = DateToString(date);
-        window.location.href = `odtahy-tyden.php?date=${den}`;
+        window.location.href = `odtahy-tyden.php?date=${DateToString(date)}`;
+    });
+    $(document).on('change', '#tydenOdtahu', function(){
+        const val = $('#tydenOdtahu').val();
+        const date = new Date(CZToPC(val));
+        const rozdil = date.getDay() == 0 ? 6 : date.getDay() - 1;
+        date.setDate(date.getDate() - rozdil);
+        window.location.href = `odtahy-tyden.php?date=${DateToString(date)}`;
+    });
+
+    $(document).on('click', '#novyTydenButt', function() {
+        $.ajax({
+            url: "get_db.php",
+            type: "POST",
+            data: { getTyden: true },
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    const date = new Date(response.data.posledni);
+                    const rozdil = date.getDay() == 0 ? 6 : date.getDay() - 1;
+                    date.setDate(date.getDate() - rozdil);
+                    $(".modal h3").text(PCToCZ(DateToString(date)) + " - ");
+                    $("#hiPondeli").val(DateToString(date));
+                    date.setDate(date.getDate() + 6);
+                    $(".modal h3").append(PCToCZ(DateToString(date)));
+                    
+                    $("#selectStav").html(`<option value="0">Beze změny</option>`);
+                    response.data.stavy.forEach(function(stavy) {
+                        $("#selectStav").append(`<option value="${stavy.id_stav}">${stavy.stav}</option>`)
+                    });
+                    $(".modal").fadeIn(200).css("display", "flex");
+                } else {
+                    alert("Chyba při načítání dat!");
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert("Chyba komunikace se serverem!");
+                alert(xhr.responseText);
+                alert(message);
+            }
+        });        
+    });
+
+    //Pozice v adminu
+    $(document).on('click', '.nadpis', function() {
+        let id = $(this).attr("id");
+        
+        $("." + id).toggle();
+        $(".strojContent, .specContent").each(function () {
+            if ($(this).css("display") == "block") {
+                $(this).toggle();
+                return;
+            }
+        });
+        if ($("." + id).css("display") == "none") {
+            id = false;
+        }
+        
+        $.ajax({
+            url: 'administrace.php',
+            type: "POST",
+            data: {id: id, save: 1},
+            dataType: "json"
+        });
+    })
+    $(document).on('click', '.vyberButt:not(#addTypStroj, #addTabSpec)', function() { //zobrazí content
+        if ($(this).attr("id")) {
+            const id = $(this).attr("id");
+    
+            $(".strojContent, .specContent").each(function () {
+                if ($(this).attr("id") == id)
+                    $(this).show();
+                else
+                    $(this).hide();
+            });
+            $.ajax({
+                url: 'administrace.php',
+                type: "POST",
+                data: {id: id, save: 1},
+                dataType: "json"
+            });
+        }
     });
 
 
@@ -639,6 +782,29 @@ $(document).ready(function() {
         else{
             const param = new URLSearchParams(window.location.search).get('date');
             $("#denOdtahu").val(PCToCZ(param));
+            $(".tabDat").each(function() {
+                $(this).append(PCToCZ(param));
+            });
         }
+    }
+    if(window.location.href.includes("odtahy-tyden.php")){
+        if(!window.location.href.includes("odtahy-tyden.php?date=")){
+            const date = new Date();
+            const rozdil = date.getDay() == 0 ? 6 : date.getDay() - 1;
+            date.setDate(date.getDate() - rozdil);
+            window.location.href = `odtahy-tyden.php?date=${DateToString(date)}`;
+        }
+        else{
+            const param = new URLSearchParams(window.location.search).get('date');
+            $("#tydenOdtahu").val(PCToCZ(param));
+        }
+    }
+    if (window.location.href.includes("administrace.php")) {
+        $(".strojContent, .specContent").each(function () {
+            if ($(this).css("display") === "block") {
+                $(".stroje, .specifikace").show();
+                return;
+            }
+        });    
     }
 });

@@ -240,11 +240,19 @@
         <img src="Indorama.png" width="200px">
     </div>
     <style>
+        h2::after {
+            content: "";
+            display: block;
+            width: 25%;
+            height: 3px; 
+            background: #d40000; 
+            margin-top: 5px;
+            border-radius: 2px;
+        }
         table {
             width: 100%;
             max-width: 80vw;
             margin: 20px auto;
-            border-collapse: collapse;
             background: white;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             border-radius: 8px;
@@ -271,15 +279,6 @@
         tbody tr:hover {
             background-color: #f8f9fa;
         }
-        h2::after {
-            content: "";
-            display: block;
-            width: 25%;
-            height: 3px; 
-            background: #d40000; 
-            margin-top: 5px;
-            border-radius: 2px;
-        }
         .info-icon {
             width: 20px;
             height: 20px;
@@ -291,12 +290,14 @@
         .info-icon:hover {
             transform: scale(1.1);
         }
-        
-        .setting {
-            width: 60vw;
-        }
+    
         select {
             max-width: 300px;
+        }
+        #selectVyr{
+            padding: 0.5vw 1vw;
+            margin: 0;
+            width: auto;
         }
         .vyr {
             cursor: pointer;

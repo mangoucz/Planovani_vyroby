@@ -53,8 +53,7 @@
 
     $sql = "SELECT
                 CONCAT(z.jmeno, ' ', z.prijmeni) AS jmeno,
-                z.funkce,
-                z.uziv_jmeno
+                z.funkce
             FROM Zamestnanci AS z
             WHERE z.id_zam = ?;";
     $params = [$uziv];
@@ -67,21 +66,6 @@
 
     $jmeno = $zam['jmeno'];
     $funkce = $zam['funkce'];
-    $uziv_jmeno = $zam['uziv_jmeno'];
-
-    switch ($uziv_jmeno) {
-        case 'admin':
-            $admin = true;
-            break;
-        case 'kucera':
-            $admin = true;
-            break;
-        default:
-            $admin = false;
-            break;
-    }
-    if ($admin) 
-        $_SESSION['admin'] = true;
 
     $sql = "SELECT * FROM Typ_stroje;";
     $result = sqlsrv_query($conn, $sql);
@@ -241,7 +225,7 @@
                 </div>
                 <div class="radek nove">
                     <label for="vg2">vG2</label>
-                    <input type="number" id="vg2" name="vg2" step="0.01" <?= $id_spec == 3 ? 'required' : '' ?> value="<?= (float)$zaznam['vg2'] ?? '' ?>">
+                    <input type="number" id="vg2" name="vg2" step="0.01" <?= $id_spec ?? 0 == 3 ? 'required' : '' ?> value="<?= (float)$zaznam['vg2'] ?? '' ?>">
                     <span class="jednotka">ot/min</span>
                 </div>
                 <div class="radek nove">
@@ -597,6 +581,15 @@
             text-align: center;
             margin-top: 20px;
             color: #2c3e50;
+        }
+        h2::after {
+            content: "";
+            display: block;
+            width: 25%;
+            height: 3px; 
+            background: #d40000; 
+            margin-top: 5px;
+            border-radius: 2px;
         }
         textarea {
             width: 100%;

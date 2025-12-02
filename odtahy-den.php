@@ -39,14 +39,6 @@
     }
     if ($admin) 
         $_SESSION['admin'] = true;
-
-    $sql = "SELECT s.id_schval FROM Schvalovani as s WHERE s.id_schval = ?;";
-    $result = sqlsrv_query($conn, $sql, $params);
-    if ($result === FALSE)
-        die(print_r(sqlsrv_errors(), true));
-
-    $schval = sqlsrv_has_rows($result);
-    sqlsrv_free_stmt($result);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -101,12 +93,10 @@
         <?php for($i=0; $i < 3; $i++): ?>
         <table>
             <thead>
-                <tr>
-                    <th></th>
-                    <th><?= $i == 0 ? 'ranní' : ($i == 1 ? 'odpolední' : 'noční') ?></th>
-                    <th><a href="">Tisk (blokovaná výroba)</a></th>
-                    <th></th>
-                </tr>
+                <tr><th class="tabDat"></th></tr>
+                <tr><th><?= $i == 0 ? 'ranní' : ($i == 1 ? 'odpolední' : 'noční') ?></th></tr>
+                <tr><th><a href="">Tisk (blokovaná výroba)</a></th></tr>
+                <tr><th></th></tr>
             </thead>
             <tbody>
 
@@ -118,11 +108,15 @@
         <img src="Indorama.png" width="200px">
     </div>
     <style>
+        th{
+            border: #5d99a3 1px solid
+        }
         .setting{
             justify-content: space-around;
         }
         .naviny{
             display: flex;
+            justify-content: space-evenly;
         }
         .footer{
             display: none;

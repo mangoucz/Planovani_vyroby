@@ -274,6 +274,10 @@
             echo json_encode(["success" => true, "message" => "Výrobek byl úspěšně přiřazen."]);
             exit;
         }
+        elseif (isset($_POST['novyTyden'])){
+            $stav = $_POST['stav_stroju'];
+            $pondeli = $_POST['pondeli'];
+        }
         else{
             echo json_encode([
                 "success" => false,

@@ -132,8 +132,7 @@
             }
             $sql = "SELECT
                         CONCAT(z.jmeno, ' ', z.prijmeni) AS jmeno,
-                        z.funkce,
-                        z.uziv_jmeno
+                        z.funkce
                     FROM Zamestnanci AS z
                     WHERE z.id_zam = ?;";
             $params = [$uziv];
@@ -146,21 +145,6 @@
 
             $jmeno = $zam['jmeno'];
             $funkce = $zam['funkce'];
-            $uziv_jmeno = $zam['uziv_jmeno'];
-
-            switch ($uziv_jmeno) {
-                case 'admin':
-                    $admin = true;
-                    break;
-                case 'kucera':
-                    $admin = true;
-                    break;
-                default:
-                    $admin = false;
-                    break;
-            }
-            if ($admin) 
-                $_SESSION['admin'] = true;
         }
     }
 

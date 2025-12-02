@@ -128,6 +128,45 @@
             ]);
             exit;
         }
+        elseif(isset($_POST['getTyden'])){
+            $sql = "SELECT id_stav, CONCAT(zkratka, ' - ', nazev) as stav from Stav_stroje;";
+            $result = sqlsrv_query($conn, $sql);
+            if ($result === FALSE) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Chyba SQL dotazu pro SELECT stavů strojů!",
+                    "error" => sqlsrv_errors()
+                ]);
+                exit;
+            }
+            $stavy = [];
+            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                $stavy[] = $row;
+            }
+            sqlsrv_free_stmt($result);
+
+            $sql = "SELECT MAX(konec) as posledni from Naviny;";
+            $result = sqlsrv_query($conn, $sql);
+            if ($result === FALSE) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Chyba SQL dotazu pro SELECT posledního týdne!",
+                    "error" => sqlsrv_errors()
+                ]);
+                exit;
+            }
+            $posledni = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)['posledni']->format("Y-m-d");
+            sqlsrv_free_stmt($result);
+
+            echo json_encode([
+                "success" => true,
+                "data" => [
+                    "stavy" => $stavy,
+                    "posledni" => $posledni
+                ]
+            ]);
+            exit;
+        }
         else {
             echo json_encode(["success" => false, "message" => "Chybí ID specifikace"]);
             exit;
