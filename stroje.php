@@ -75,7 +75,7 @@
             JOIN Naviny AS n ON st.id_stroj = n.id_stroj
             JOIN Specifikace AS s ON n.id_spec = s.id_spec
             JOIN Spec_stare AS ss ON s.id_spec = ss.id_spec
-            WHERE n.zacatek <= GETDATE()-30 AND n.konec > GETDATE()-30 AND n.stav_stroje = 1
+            WHERE n.zacatek <= GETDATE()-50 AND n.konec > GETDATE()-50 AND n.stav_stroje = 1
 
             UNION ALL
 
@@ -88,7 +88,7 @@
             JOIN Naviny AS n ON st.id_stroj = n.id_stroj
             JOIN Specifikace AS s ON n.id_spec = s.id_spec
             JOIN Spec_barmag AS sb ON s.id_spec = sb.id_spec
-            WHERE n.zacatek <= GETDATE()-30 AND n.konec > GETDATE()-30 AND n.stav_stroje = 1
+            WHERE n.zacatek <= GETDATE()-50 AND n.konec > GETDATE()-50 AND n.stav_stroje = 1
 
             UNION ALL
 
@@ -101,7 +101,7 @@
             JOIN Naviny AS n ON st.id_stroj = n.id_stroj
             JOIN Specifikace AS s ON n.id_spec = s.id_spec
             JOIN Spec_nove AS sn ON s.id_spec = sn.id_spec
-            WHERE n.zacatek <= GETDATE()-30 AND n.konec > GETDATE()-30 AND n.stav_stroje = 1
+            WHERE n.zacatek <= GETDATE()-50 AND n.konec > GETDATE()-50 AND n.stav_stroje = 1
             ORDER BY LEFT(st.nazev, 1), TRY_CAST(SUBSTRING(st.nazev, 2, LEN(st.nazev)) AS INT);";
     $result = sqlsrv_query($conn, $sql);
     if ($result === FALSE)
