@@ -24,83 +24,13 @@
 
     $jmeno = $zaznam['jmeno'];
     $funkce = $zaznam['funkce'];
-    $uziv_jmeno = $zaznam['uziv_jmeno'];
-
-    switch ($uziv_jmeno) {
-        case 'admin':
-            $admin = true;
-            break;
-        case 'kucera':
-            $admin = true;
-            break;
-        default:
-            $admin = false;
-            break;
-    }
-    if ($admin) 
-        $_SESSION['admin'] = true;
-
-    // nastavení hodnot pro ozubená kola která mají neměnný počet zubů
-    $z3 = 19;
-    $z4 = 28;
-    $z25 = 10;
-    $z26 = 30;
-    $z33 = 10;
-    $z34 = 30;
-    $z38 = 10;
-    $z39 = 30;
-    $z40 = 10;
-    $z41 = 30;
-    $z42 = 22;
-    $z43 = 44;
-    $z44 = 22;
-    $z45 = 44;
-    $z46 = 29;
-    $z47 = 58;
-    $z48 = 10;
-    $z49 = 30;
-    $z52 = 18;
-    $z53 = 18;
-    $z54 = 21;
-    $z55 = 14;
-    $z58 = 21;
-    $z59 = 14;
+    $admin = $_SESSION['admin'];
 
     $sql = "SELECT 
-                LEFT(st.nazev, 1) as nazev_L, TRY_CAST(SUBSTRING(st.nazev, 2, LEN(st.nazev)) AS INT) as nazev_p, st.id_typ, s.titr, s.titr_skup, s.c_spec, n.doba, n.konec, 
-                ss.hnaci_motor, ss.kotouc1, ss.kotouc2, ss.z21, ss.z22, ss.z23, ss.z24, 
-                s.korekce + 1 as korekce, s.cerpadlo, s.pocet_mist,
-                id_typ AS typ_stroje
+                LEFT(st.nazev, 1) as nazev_L, TRY_CAST(SUBSTRING(st.nazev, 2, LEN(st.nazev)) AS TINYINT) as nazev_p, st.id_typ, s.titr, s.titr_skup, s.c_spec, s.spotreba, n.doba, n.konec, id_typ AS typ_stroje
             FROM Stroje AS st
             JOIN Naviny AS n ON st.id_stroj = n.id_stroj
             JOIN Specifikace AS s ON n.id_spec = s.id_spec
-            JOIN Spec_stare AS ss ON s.id_spec = ss.id_spec
-            WHERE n.zacatek <= GETDATE()-50 AND n.konec > GETDATE()-50 AND n.stav_stroje = 1
-
-            UNION ALL
-
-            SELECT 
-                LEFT(st.nazev, 1) as nazev_L, TRY_CAST(SUBSTRING(st.nazev, 2, LEN(st.nazev)) AS INT) as nazev_p, st.id_typ, s.titr, s.titr_skup, s.c_spec, n.doba, n.konec, 
-                sb.hnaci_motor, sb.kotouc1, sb.kotouc2, sb.z21, sb.z22, sb.z23, sb.z24, 
-                s.korekce + 1 as korekce, s.cerpadlo, s.pocet_mist,
-                id_typ AS typ_stroje
-            FROM Stroje AS st
-            JOIN Naviny AS n ON st.id_stroj = n.id_stroj
-            JOIN Specifikace AS s ON n.id_spec = s.id_spec
-            JOIN Spec_barmag AS sb ON s.id_spec = sb.id_spec
-            WHERE n.zacatek <= GETDATE()-50 AND n.konec > GETDATE()-50 AND n.stav_stroje = 1
-
-            UNION ALL
-
-            SELECT 
-                LEFT(st.nazev, 1) as nazev_L, TRY_CAST(SUBSTRING(st.nazev, 2, LEN(st.nazev)) AS INT) as nazev_p, st.id_typ, s.titr, s.titr_skup, s.c_spec, n.doba, n.konec, 
-                sn.vg2, sn.faktor, NULL AS kotouc2, NULL AS z21, NULL AS z22, NULL AS z23, NULL AS z24,
-                s.korekce + 1 as korekce, s.cerpadlo, s.pocet_mist,
-                id_typ AS typ_stroje
-            FROM Stroje AS st
-            JOIN Naviny AS n ON st.id_stroj = n.id_stroj
-            JOIN Specifikace AS s ON n.id_spec = s.id_spec
-            JOIN Spec_nove AS sn ON s.id_spec = sn.id_spec
             WHERE n.zacatek <= GETDATE()-50 AND n.konec > GETDATE()-50 AND n.stav_stroje = 1
             ORDER BY LEFT(st.nazev, 1), TRY_CAST(SUBSTRING(st.nazev, 2, LEN(st.nazev)) AS INT);";
     $result = sqlsrv_query($conn, $sql);
@@ -108,46 +38,7 @@
         die(print_r(sqlsrv_errors(), true));
     $stroje = [];
     while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-        if($zaznam['typ_stroje'] == 1){
-            //stare
-            $hnacimotor = $zaznam['hnaci_motor'];
-            $kotouc1 = $zaznam['kotouc1'];
-            $kotouc2 = $zaznam['kotouc2'];
-            $z21 = $zaznam['z21'];
-            $z22 = $zaznam['z22'];
-            $z23 = $zaznam['z23'];
-            $z24 = $zaznam['z24'];
-            $korekce = $zaznam['korekce'];
-            $cerpadlo = $zaznam['cerpadlo'];
-            $pocetmist = $zaznam['pocet_mist'];
-
-            $spotreba = $hnacimotor * $kotouc1 / $kotouc2 * $z3 / $z4 * $z21 / $z22 * $z23 / $z24 * $z40 / $z41 * $z42 / $z43 * $z44 / $z45 * $z46 / $z47 * $korekce * $cerpadlo * 60 / 1000 * $pocetmist;
-        }
-        elseif($zaznam['typ_stroje'] == 2){
-            //barmag
-            $hnacimotor = $zaznam['hnaci_motor'];
-            $kotouc1 = $zaznam['kotouc1'];
-            $kotouc2 = $zaznam['kotouc2'];
-            $z21 = $zaznam['z21'];
-            $z22 = $zaznam['z22'];
-            $z23 = $zaznam['z23'];
-            $z24 = $zaznam['z24'];
-            $korekce = $zaznam['korekce'];
-            $cerpadlo = $zaznam['cerpadlo'];
-            $pocetmist = $zaznam['pocet_mist'];
-
-            $spotreba = $hnacimotor * $kotouc1 / $kotouc2 * $z3 / $z4 * $z21 / $z22 * $z23 / $z24 * $z40 / $z41 * $z42 / $z43 * $z44 / $z45 * $z46 / $z47 * $korekce * $cerpadlo * 60 / 1000 * $pocetmist;
-        }
-        else{
-            //nove
-            $vg2 = $zaznam['hnaci_motor'];
-            $titr = $zaznam['titr'];
-            $korekce = $zaznam['korekce'];
-            $pocetmist = $zaznam['pocet_mist'];
-            $faktor = $zaznam['kotouc1'];
-
-            $spotreba = $vg2 * 60 / 10000 * $titr / 1000 / $faktor * $korekce * $pocetmist;
-        }
+        $spotreba = $zaznam['spotreba'];
         $rychlost_hod = $spotreba * 0.08674 * 0.97;
         $stroje[] = [
             'nazev' => $zaznam['nazev_L'] . $zaznam['nazev_p'],
@@ -195,9 +86,14 @@
         </div>
     </div>
     <div class="menu">
+        <?php 
+            $d = new DateTime();
+            $rozdil = $d->format('N')-1;              
+            $d->modify("-$rozdil days");
+       ?>
         <ul>
-            <li><a href="odtahy-tyden.php">Odtahy - týden</a></li>
-            <li><a href="odtahy-den.php">Odtahy - den</a></li>
+            <li><a href="odtahy-tyden.php?date=<?= date_format($d, "Y-m-d") ?>">Odtahy - týden</a></li>
+            <li><a href="odtahy-den.php?date=<?= date_format(new DateTime(), "Y-m-d") ?>">Odtahy - den</a></li>
             <li><a href="specifikace.php">Specifikace</a></li>
             <li><a href="stroje.php" class="active">Stroje</a></li>
             <?php if($admin): ?><li><a href="administrace.php">Administrace</a></li><?php endif; ?>

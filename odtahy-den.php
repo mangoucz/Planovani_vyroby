@@ -6,6 +6,17 @@
         header("Location: login.php");
         exit();    
     }
+
+    try {
+        $date = new DateTime($_GET['date'] ?? null);
+    } catch (Exception $e) {
+        $date = new DateTime();
+    }
+    if (!isset($_GET['date']) || $_GET['date'] !== $date->format("Y-m-d")) {
+        header("Location: odtahy-den.php?date=" . $date->format("Y-m-d"));
+        exit;
+    }    
+
     require_once 'server.php';
 
     $sql = "SELECT
@@ -24,21 +35,46 @@
 
     $jmeno = $zaznam['jmeno'];
     $funkce = $zaznam['funkce'];
-    $uziv_jmeno = $zaznam['uziv_jmeno'];
+    $admin = $_SESSION['admin'];
+    $od = $date->format("Y-m-d") . " 05:45";
+    $date->modify("+1 day");
+    $do = $date->format("Y-m-d") . " 05:35";
 
-    switch ($uziv_jmeno) {
-        case 'admin':
-            $admin = true;
-            break;
-        case 'kucera':
-            $admin = true;
-            break;
-        default:
-            $admin = false;
-            break;
+    $sql = "SELECT * FROM Stav_stroje;";
+    $result = sqlsrv_query($conn, $sql);
+    if ($result === FALSE)
+        die(print_r(sqlsrv_errors(), true));
+    $stavy = [];
+    while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+        $stavy[] = $zaznam;
     }
-    if ($admin) 
-        $_SESSION['admin'] = true;
+    sqlsrv_free_stmt($result);
+
+    //pocet sloupců
+    $sql = "SELECT DISTINCT doba FROM Naviny as n WHERE ? <= n.konec AND n.konec <= ? AND n.stav_stroje = ? ORDER BY doba;";
+    $params = [$od, $do, 1];
+    $result = sqlsrv_query($conn, $sql, $params);
+    if ($result === FALSE)
+        die(print_r(sqlsrv_errors(), true));
+    $doby = [];
+    while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+        $doby[] = $zaznam['doba'];
+    }
+    $pocetSloupcu = count($doby);
+
+    $sql = "SELECT sp.titr_skup, s.nazev, n.konec, n.doba, n.stav_stroje
+            FROM (Specifikace as sp JOIN Naviny as n ON sp.id_spec = n.id_spec) JOIN Stroje as s ON n.id_stroj = s.id_stroj
+            WHERE ? <= n.konec AND n.konec <= ? AND stav_stroje = ? 
+            ORDER BY n.konec, n.doba;";
+    $params = [$od, $do, 1];
+    $result = sqlsrv_query($conn, $sql, $params);
+    if ($result === FALSE)
+        die(print_r(sqlsrv_errors(), true));
+    $naviny = [];
+    while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+        $naviny[] = $zaznam;
+    }
+    $cas = new DateTime('05:45');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,7 +107,12 @@
     </div>
     <div class="menu">
         <ul>
-            <li><a href="odtahy-tyden.php">Odtahy - týden</a></li>
+            <?php 
+                $d = new DateTime();
+                $rozdil = $d->format('N')-1;              
+                $d->modify("-$rozdil days");
+            ?>
+            <li><a href="odtahy-tyden.php?date=<?= date_format($d, "Y-m-d") ?>">Odtahy - týden</a></li>
             <li><a href="odtahy-den.php" class="active">Odtahy - den</a></li>
             <li><a href="specifikace.php">Specifikace</a></li>
             <li><a href="stroje.php">Stroje</a></li>
@@ -90,40 +131,143 @@
         <iframe id="frame" name="printFrame" style="display: none;"></iframe>
     </div>
     <div class="naviny">
-        <?php for($i=0; $i < 3; $i++): ?>
-        <table>
-            <thead>
-                <tr><th class="tabDat"></th></tr>
-                <tr><th><?= $i == 0 ? 'ranní' : ($i == 1 ? 'odpolední' : 'noční') ?></th></tr>
-                <tr><th><a href="">Tisk (blokovaná výroba)</a></th></tr>
-                <tr><th></th></tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
-        <?php endfor; ?>
+        <?php if ($pocetSloupcu != 0): ?>
+            <?php for($i=0; $i < 3; $i++): //počet tabulek?>
+                <table>
+                    <thead>
+                        <tr><th rowspan="4"></th><th colspan="<?= $pocetSloupcu ?>" class="tabDat"></th></tr>
+                        <tr><th colspan="<?= $pocetSloupcu ?>"><?= $i == 0 ? 'ranní' : ($i == 1 ? 'odpolední' : 'noční') ?></th></tr>
+                        <tr><th colspan="<?= $pocetSloupcu ?>"><a href="">Tisk (blokovaná výroba)</a></th></tr>
+                        <tr>
+                            <?php for($j=0; $j<$pocetSloupcu; $j++) : ?>
+                                <th><?= $doby[$j]->format("H:i") ?></th>
+                            <?php endfor; ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php for($j=0; $j<48; $j++) : //počet řádků?>
+                            <tr>
+                                <td><?= $cas->format("H:i") ?></td>
+                                <?php for($k=0; $k < $pocetSloupcu; $k++) : //počet sloupců ?>
+                                    <?php // hledáme navin, který odpovídá tomuto řádku a sloupci
+                                        $obsah = "";
+                                        for($l=0; $l < count($naviny); $l++) {
+                                            if ($naviny[$l]['doba']->format("H:i") == $doby[$k]->format("H:i") && $naviny[$l]['konec']->format("H:i") == $cas->format("H:i")) {
+                                                $obsah = $naviny[$l]['nazev'];
+                                                break;
+                                            }
+                                        }
+                                    ?>
+                                    <td><?= $obsah ?></td>
+                                <?php endfor; ?>
+                                <?php $cas->modify("+10 minutes"); ?>
+                            </tr>
+                        <?php endfor ?>
+                    </tbody>
+                </table>
+            <?php endfor; ?>
+        <?php else: ?>
+            <div class='no-data'>Na zadaný den nejsou naplánovány žádné odtahy.</div>        
+        <?php endif; ?>
     </div>
     <div class="footer">
         <img src="Indorama.png" width="200px">
     </div>
     <style>
-        th{
-            border: #5d99a3 1px solid
+        .naviny {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 10px;
+            align-items: flex-start;
         }
+        .naviny table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 90vw;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+            font-size: 14px;
+            table-layout: fixed; 
+        }
+        .naviny thead{
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        .naviny thead th {
+            background: #f5f5f5;
+            padding: 3px;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+        }
+        .naviny tbody{
+            display: block;
+            max-height: 600px;   /* uprav dle výšky okna */
+            overflow-y: auto;    /* jen vertikální scroll */
+            overflow-x: hidden;  /* žádný horizontální posuvník */
+            width: 100%;
+        }
+        .naviny tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;    /* důležité pro zarovnání sloupců */
+        }
+        tbody td:first-child {
+            font-weight: bold;
+            background: #fafafa;
+            border-right: 1px solid #ccc;
+        }
+        .naviny td, .naviny th {
+            border: 1px solid #e0e0e0;
+            padding: 2px 3px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .naviny td:not(:first-child):not(:empty), .naviny tr:last-child th {
+            background: #d9f3ff;
+            font-weight: 600;
+        }
+        .naviny tr:last-child th{
+            border-bottom: 1px solid #4b7c85;
+        }
+        .naviny thead a {
+            color: #0055aa;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .naviny thead a:hover {
+            text-decoration: underline;
+        }
+        .naviny tbody::-webkit-scrollbar {
+            width: 1px;
+        }
+         
+        .no-data {
+            padding: 15px;
+            background: #ffefef;
+            border: 1px solid #ffbcbc;
+            color: #900;
+            margin: 15px auto;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
         .setting{
             justify-content: space-around;
-        }
-        .naviny{
-            display: flex;
-            justify-content: space-evenly;
-        }
+        }        
         .footer{
             display: none;
         }
         
         @media (max-width: 660px) {
-            
+            .naviny {
+                flex-direction: column;
+                gap: 30px;
+                margin-bottom: 5vh;
+            }
         }
     </style>
 </body>

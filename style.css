@@ -116,11 +116,14 @@ li {
     font-weight: 500 !important;
     padding-bottom: 5px !important;
     font-size: 0.9em !important;
+    border-bottom: #ddd 1px solid !important;
 }
 
 /* Č. týdnu */
-.ui-datepicker-calendar td {
+.ui-datepicker-calendar td:first-child, .ui-datepicker-calendar th:first-child {
     text-align: center !important;
+    font-weight: bold !important;
+    border-right: #ddd 1px solid !important;
     padding: 0 !important;
 }
 

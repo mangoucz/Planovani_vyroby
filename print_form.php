@@ -145,6 +145,7 @@
 
             $jmeno = $zam['jmeno'];
             $funkce = $zam['funkce'];
+            $admin = $_SESSION['admin'];
         }
     }
 

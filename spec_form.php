@@ -53,7 +53,8 @@
 
     $sql = "SELECT
                 CONCAT(z.jmeno, ' ', z.prijmeni) AS jmeno,
-                z.funkce
+                z.funkce,
+                z.uziv_jmeno
             FROM Zamestnanci AS z
             WHERE z.id_zam = ?;";
     $params = [$uziv];
@@ -66,7 +67,8 @@
 
     $jmeno = $zam['jmeno'];
     $funkce = $zam['funkce'];
-
+    $admin = $_SESSION['admin'];
+   
     $sql = "SELECT * FROM Typ_stroje;";
     $result = sqlsrv_query($conn, $sql);
     if ($result === FALSE)
@@ -225,7 +227,7 @@
                 </div>
                 <div class="radek nove">
                     <label for="vg2">vG2</label>
-                    <input type="number" id="vg2" name="vg2" step="0.01" <?= $id_spec ?? 0 == 3 ? 'required' : '' ?> value="<?= (float)$zaznam['vg2'] ?? '' ?>">
+                    <input type="number" id="vg2" name="vg2" step="0.01" <?= $typ_stroje ?? 0 == 3 ? 'required' : '' ?> value="<?= (float)$zaznam['vg2'] ?? '' ?>">
                     <span class="jednotka">ot/min</span>
                 </div>
                 <div class="radek nove">
@@ -582,7 +584,7 @@
             margin-top: 20px;
             color: #2c3e50;
         }
-        h2::after {
+        .modal h2::after {
             content: "";
             display: block;
             width: 25%;

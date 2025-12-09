@@ -788,16 +788,8 @@ $(document).ready(function() {
         }
     }
     if(window.location.href.includes("odtahy-tyden.php")){
-        if(!window.location.href.includes("odtahy-tyden.php?date=")){
-            const date = new Date();
-            const rozdil = date.getDay() == 0 ? 6 : date.getDay() - 1;
-            date.setDate(date.getDate() - rozdil);
-            window.location.href = `odtahy-tyden.php?date=${DateToString(date)}`;
-        }
-        else{
-            const param = new URLSearchParams(window.location.search).get('date');
-            $("#tydenOdtahu").val(PCToCZ(param));
-        }
+        const param = new URLSearchParams(window.location.search).get('date');
+        $("#tydenOdtahu").val(PCToCZ(param));
     }
     if (window.location.href.includes("administrace.php")) {
         $(".strojContent, .specContent").each(function () {

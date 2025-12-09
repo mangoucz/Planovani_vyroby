@@ -55,21 +55,7 @@
 
     $jmeno = $zaznam['jmeno'];
     $funkce = $zaznam['funkce'];
-    $uziv_jmeno = $zaznam['uziv_jmeno'];
-
-    switch ($uziv_jmeno) {
-        case 'admin':
-            $admin = true;
-            break;
-        case 'kucera':
-            $admin = true;
-            break;
-        default:
-            $admin = false;
-            break;
-    }
-    if ($admin) 
-        $_SESSION['admin'] = true;
+    $admin = $_SESSION['admin'];
 
     $sql = "SELECT * FROM Typ_stroje;";
     $result = sqlsrv_query($conn, $sql);
@@ -124,9 +110,14 @@
         </div>
     </div>
     <div class="menu">
+        <?php 
+            $d = new DateTime();
+            $rozdil = $d->format('N')-1;              
+            $d->modify("-$rozdil days");
+        ?>
         <ul>
-            <li><a href="odtahy-tyden.php">Odtahy - týden</a></li>
-            <li><a href="odtahy-den.php">Odtahy - den</a></li>
+            <li><a href="odtahy-tyden.php?date=<?= date_format($d, "Y-m-d") ?>">Odtahy - týden</a></li>
+            <li><a href="odtahy-den.php?date=<?= date_format(new DateTime(), "Y-m-d") ?>">Odtahy - den</a></li>
             <li><a href="specifikace.php" class="active">Specifikace</a></li>
             <li><a href="stroje.php">Stroje</a></li>
             <?php if($admin): ?><li><a href="administrace.php">Administrace</a></li><?php endif; ?>
