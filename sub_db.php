@@ -92,13 +92,16 @@
             $z2t = $_POST['z2t'] ?? null;
             $z1sp = $_POST['z1sp'] ?? null;
             $z2sp = $_POST['z2sp'] ?? null;
-    
+
+            $spotreba = $id_typ_stroje == 3 ? (($vg2 * 60.0 / 10000.0 * $titr / 1000.0) / $faktor * (1.0 + $korekce / 100.0) * $pocet_mist) : 
+                                                ($hnaci_motor * 1.0 * $kotouc1 * 1.0 / $kotouc2 * 19.0 / 28.0 * $z21 * 1.0 / $z22 * $z23 * 1.0 / $z24 * 10.0 / 30.0 * 22.0 / 44.0 * 22.0 / 44.0 * 29.0 / 58.0 * ($korekce + 1) * $cerpadlo * 1.0 * 60.0 / 1000.0 * $pocet_mist * 1.0);
+
             //EDIT
-            if ($id_spec != null) { //id_zam který? + c_spec lze měnit?
+            if ($id_spec != null) { 
                 $sql = "UPDATE Specifikace 
-                        SET c_spec = ?, id_typ_stroje = ?, titr = ?, titr_skup = ?, poznamka = ?, upraveno = GETDATE(), id_zam = ?, galety = ?, praci_valce = ?, susici_valec = ?, cerpadlo = ?, pocet_mist = ?, korekce = ? 
+                        SET c_spec = ?, id_typ_stroje = ?, titr = ?, titr_skup = ?, poznamka = ?, upraveno = GETDATE(), upravil = ?, galety = ?, praci_valce = ?, susici_valec = ?, cerpadlo = ?, pocet_mist = ?, korekce = ?, spotreba = ? 
                         WHERE id_spec = ?;";
-                $params = [$c_spec, $id_typ_stroje, $titr, $titr_skup, $poznamka, $uziv, $galety, $praci_valce, $susici_valec, $cerpadlo, $pocet_mist, $korekce, $id_spec];
+                $params = [$c_spec, $id_typ_stroje, $titr, $titr_skup, $poznamka, $uziv, $galety, $praci_valce, $susici_valec, $cerpadlo, $pocet_mist, $korekce, $spotreba, $id_spec];
                 $result = sqlsrv_query($conn, $sql, $params);
                 if ($result === false) {
                     echo json_encode([

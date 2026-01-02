@@ -297,11 +297,7 @@ $(document).ready(function() {
             closeModal();
         }
     });
-    
-    // $(document).on('input', '#riziko', function () {
-    //     $("#rizikoValue").text($(this).val());
-    // });
-    
+        
     $(document).on('change', '.time', function() {
         const value = $(this).val();
         
@@ -330,10 +326,10 @@ $(document).ready(function() {
             dataType: "json",
             success: function(response) {
                 if (response.success) {
+                    $("#selectVyr").append("<option value='0'" + (id_vyr == 0 ? 'selected' : '') + ">-- Nevybrán --</option>");
                     response.data.forEach(function(vyrobek) {
                         $("#selectVyr").append("<option value='" + vyrobek.id_vyr + "'" + (vyrobek.id_vyr == id_vyr ? ' selected' : '') + ">" + vyrobek.vyrobek + "</option>");
                     }); 
-                    $("#selectVyr").append("<option value='0'" + (id_vyr == 0 ? 'selected' : '') + ">-- Nevybrán --</option>");
                     $("#selectVyr").focus();
                 } else {
                     alert("Chyba při načítání výrobků: " + (response.message || "Neznámá chyba"));
@@ -352,11 +348,11 @@ $(document).ready(function() {
             type: "POST",
             data: { id_spec: id_spec, id_vyr: selectedId },
             dataType: "json",
-            success: function(updateResponse) {
-                if (updateResponse.success) 
+            success: function(response) {
+                if (response.success) 
                     location.reload();
                 else 
-                    alert("Chyba při aktualizaci výrobku: " + (updateResponse.message || "Neznámá chyba"));
+                    alert("Chyba při aktualizaci výrobku: " + (response.message || "Neznámá chyba"));
             },
             error: function() {
                 alert("Chyba komunikace se serverem při aktualizaci výrobku!");

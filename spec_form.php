@@ -48,7 +48,31 @@
                 die(print_r(sqlsrv_errors(), true));
             $zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
             sqlsrv_free_stmt($result);
+            $c_spec = $zaznam['c_spec'];
         }
+    }
+    else{
+        $id_typ_stroje = isset($_GET['stroj']) ? $_GET['stroj'] : 1;
+        $sql = "";
+        switch ($id_typ_stroje) {
+            case '1':
+                $sql = "SELECT TOP 1 * FROM Specifikace AS s RIGHT JOIN Spec_stare AS st ON s.id_spec = st.id_spec ORDER BY s.vytvoreno DESC;";
+                break;
+            case '2':
+                $sql = "SELECT TOP 1 * FROM Specifikace AS s RIGHT JOIN Spec_barmag AS sb ON s.id_spec = sb.id_spec ORDER BY s.vytvoreno DESC;";
+                break;
+            case '3':
+                $sql = "SELECT TOP 1 * FROM Specifikace AS s RIGHT JOIN Spec_nove AS sn ON s.id_spec = sn.id_spec ORDER BY s.vytvoreno DESC;";
+                break;
+            default:
+                break;
+        }
+        $result = sqlsrv_query($conn, $sql);
+        if ($result === FALSE)
+            die(print_r(sqlsrv_errors(), true));
+        $zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
+        sqlsrv_free_stmt($result);
+        $c_spec = GenCisSpec($conn);
     }
 
     $sql = "SELECT
@@ -132,7 +156,7 @@
             <h3>Specifikace</h3>
             <div class="radek">
                 <label for="c_spec">Číslo specifikace</label>
-                <input type="number" id="c_spec" name="c_spec" required value="<?= isset($zaznam['c_spec']) ? $zaznam['c_spec'] : GenCisSpec($conn); ?>">
+                <input type="number" id="c_spec" name="c_spec" required readonly value="<?= $c_spec ?? '' ?>">
             </div>
             <div class="radek">
                 <label for="titr">Titr</label>
@@ -227,7 +251,7 @@
                 </div>
                 <div class="radek nove">
                     <label for="vg2">vG2</label>
-                    <input type="number" id="vg2" name="vg2" step="0.01" <?= $typ_stroje ?? 0 == 3 ? 'required' : '' ?> value="<?= (float)$zaznam['vg2'] ?? '' ?>">
+                    <input type="number" id="vg2" name="vg2" step="0.01" <?= ($typ_stroje ?? 0) == 3 ? 'required' : '' ?> value="<?= (float)$zaznam['vg2'] ?? '' ?>">
                     <span class="jednotka">ot/min</span>
                 </div>
                 <div class="radek nove">

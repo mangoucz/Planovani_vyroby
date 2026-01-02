@@ -24,7 +24,6 @@
                     $table = 'Spec_nove';
                     break;
                 default:
-                    $table = '';
                     break;
             }
             $sql = "DELETE FROM $table WHERE id_spec = ?;
@@ -65,18 +64,15 @@
     while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
         $typ_stroje[$zaznam['id_typ']] = $zaznam['nazev'];
     }
-    $id_stroje = isset($_GET['stroj']) ? $_GET['stroj'] : 0;
     sqlsrv_free_stmt($result);
-
+    
+    $id_stroje = isset($_GET['stroj']) ? $_GET['stroj'] : 0;
     $sql = "SELECT id_spec, s.id_vyr, c_spec, titr, titr_skup, s.id_typ_stroje, v.vyrobek, s.id_zam, CONCAT(z.jmeno, ' ', z.prijmeni) as vytvoril, vytvoreno 
             FROM (Specifikace as s LEFT JOIN Vyrobky as v ON s.id_vyr = v.id_vyr) LEFT JOIN Zamestnanci as z ON s.id_zam = z.id_zam 
             " . ($id_stroje != 0 ? "WHERE s.id_typ_stroje = ?" : "") . "
             ORDER BY c_spec;";
-    $params = $id_stroje != 0 ? [$id_stroje] : [];
-    if ($id_stroje != 0)
-        $result = sqlsrv_query($conn, $sql, $params);
-    else
-        $result = sqlsrv_query($conn, $sql);
+    $params = [$id_stroje];
+    $result = sqlsrv_query($conn, $sql, $params);
     if ($result === FALSE)
         die(print_r(sqlsrv_errors(), true));
 ?>
@@ -144,7 +140,7 @@
                 <th>Vytvořil</th>
                 <th>Vytvořeno</th>
                 <th>Výrobek</th>
-                <th>info</th>
+                <th>Více</th>
             </tr>
         </thead>
         <tbody id="body_spec">
@@ -179,7 +175,7 @@
                             <td data-label='Vytvořil' id='vytvoril'>$vytvoril</td>
                             <td data-label='Vytvořeno' id='vytvoreno'>$vytvoreno</td>
                             <td data-label='Výrobek' id='vyrobek'><span class='vyr' id='$id_vyr' data-id_spec='$id_spec'>$vyrobek</span></td>
-                            <td data-label='info' id='info'><img src='info.png' alt='Podrobnosti' class='info-icon link' id='$id_spec'></td>
+                            <td data-label='Více' id='info'><img src='info.png' alt='Podrobnosti' class='info-icon link' id='$id_spec'></td>
                         </tr>";
                 }
                 sqlsrv_free_stmt($result);

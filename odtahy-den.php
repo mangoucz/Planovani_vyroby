@@ -205,15 +205,15 @@
         }
         .naviny tbody{
             display: block;
-            max-height: 600px;   /* uprav dle výšky okna */
-            overflow-y: auto;    /* jen vertikální scroll */
-            overflow-x: hidden;  /* žádný horizontální posuvník */
+            max-height: 70vh;   
+            overflow-y: auto;    
+            overflow-x: hidden; 
             width: 100%;
         }
         .naviny tbody tr {
             display: table;
             width: 100%;
-            table-layout: fixed;    /* důležité pro zarovnání sloupců */
+            table-layout: fixed;    
         }
         tbody td:first-child {
             font-weight: bold;
