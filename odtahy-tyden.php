@@ -226,7 +226,7 @@
     <div class="footer">
         <img src="Indorama.png" width="200px">
     </div>
-    <div class="modal">
+    <div class="modal novy">
         <div class="modal-content">
             <div class="modal-header">
                 <span id="closeBtn" class="close">&times;</span>
@@ -244,6 +244,17 @@
             </div>
             <div class="footer">
 
+            </div>
+        </div>
+    </div>
+    <div class="modal alert">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeBtn" class="close">&times;</span>
+                <h2>Upozornění</h2>
+            </div>
+            <div class="modal-body">
+                <h3>Plán návinů pro následující tři týdny byl již vytvořen!</h3>
             </div>
         </div>
     </div>

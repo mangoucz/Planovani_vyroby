@@ -87,7 +87,11 @@ $(document).ready(function() {
         const year = date.getFullYear();
         return `${year}-${month}-${day}`;
     }
-    
+    function najdiPondeli(date) {
+        const rozdil = date.getDay() == 0 ? 6 : date.getDay() - 1;
+        date.setDate(date.getDate() - rozdil);
+        return date;
+    }
     function initializeDatepicker(selector) {
         $('.date').attr('autocomplete', 'off');
         
@@ -687,19 +691,25 @@ $(document).ready(function() {
             dataType: "json",
             success: function(response) {
                 if (response.success) {
-                    const date = new Date(response.data.posledni);
-                    const rozdil = date.getDay() == 0 ? 6 : date.getDay() - 1;
-                    date.setDate(date.getDate() - rozdil);
-                    $(".modal h3").text(PCToCZ(DateToString(date)) + " - ");
-                    $("#hiPondeli").val(DateToString(date));
-                    date.setDate(date.getDate() + 6);
-                    $(".modal h3").append(PCToCZ(DateToString(date)));
-                    
-                    $("#selectStav").html(`<option value="0">Beze změny</option>`);
-                    response.data.stavy.forEach(function(stavy) {
-                        $("#selectStav").append(`<option value="${stavy.id_stav}">${stavy.stav}</option>`)
-                    });
-                    $(".modal").fadeIn(200).css("display", "flex");
+                    let date = najdiPondeli(new Date(response.data.posledni));
+                    let zaTri_tydny = new Date();
+                    zaTri_tydny.setDate(zaTri_tydny.getDate() + 21);
+                    if (najdiPondeli(zaTri_tydny) <= date)
+                        $(".alert").fadeIn(200).css("display", "flex").delay(3000).fadeOut(200);
+                    else{
+                        date = date < najdiPondeli(new Date()) ? najdiPondeli(new Date()) : date;
+    
+                        $(".modal h3").text(PCToCZ(DateToString(date)) + " - ");
+                        $("#hiPondeli").val(DateToString(date));
+                        date.setDate(date.getDate() + 6);
+                        $(".modal h3").append(PCToCZ(DateToString(date)));
+                        
+                        $("#selectStav").html(`<option value="0">Beze změny</option>`);
+                        response.data.stavy.forEach(function(stavy) {
+                            $("#selectStav").append(`<option value="${stavy.id_stav}">${stavy.stav}</option>`)
+                        });
+                        $(".novy").fadeIn(200).css("display", "flex");
+                    }
                 } else {
                     alert("Chyba při načítání dat!");
                     alert(response.message);
