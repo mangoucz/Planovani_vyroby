@@ -242,9 +242,6 @@
                     <input type="submit" name="novyTyden" value="Vytvořit" class="defButt">
                 </form>
             </div>
-            <div class="footer">
-
-            </div>
         </div>
     </div>
     <div class="modal alert">

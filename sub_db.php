@@ -14,6 +14,9 @@
             return $c_spec = $zaznam + 1;   
         return $c_spec + 1;
     }
+    function GenSerie($konec) : int {
+        return (int)$konec->format('ymd');
+    }
     function inputCheck($input){
         return $input === "" ? $input = null : $input;
     }
@@ -279,7 +282,57 @@
         }
         elseif (isset($_POST['novyTyden'])){
             $stav = $_POST['stav_stroju'];
-            $pondeli = $_POST['pondeli'];
+            $pondeli = new DateTime($_POST['pondeli']);
+
+            $sql = "SELECT MAX(n.zacatek) as posledni FROM Naviny as n;";
+            $result = sqlsrv_query($conn, $sql);
+            if ($result === FALSE) 
+                die(print_r(sqlsrv_errors(), true));
+            $posledni = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)['posledni'];
+            sqlsrv_free_stmt($result);
+
+            $posl_zac_tydne = new DateTime($posledni->format('Y-m-d'));
+            if ($posl_zac_tydne->format('N') == 1) 
+                $posl_zac_tydne->modify('monday previous week'); //první den posledně nalánovaného týdne
+            else
+                $posl_zac_tydne = $posl_zac_tydne->modify('monday this week'); 
+
+            $posl_zac_tydne->modify('+5 hours 45 minutes');
+            $posl_konec_tydne = (clone $posl_zac_tydne)->modify('monday next week'); //poslední den posledně naplánovaného týdne 
+            $posl_konec_tydne->modify('+5 hours 35 minutes');
+
+            $sql = "SELECT n.id_stroj, n.serie, n.id_spec, n.zacatek, n.konec, n.doba, n.stav_stroje 
+                    FROM Naviny AS n
+                    JOIN (SELECT id_stroj, max(konec) as posledni 
+                        FROM Naviny as n
+                        WHERE n.zacatek >= ? AND n.konec <= ? 
+                        GROUP BY id_stroj) AS stroje
+                    ON n.id_stroj = stroje.id_stroj AND n.konec = stroje.posledni
+                    ORDER BY n.id_stroj;";
+            $params = [$posl_zac_tydne->format('Y-m-d H:i'), $posl_konec_tydne->format('Y-m-d H:i')];
+            $result = sqlsrv_query($conn, $sql, $params);
+            if ($result === FALSE) 
+                die(print_r(sqlsrv_errors(), true));
+            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                $novy_zacatek = $row['konec'];
+                $minuty = ((int)$row['doba']->format('H') * 60) + (int)$row['doba']->format('i');
+                while($novy_zacatek->format('o-W') != $pondeli->format('o-W')){
+                    $novy_zacatek->modify('+' . $minuty . ' minutes');
+                }
+                $novy_konec = (clone $novy_zacatek)->modify('+' . $minuty . ' minutes');
+                if($stav == 0)
+                    $stav = $row['stav_stroje'];
+                $serie = GenSerie($novy_konec);
+                //INSERT NOVY NAVIN
+                // $sql_insert = "INSERT INTO Naviny (id_stroj, serie, id_spec, zacatek, konec, doba, stav_stroje) 
+                //                VALUES (?, ?, ?, ?, ?, ?, ?);";
+                // $params_insert = [$row['id_stroj'], $row['serie'], $row['id_spec'], $novy_zacatek, $novy_konec, $row['doba'], $stav];
+                // $result_insert = sqlsrv_query($conn, $sql_insert, $params_insert);
+                // if ($result_insert === FALSE) 
+                //     die(print_r(sqlsrv_errors(), true));
+                // sqlsrv_free_stmt($result_insert);
+            }
+
         }
         else{
             echo json_encode([
