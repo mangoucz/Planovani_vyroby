@@ -5,6 +5,29 @@
 
         return $datum->format("d. m. Y");
     }
+    function dobaToColor(int $minuty, array $doba): string{
+        $min = $doba['min_doba']; 
+        $max = $doba['max_doba']; 
+
+        $minuty = max($min, min($max, $minuty));
+        $ratio = ($minuty - $min) / ($max - $min);
+
+        // HSL nastavení
+        $sat = 80;
+        $light = 65;
+
+        if ($ratio <= 0.5) {
+            // zelená (120) → žlutá (55)
+            $local = $ratio / 0.5;
+            $hue = 120 - (120 - 55) * $local;
+        } else {
+            // žlutá (55) → oranžová (30)
+            $local = ($ratio - 0.5) / 0.5;
+            $hue = 55 - (55 - 30) * $local;
+        }
+
+        return "hsl(" . round($hue) . ", {$sat}%, {$light}%)";
+    }
 
     session_start();
     if (isset($_SESSION['uziv']))
@@ -30,6 +53,8 @@
         exit;
     }    
     $cis_tydne = $date->format("W");
+    $od = (clone $date)->modify("+5 hours +45 minutes");
+    $do = (clone $date)->modify("+7 days +5 hours +35 minutes");
 
     require_once 'server.php';
 
@@ -66,7 +91,7 @@
         $_SESSION['admin'] = true;
 
     $sql = "SELECT DISTINCT titr_skup from Specifikace as s JOIN Naviny as n ON s.id_spec = n.id_spec where ? <= n.konec AND n.konec < ?;";
-    $params = ['2025-10-27', '2025-11-03'];
+    $params = [$od, $do];
     $result = sqlsrv_query($conn, $sql, $params);
     if ($result === FALSE)
         die(print_r(sqlsrv_errors(), true));
@@ -163,6 +188,17 @@
                 </tr>
             </thead>
             <tbody>
+                <?php
+                    $sql = "SELECT
+                                MIN(DATEDIFF(MINUTE, '00:00:00', doba)) AS min_doba,
+                                MAX(DATEDIFF(MINUTE, '00:00:00', doba)) AS max_doba
+                            FROM Naviny;";
+                    $result = sqlsrv_query($conn, $sql);
+                    if ($result === FALSE)
+                        die(print_r(sqlsrv_errors(), true));
+                    $doba = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
+                    sqlsrv_free_stmt($result);
+                ?>
                 <?php for ($i=0; $i<count($skup); $i++) : ?>
                     <tr><td colspan="28"></td></tr>
                     <tr>
@@ -177,7 +213,7 @@
                                 WHERE ? <= n.konec AND n.konec < ? AND titr_skup = ?
                                 GROUP BY id_stroj 
                                 ORDER BY 2;";
-                        $params = ['2025-10-27', '2025-11-03', $skup[$i]];
+                        $params = [$od, $do, $skup[$i]];
                         $result = sqlsrv_query($conn, $sql, $params);
                         if ($result === FALSE)
                             die(print_r(sqlsrv_errors(), true));
@@ -192,11 +228,11 @@
                         <?php
                             $stroj = $poradiStroju[$j]['id_stroj'];
     
-                            $sql = "SELECT n.id_nav, s.nazev, sp.c_spec, n.zacatek, n.konec, n.doba, n.stav_stroje
-                                    FROM (Specifikace as sp JOIN Naviny as n ON sp.id_spec = n.id_spec) JOIN Stroje as s ON n.id_stroj = s.id_stroj
+                            $sql = "SELECT n.id_nav, s.nazev, sp.c_spec, n.zacatek, n.konec, n.doba, n.stav_stroje, CONCAT(ss.zkratka, ' (', ss.nazev, ')') AS stav
+                                    FROM ((Specifikace as sp JOIN Naviny as n ON sp.id_spec = n.id_spec) JOIN Stroje as s ON n.id_stroj = s.id_stroj) JOIN Stav_stroje as ss ON n.stav_stroje = ss.id_stav
                                     WHERE ? <= n.konec AND n.konec < ? AND sp.titr_skup = ? AND s.id_stroj = ?
                                     ORDER BY n.konec;";
-                            $params = ['2025-10-27', '2025-11-03', $skup[$i], $stroj];
+                            $params = [$od, $do, $skup[$i], $stroj];
                             $result = sqlsrv_query($conn, $sql, $params);
                             if ($result === FALSE)
                                 die(print_r(sqlsrv_errors(), true));
@@ -205,13 +241,30 @@
                             while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                                 $naviny[] = $zaznam;
                             }
-                            //print_r($naviny);
                         ?>
                         <tr>
                             <td><?= $naviny[0]['nazev'] ?></td>
                             <?php for($k=0; $k<7; $k++) : ?>
+                                <?php $zacatek = (clone $date)->modify('+' . ($k) . ' day +5 hours +45 minutes'); ?>
                                 <?php for ($l=0; $l<3; $l++) : ?>
-                                    <td></td>
+                                    <?php 
+                                        if ($l != 0) 
+                                            $zacatek->modify('+8 hours');
+                                        $konec = (clone $zacatek)->modify('+7 hours +50 minutes');
+                                        $obsah = '';
+                                        $barva = 'white';
+                                        for($m=0; $m < count($naviny); $m++) {
+                                            if ($naviny[$m]['konec'] >= $zacatek && $naviny[$m]['konec'] <= $konec) {
+                                                $obsah = $naviny[$m]['konec']->format("H:i");
+                                                $title = "Specifikace: " . $naviny[$m]['c_spec'] . ",\nZačátek: " . $naviny[$m]['zacatek']->format("H:i") . ",\nDoba: " . $naviny[$m]['doba']->format("H:i") . ",\nStav: " . $naviny[$m]['stav'];
+                                                $minuty = ((int)$naviny[$m]['doba']->format('H') * 60) + (int)$naviny[$m]['doba']->format('i');
+                                                $barva = dobaToColor($minuty, $doba);
+                                                $class = $naviny[$m]['stav_stroje'] == 4 ? 'mimo' : '';
+                                                break;
+                                            }   
+                                        }
+                                    ?>
+                                    <td style="background-color: <?= $barva ?>" class="<?= $class ?>"><a href="" title="<?= $title ?>" class="<?= $class ?>"><?= $obsah ?></a></td>
                                 <?php endfor; ?>
                                 <?php if($k<6) : ?>
                                     <td></td>
@@ -300,6 +353,11 @@
         }
         #novyTydenForm{
             display: flex;
+        }
+        .mimo{
+            background-color: #fff !important;
+            color: #868686 !important;
+            text-decoration: line-through;
         }
         .footer{
             display: none;

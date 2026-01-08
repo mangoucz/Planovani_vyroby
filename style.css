@@ -197,7 +197,7 @@ li {
     border-radius: 4px !important;
     font-size: 14px !important;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
-    max-width: 120px !important;
+    max-width: 200px !important;
 }
 
 /* Tooltip arrow */
@@ -259,6 +259,8 @@ li {
     position: fixed;
     bottom: 0;
     width: 100%;
+    display: flex;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
 }
 
 .modal {
@@ -408,6 +410,9 @@ li {
     }
     .footer{
         display: flex !important;  
+    }
+    body {
+        padding-bottom: 75px;
     }
     .logo {
         display: none;

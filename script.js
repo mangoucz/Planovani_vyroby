@@ -144,7 +144,9 @@ $(document).ready(function() {
                 my: "center bottom-10",
                 at: "center top"
             },
-            content: $(this).attr("title"), 
+            content: function () {
+                return $(this).attr("title").replace(/\n/g, "<br>");
+            },
             show: {
                 effect: "fadeIn",
                 duration: 200
@@ -160,7 +162,7 @@ $(document).ready(function() {
     //initializeRange('#riziko', '#rizikoValue', '#rizikoInput');
     initializeTitle("input");
     initializeTitle("textarea");
-
+    initializeTitle("a");
 
     if($(".respons").css("display") == "none"){
         $(".respons input, .respons textarea").each(function() {

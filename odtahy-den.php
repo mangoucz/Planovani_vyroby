@@ -62,8 +62,8 @@
     }
     $pocetSloupcu = count($doby);
 
-    $sql = "SELECT sp.titr_skup, s.nazev, n.konec, n.doba, n.stav_stroje
-            FROM (Specifikace as sp JOIN Naviny as n ON sp.id_spec = n.id_spec) JOIN Stroje as s ON n.id_stroj = s.id_stroj
+    $sql = "SELECT sp.titr_skup, sp.c_spec, s.nazev, n.konec, n.doba, n.stav_stroje
+            FROM (Specifikace as sp JOIN Naviny as n ON sp.id_spec = n.id_spec) JOIN Stroje as s ON n.id_stroj = s.id_stroj JOIN Stav_stroje as ss ON ss.id_stav = n.stav_stroje
             WHERE ? <= n.konec AND n.konec <= ? AND stav_stroje = ? 
             ORDER BY n.konec, n.doba;";
     $params = [$od, $do, 1];
@@ -145,24 +145,27 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php for($j=0; $j<48; $j++) : //počet řádků?>
+                        <?php for($j=0; $j<48; $j++) : //počet řádků ?>
                             <tr>
                                 <td><?= $cas->format("H:i") ?></td>
                                 <?php for($k=0; $k < $pocetSloupcu; $k++) : //počet sloupců ?>
                                     <?php // hledáme navin, který odpovídá tomuto řádku a sloupci
                                         $obsah = "";
+                                        $barva = "#ffffff";
                                         for($l=0; $l < count($naviny); $l++) {
                                             if ($naviny[$l]['doba']->format("H:i") == $doby[$k]->format("H:i") && $naviny[$l]['konec']->format("H:i") == $cas->format("H:i")) {
                                                 $obsah = $naviny[$l]['nazev'];
+                                                $title = "skupina titrů: " . $naviny[$l]['titr_skup'] . ",\n specifikace: " . $naviny[$l]['c_spec'];
+                                                $barva = $naviny[$l]['stav_stroje'] == 1 ? "#d9f3ff" : "#ffd9d9";
                                                 break;
                                             }
                                         }
                                     ?>
-                                    <td><?= $obsah ?></td>
+                                    <td style="background-color: <?= $barva ?>"><a href="" title="<?= $title ?>"><?= $obsah ?></a></td>
                                 <?php endfor; ?>
                                 <?php $cas->modify("+10 minutes"); ?>
                             </tr>
-                        <?php endfor ?>
+                        <?php endfor; ?>
                     </tbody>
                 </table>
             <?php endfor; ?>
@@ -180,6 +183,8 @@
             gap: 20px;
             padding: 10px;
             align-items: flex-start;
+            width: 80vw;
+            margin: 0 auto;
         }
         .naviny table {
             border-collapse: collapse;
@@ -226,9 +231,19 @@
             text-align: center;
             vertical-align: middle;
         }
-        .naviny td:not(:first-child):not(:empty), .naviny tr:last-child th {
+        .naviny td:has(a:not(:empty)) {
             background: #d9f3ff;
             font-weight: 600;
+        }
+        .naviny td:has(a:not(:empty)):hover {
+            background: #a6e1ff;
+        }
+        .naviny td a {
+            color: #0055aa;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            height: 100%;
         }
         .naviny tr:last-child th{
             border-bottom: 1px solid #4b7c85;
