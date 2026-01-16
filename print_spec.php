@@ -148,7 +148,6 @@
             $admin = $_SESSION['admin'];
         }
     }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

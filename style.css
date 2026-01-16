@@ -252,6 +252,17 @@ li {
     width: 60vw;
 } 
 
+.no-data {
+    padding: 15px;
+    background: #ffefef;
+    border: 1px solid #ffbcbc;
+    color: #900;
+    margin: 15px auto;
+    width: fit-content;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
 .footer{
     justify-content: center;
     background: #FFFFFF;

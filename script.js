@@ -767,7 +767,7 @@ $(document).ready(function() {
     });
 
 
-    if(window.location.href.includes("print_form.php")){
+    if(window.location.href.includes("print_spec.php")){
         $("input").each(function() {
             const val = parseFloat($(this).val());
             if (!isNaN(val) && val % 1 !== 0) {

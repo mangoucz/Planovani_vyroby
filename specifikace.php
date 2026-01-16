@@ -204,13 +204,13 @@
                     <input type="hidden" name="id" value="">
                     <input type="hidden" name="typ_stroje" value="">
                 </form>
-                <form action="print_form.php" method="post" target="printFrame">
+                <form action="print_spec.php" method="post" target="printFrame">
                     <input type="submit" name="subTisk" class="defButt print" id="subTisk" value="Tisk" title="Tisk specifikace">
                     <input type="hidden" name="id" value="">
                     <input type="hidden" name="typ_stroje" value="">
                 </form>
                 <iframe id="frame" name="printFrame" style="display: none;"></iframe>
-                <form action="print_form.php" method="post">
+                <form action="print_spec.php" method="post">
                     <input type="submit" name="subTisk" class="defButt print" id="subNahl" value="Zobrazit" title="Zobrazení celé specifikace">
                     <input type="hidden" name="id" value="">
                     <input type="hidden" name="typ_stroje" value="">

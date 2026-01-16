@@ -592,7 +592,7 @@
                     <p>Chcete ji vytisknout?</p>
                 </div>
                 <div class="modal-footer">
-                    <form action="print_form.php" method="post" target="printFrame">
+                    <form action="print_spec.php" method="post" target="printFrame">
                         <input type="hidden" name="id" value="">
                         <input type="submit" name="subTisk" value="Tisk" id="printBtn" class="defButt print"></button>                    
                     </form>

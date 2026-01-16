@@ -37,8 +37,7 @@
     $funkce = $zaznam['funkce'];
     $admin = $_SESSION['admin'];
     $od = $date->format("Y-m-d") . " 05:45";
-    $date->modify("+1 day");
-    $do = $date->format("Y-m-d") . " 05:35";
+    $do = (clone $date)->modify("+1 day")->format("Y-m-d") . " 05:35";
 
     $sql = "SELECT * FROM Stav_stroje;";
     $result = sqlsrv_query($conn, $sql);
@@ -125,8 +124,8 @@
             <input type="text" id="denOdtahu" name="date" class="date">
         </form>
         <form action="print_den.php" method="post" target="printFrame">
-            <input type="submit" name="subTisk" class="defButt print" id="subTisk" value="Tisk" title="Tisk denního plánu odtahů">
-            <input type="hidden" name="den" value="">
+            <input type="submit" name="subTisk" class="defButt print" id="subTisk" value="Tisk" title="Tisk denního plánu odtahů" <?= $pocetSloupcu == 0 ? "disabled" : "" ?>>
+            <input type="hidden" name="den" value="<?= $date->format("Y-m-d") ?>">
         </form>
         <iframe id="frame" name="printFrame" style="display: none;"></iframe>
     </div>
@@ -258,16 +257,6 @@
         }
         .naviny tbody::-webkit-scrollbar {
             width: 1px;
-        }
-         
-        .no-data {
-            padding: 15px;
-            background: #ffefef;
-            border: 1px solid #ffbcbc;
-            color: #900;
-            margin: 15px auto;
-            font-weight: 600;
-            border-radius: 6px;
         }
 
         .setting{

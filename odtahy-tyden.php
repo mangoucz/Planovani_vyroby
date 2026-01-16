@@ -16,14 +16,14 @@
         $sat = 80;
         $light = 65;
 
-        if ($ratio <= 0.5) {
+        if ($ratio <= (2/3)) {
             // zelená (120) → žlutá (55)
-            $local = $ratio / 0.5;
+            $local = $ratio / (2/3);
             $hue = 120 - (120 - 55) * $local;
         } else {
-            // žlutá (55) → oranžová (30)
-            $local = ($ratio - 0.5) / 0.5;
-            $hue = 55 - (55 - 30) * $local;
+            // žlutá (55) → oranžová (10)
+            $local = ($ratio - (2/3)) / (1/3);
+            $hue = 55 - (55 - 10) * $local;
         }
 
         return "hsl(" . round($hue) . ", {$sat}%, {$light}%)";
@@ -152,129 +152,133 @@
         <iframe id="frame" name="printFrame" style="display: none;"></iframe>
     </div>
     <div class="naviny">
-        <table>
-            <thead>
-                <tr><th colspan="28">Týden č. <?= $cis_tydne ?></th></tr>
-                <tr><td colspan="28"></td></tr>
-                <tr>
-                    <td></td>
-                    <th colspan="3">Pondělí</th>
-                    <td></td>
-                    <th colspan="3">Úterý</th>
-                    <td></td>
-                    <th colspan="3">Středa</th>
-                    <td></td>
-                    <th colspan="3">Čtvrtek</th>
-                    <td></td>
-                    <th colspan="3">Pátek</th>
-                    <td></td>
-                    <th colspan="3">Sobota</th>
-                    <td></td>
-                    <th colspan="3">Neděle</th>
-                </tr>
-                <tr>
-                    <?php for ($i=0; $i<7; $i++) : ?>
-                        <td></td>
-                        <th colspan="3"><?= formatDate($date, $i)?></th>
-                    <?php endfor; ?>
-                </tr>
-                <tr>
-                    <?php for ($i=0; $i<7; $i++) : ?>
-                        <td></td>
-                        <th>R</th>
-                        <th>O</th>
-                        <th>N</th>
-                    <?php endfor; ?>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                    $sql = "SELECT
-                                MIN(DATEDIFF(MINUTE, '00:00:00', doba)) AS min_doba,
-                                MAX(DATEDIFF(MINUTE, '00:00:00', doba)) AS max_doba
-                            FROM Naviny;";
-                    $result = sqlsrv_query($conn, $sql);
-                    if ($result === FALSE)
-                        die(print_r(sqlsrv_errors(), true));
-                    $doba = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
-                    sqlsrv_free_stmt($result);
-                ?>
-                <?php for ($i=0; $i<count($skup); $i++) : ?>
+        <?php if (isset($skup)) : ?>
+            <table>
+                <thead>
+                    <tr><th colspan="28">Týden č. <?= $cis_tydne ?></th></tr>
                     <tr><td colspan="28"></td></tr>
                     <tr>
-                        <?php for($j=0; $j<7; $j++) : ?>
+                        <td></td>
+                        <th colspan="3">Pondělí</th>
+                        <td></td>
+                        <th colspan="3">Úterý</th>
+                        <td></td>
+                        <th colspan="3">Středa</th>
+                        <td></td>
+                        <th colspan="3">Čtvrtek</th>
+                        <td></td>
+                        <th colspan="3">Pátek</th>
+                        <td></td>
+                        <th colspan="3">Sobota</th>
+                        <td></td>
+                        <th colspan="3">Neděle</th>
+                    </tr>
+                    <tr>
+                        <?php for ($i=0; $i<7; $i++) : ?>
                             <td></td>
-                            <th colspan="3"><?= $skup[$i] ?></th>
+                            <th colspan="3"><?= formatDate($date, $i)?></th>
                         <?php endfor; ?>
                     </tr>
-                    <?php 
-                        $sql = "SELECT n.id_stroj, MIN(n.konec) as minNavin 
-                                from Specifikace as s JOIN Naviny as n on s.id_spec = n.id_spec 
-                                WHERE ? <= n.konec AND n.konec < ? AND titr_skup = ?
-                                GROUP BY id_stroj 
-                                ORDER BY 2;";
-                        $params = [$od, $do, $skup[$i]];
-                        $result = sqlsrv_query($conn, $sql, $params);
+                    <tr>
+                        <?php for ($i=0; $i<7; $i++) : ?>
+                            <td></td>
+                            <th>R</th>
+                            <th>O</th>
+                            <th>N</th>
+                        <?php endfor; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $sql = "SELECT
+                                    MIN(DATEDIFF(MINUTE, '00:00:00', doba)) AS min_doba,
+                                    MAX(DATEDIFF(MINUTE, '00:00:00', doba)) AS max_doba
+                                FROM Naviny;";
+                        $result = sqlsrv_query($conn, $sql);
                         if ($result === FALSE)
                             die(print_r(sqlsrv_errors(), true));
-    
-                        $poradiStroju = [];
-                        while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                            $poradiStroju[] = $zaznam;
-                        }
+                        $doba = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
                         sqlsrv_free_stmt($result);
                     ?>
-                    <?php  for($j=0; $j<count($poradiStroju); $j++) : ?>
-                        <?php
-                            $stroj = $poradiStroju[$j]['id_stroj'];
-    
-                            $sql = "SELECT n.id_nav, s.nazev, sp.c_spec, n.zacatek, n.konec, n.doba, n.stav_stroje, CONCAT(ss.zkratka, ' (', ss.nazev, ')') AS stav
-                                    FROM ((Specifikace as sp JOIN Naviny as n ON sp.id_spec = n.id_spec) JOIN Stroje as s ON n.id_stroj = s.id_stroj) JOIN Stav_stroje as ss ON n.stav_stroje = ss.id_stav
-                                    WHERE ? <= n.konec AND n.konec < ? AND sp.titr_skup = ? AND s.id_stroj = ?
-                                    ORDER BY n.konec;";
-                            $params = [$od, $do, $skup[$i], $stroj];
+                    <?php for ($i=0; $i<count($skup); $i++) : ?>
+                        <tr><td colspan="28"></td></tr>
+                        <tr>
+                            <?php for($j=0; $j<7; $j++) : ?>
+                                <td></td>
+                                <th colspan="3"><?= $skup[$i] ?></th>
+                            <?php endfor; ?>
+                        </tr>
+                        <?php 
+                            $sql = "SELECT n.id_stroj, MIN(n.konec) as minNavin 
+                                    from Specifikace as s JOIN Naviny as n on s.id_spec = n.id_spec 
+                                    WHERE ? <= n.konec AND n.konec < ? AND titr_skup = ?
+                                    GROUP BY id_stroj 
+                                    ORDER BY 2;";
+                            $params = [$od, $do, $skup[$i]];
                             $result = sqlsrv_query($conn, $sql, $params);
                             if ($result === FALSE)
                                 die(print_r(sqlsrv_errors(), true));
-    
-                            $naviny = [];
+        
+                            $poradiStroju = [];
                             while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                                $naviny[] = $zaznam;
+                                $poradiStroju[] = $zaznam;
                             }
+                            sqlsrv_free_stmt($result);
                         ?>
-                        <tr>
-                            <td><?= $naviny[0]['nazev'] ?></td>
-                            <?php for($k=0; $k<7; $k++) : ?>
-                                <?php $zacatek = (clone $date)->modify('+' . ($k) . ' day +5 hours +45 minutes'); ?>
-                                <?php for ($l=0; $l<3; $l++) : ?>
-                                    <?php 
-                                        if ($l != 0) 
-                                            $zacatek->modify('+8 hours');
-                                        $konec = (clone $zacatek)->modify('+7 hours +50 minutes');
-                                        $obsah = '';
-                                        $barva = 'white';
-                                        for($m=0; $m < count($naviny); $m++) {
-                                            if ($naviny[$m]['konec'] >= $zacatek && $naviny[$m]['konec'] <= $konec) {
-                                                $obsah = $naviny[$m]['konec']->format("H:i");
-                                                $title = "Specifikace: " . $naviny[$m]['c_spec'] . ",\nZačátek: " . $naviny[$m]['zacatek']->format("H:i") . ",\nDoba: " . $naviny[$m]['doba']->format("H:i") . ",\nStav: " . $naviny[$m]['stav'];
-                                                $minuty = ((int)$naviny[$m]['doba']->format('H') * 60) + (int)$naviny[$m]['doba']->format('i');
-                                                $barva = dobaToColor($minuty, $doba);
-                                                $class = $naviny[$m]['stav_stroje'] == 4 ? 'mimo' : '';
-                                                break;
-                                            }   
-                                        }
-                                    ?>
-                                    <td style="background-color: <?= $barva ?>" class="<?= $class ?>"><a href="" title="<?= $title ?>" class="<?= $class ?>"><?= $obsah ?></a></td>
+                        <?php  for($j=0; $j<count($poradiStroju); $j++) : ?>
+                            <?php
+                                $stroj = $poradiStroju[$j]['id_stroj'];
+        
+                                $sql = "SELECT n.id_nav, s.nazev, sp.c_spec, n.zacatek, n.konec, n.doba, n.stav_stroje, CONCAT(ss.zkratka, ' (', ss.nazev, ')') AS stav
+                                        FROM ((Specifikace as sp JOIN Naviny as n ON sp.id_spec = n.id_spec) JOIN Stroje as s ON n.id_stroj = s.id_stroj) JOIN Stav_stroje as ss ON n.stav_stroje = ss.id_stav
+                                        WHERE ? <= n.konec AND n.konec < ? AND sp.titr_skup = ? AND s.id_stroj = ?
+                                        ORDER BY n.konec;";
+                                $params = [$od, $do, $skup[$i], $stroj];
+                                $result = sqlsrv_query($conn, $sql, $params);
+                                if ($result === FALSE)
+                                    die(print_r(sqlsrv_errors(), true));
+        
+                                $naviny = [];
+                                while ($zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                    $naviny[] = $zaznam;
+                                }
+                            ?>
+                            <tr>
+                                <td><?= $naviny[0]['nazev'] ?></td>
+                                <?php for($k=0; $k<7; $k++) : ?>
+                                    <?php $zacatek = (clone $date)->modify('+' . ($k) . ' day +5 hours +45 minutes'); ?>
+                                    <?php for ($l=0; $l<3; $l++) : ?>
+                                        <?php 
+                                            if ($l != 0) 
+                                                $zacatek->modify('+8 hours');
+                                            $konec = (clone $zacatek)->modify('+7 hours +50 minutes');
+                                            $obsah = '';
+                                            $barva = 'white';
+                                            for($m=0; $m < count($naviny); $m++) {
+                                                if ($naviny[$m]['konec'] >= $zacatek && $naviny[$m]['konec'] <= $konec) {
+                                                    $obsah = $naviny[$m]['konec']->format("H:i");
+                                                    $title = "Specifikace: " . $naviny[$m]['c_spec'] . ",\nZačátek: " . $naviny[$m]['zacatek']->format("H:i") . ",\nDoba: " . $naviny[$m]['doba']->format("H:i") . ",\nStav: " . $naviny[$m]['stav'];
+                                                    $minuty = ((int)$naviny[$m]['doba']->format('H') * 60) + (int)$naviny[$m]['doba']->format('i');
+                                                    $barva = dobaToColor($minuty, $doba);
+                                                    $class = $naviny[$m]['stav_stroje'] == 4 ? 'mimo' : '';
+                                                    break;
+                                                }   
+                                            }
+                                        ?>
+                                        <td style="background-color: <?= $barva ?>" class="<?= $class ?>"><a href="" title="<?= $title ?>" class="<?= $class ?>"><?= $obsah ?></a></td>
+                                    <?php endfor; ?>
+                                    <?php if($k<6) : ?>
+                                        <td></td>
+                                    <?php endif; ?>
                                 <?php endfor; ?>
-                                <?php if($k<6) : ?>
-                                    <td></td>
-                                <?php endif; ?>
-                            <?php endfor; ?>
-                        </tr>
+                            </tr>
+                        <?php endfor; ?>
                     <?php endfor; ?>
-                <?php endfor; ?>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        <?php else : ?>
+            <div class='no-data'>Na zadaný týden nejsou naplánovány žádné odtahy.</div>        
+        <?php endif; ?>
     </div>
     <div class="footer">
         <img src="Indorama.png" width="200px">
@@ -339,6 +343,19 @@
             color: #333;
             text-align: center;
         }
+        .naviny td a{
+            color: inherit;
+            text-decoration: none;
+        }
+        .naviny td:hover{
+            text-decoration: underline;
+        }
+        .mimo{
+            background-color: #fff !important;
+            color: #868686 !important;
+            text-decoration: line-through;
+        }
+
         h2::after {
             content: "";
             display: block;
@@ -354,11 +371,7 @@
         #novyTydenForm{
             display: flex;
         }
-        .mimo{
-            background-color: #fff !important;
-            color: #868686 !important;
-            text-decoration: line-through;
-        }
+        
         .footer{
             display: none;
         }
