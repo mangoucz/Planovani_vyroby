@@ -670,6 +670,27 @@ $(document).ready(function() {
         const val = $('#denOdtahu').val();
         window.location.href = `odtahy-den.php?date=${CZToPC(val)}`;
     });
+    $(document).on('click', '.den-link', function(e) {
+        e.preventDefault();
+        const date = new Date(new URLSearchParams(window.location.search).get('date'));
+        const stroj = $(this).text();
+        const id_nav = $(this).data('id');
+        $(".modal h2").text(`Vybraný stroj: ${stroj}`);
+        $("#navIDInput").val(id_nav);
+        $(".stroj").fadeIn(200).css("display", "flex");
+    });
+    $(document).on('click', '.print-blok', function(e) {
+        e.preventDefault();
+        const form = $(this).closest('.printBlokForm');
+        $("#subDuvod").data("form", form);
+        $(".duvod").fadeIn(200).css("display", "flex");
+    });
+    $(document).on('click', '#subDuvod', function() {
+        const duvod = $("#duvodInput").val();
+        const form = $(this).data("form");
+        form.find('.duvodInputBlok').val(duvod);
+        form.submit();
+    });
 
     $(document).on('click', '#setTyden', function() {
         const date = new Date();

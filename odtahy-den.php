@@ -61,7 +61,7 @@
     }
     $pocetSloupcu = count($doby);
 
-    $sql = "SELECT sp.titr_skup, sp.c_spec, s.nazev, n.konec, n.doba, n.stav_stroje
+    $sql = "SELECT sp.titr_skup, sp.c_spec, s.nazev, n.konec, n.doba, n.stav_stroje, n.id_nav
             FROM (Specifikace as sp JOIN Naviny as n ON sp.id_spec = n.id_spec) JOIN Stroje as s ON n.id_stroj = s.id_stroj JOIN Stav_stroje as ss ON ss.id_stav = n.stav_stroje
             WHERE ? <= n.konec AND n.konec <= ? AND stav_stroje = ? 
             ORDER BY n.konec, n.doba;";
@@ -136,8 +136,15 @@
                     <thead>
                         <tr><th rowspan="4"></th><th colspan="<?= $pocetSloupcu ?>" class="tabDat"></th></tr>
                         <tr><th colspan="<?= $pocetSloupcu ?>"><?= $i == 0 ? 'ranní' : ($i == 1 ? 'odpolední' : 'noční') ?></th></tr>
-                        <tr><th colspan="<?= $pocetSloupcu ?>"><a href="">Tisk (blokovaná výroba)</a></th></tr>
-                        <tr>
+                        <tr><th colspan="<?= $pocetSloupcu ?>">
+                            <form action="print_pruvodka.php" method="post" class="printBlokForm" target="printFrame">
+                                <a href="" class="print-blok">Tisk (blokovaná výroba)</a>
+                                <input type="hidden" name="od" value="<?= $i == 0 ? $od : ($i == 1 ? (((clone $date)->modify("+13 hours 45 minutes"))->format("Y-m-d H:i")) : (((clone $date)->modify("+21 hours 45 minutes"))->format("Y-m-d H:i"))) ?>">
+                                <input type="hidden" name="do" value="<?= $i == 0 ? (((clone $date)->modify("+13 hours 35 minutes"))->format("Y-m-d H:i")) : ($i == 1 ? (((clone $date)->modify("+21 hours 35 minutes"))->format("Y-m-d H:i")) : (((clone $date)->modify("+1 day +5 hours 35 minutes"))->format("Y-m-d H:i"))) ?>">
+                                <input type="hidden" name="duvod" value="<?= $i ?>" class="duvodInputBlok">
+                            </form>
+                        </th></tr>
+                        <tr>    
                             <?php for($j=0; $j<$pocetSloupcu; $j++) : ?>
                                 <th><?= $doby[$j]->format("H:i") ?></th>
                             <?php endfor; ?>
@@ -156,11 +163,12 @@
                                                 $obsah = $naviny[$l]['nazev'];
                                                 $title = "skupina titrů: " . $naviny[$l]['titr_skup'] . ",\n specifikace: " . $naviny[$l]['c_spec'];
                                                 $barva = $naviny[$l]['stav_stroje'] == 1 ? "#d9f3ff" : "#ffd9d9";
+                                                $dataID = $naviny[$l]['id_nav'];
                                                 break;
                                             }
                                         }
                                     ?>
-                                    <td style="background-color: <?= $barva ?>"><a href="" title="<?= $title ?>"><?= $obsah ?></a></td>
+                                    <td style="background-color: <?= $barva ?>"><a href="" class="den-link" data-id="<?= $dataID ?>" title="<?= $title ?>"><?= $obsah ?></a></td>
                                 <?php endfor; ?>
                                 <?php $cas->modify("+10 minutes"); ?>
                             </tr>
@@ -175,7 +183,74 @@
     <div class="footer">
         <img src="Indorama.png" width="200px">
     </div>
+    <div class="modal stroj">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeBtn" class="close">&times;</span>
+                <h2>Vybraný stroj:</h2>
+            </div>
+            <div class="modal-body">
+                <form action="print_pruvodka.php" method="post" target="printFrame">
+                    <label class="karta">
+                        <input type="submit" value="PRŮVODNÍ LIST" name="pruvodni">
+                        <div class="karta-nadpis">PRŮVODNÍ LIST</div>
+                        <div class="karta-podnadpis">
+                            Tisk průvodního listu pro vybraný stroj
+                        </div>
+                    </label>
+                    <label class="karta">
+                        <input type="submit" value="BLOKOVANÁ VÝROBA" name="blokovana">
+                        <div class="karta-nadpis">BLOKOVANÁ VÝROBA</div>
+                        <div class="karta-podnadpis">
+                            Tisk průvodky blokované výroby pro vybraný stroj
+                        </div>
+                    </label>
+                    <label class="karta">
+                        <input type="submit" value="TESTOVACÍ VÝROBA" name="testovaci">
+                        <div class="karta-nadpis">TESTOVACÍ VÝROBA</div>
+                        <div class="karta-podnadpis">
+                            Tisk průvodky testovací výroby pro vybraný stroj
+                        </div>
+                    </label>
+                    <input type="hidden" name="id_nav" value="" id="navIDInput">
+                </form>
+                <form action="print_etiketa.php" method="post">
+                    <label class="karta">
+                        <input type="submit" value="ETIKETY" name="etikety">
+                        <div class="karta-nadpis">ETIKETY</div>
+                        <div class="karta-podnadpis">
+                            Tisk etiket pro vybraný stroj
+                        </div>
+                    </label>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal duvod">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeDuvodBtn" class="close">&times;</span>
+                <h2>Důvod blokování výroby:</h2>
+            </div>
+            <div class="modal-body">
+                <input type="text" name="duvod" id="duvodInput" placeholder="Zadejte důvod blokování výroby" style="width: 100%;">
+                <button type="button" id="subDuvod" class="defButt print" style="margin-top: 10px;">Tisk</button>
+            </div>
+        </div>
+    </div>
     <style>
+        h2::after {
+            content: "";
+            display: block;
+            width: 25%;
+            height: 3px; 
+            background: #d40000; 
+            margin-top: 5px;
+            border-radius: 2px;
+        }
+        .setting{
+            justify-content: space-around;
+        }  
         .naviny {
             display: flex;
             justify-content: space-between;
@@ -259,9 +334,34 @@
             width: 1px;
         }
 
-        .setting{
-            justify-content: space-around;
-        }        
+        .karta {
+            display: block;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            background: #fff;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+        }
+        .karta input[type="submit"] {
+            display: none;
+        }
+        .karta:hover {
+            background: #f5f7fa;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+        .karta-nadpis {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .karta-podnadpis {
+            font-size: 13px;
+            color: #555;
+        }
+      
         .footer{
             display: none;
         }
