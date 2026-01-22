@@ -261,11 +261,12 @@
                                                     $minuty = ((int)$naviny[$m]['doba']->format('H') * 60) + (int)$naviny[$m]['doba']->format('i');
                                                     $barva = dobaToColor($minuty, $doba);
                                                     $class = $naviny[$m]['stav_stroje'] == 4 ? 'mimo' : '';
+                                                    $id_nav = $naviny[$m]['id_nav'];
                                                     break;
                                                 }   
                                             }
                                         ?>
-                                        <td style="background-color: <?= $barva ?>" class="<?= $class ?>"><a href="" title="<?= $title ?>" class="<?= $class ?>"><?= $obsah ?></a></td>
+                                        <td style="background-color: <?= $barva ?>" class="<?= $class ?>"><a href="" title="<?= $title ?>" class="tyden-link <?= $class ?>" data-id_nav="<?= $id_nav ?>"><?= $obsah ?></a></td>
                                     <?php endfor; ?>
                                     <?php if($k<6) : ?>
                                         <td></td>
@@ -309,6 +310,16 @@
             </div>
             <div class="modal-body">
                 <h3>Plán návinů pro následující tři týdny byl již vytvořen!</h3>
+            </div>
+        </div>
+    </div>
+    <div class="modal zmena">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeBtn" class="close">&times;</span>
+                <h2>Změna návinu</h2>
+            </div>
+            <div class="modal-body">
             </div>
         </div>
     </div>

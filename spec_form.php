@@ -73,6 +73,7 @@
         $zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
         sqlsrv_free_stmt($result);
         $c_spec = GenCisSpec($conn);
+        $zaznam['id_spec'] = null;
     }
 
     $sql = "SELECT
@@ -581,27 +582,28 @@
             <input type="button" class="add" id="odeslat" value="Uložit specifikaci" name="subUloz" style="font-size: 16px;">
             <input type="hidden" name="id_spec" value="<?= $zaznam['id_spec'] ?? '' ?>">
         </div>
-        <div class="modal" id="modalOdeslano">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <span id="closeBtn" class="close">&times;</span>
-                    <h2>Specifikace č. </h2>
-                </div>
-                <div class="modal-body">
-                    <h3>Specifikace byla úspěšně odeslána!</h3>
-                    <p>Chcete ji vytisknout?</p>
-                </div>
-                <div class="modal-footer">
-                    <form action="print_spec.php" method="post" target="printFrame">
-                        <input type="hidden" name="id" value="">
-                        <input type="submit" name="subTisk" value="Tisk" id="printBtn" class="defButt print"></button>                    
-                    </form>
-                    <iframe id="frame" name="printFrame" style="display: none;"></iframe>
-                    <button id="closeBtn" class="defButt">Zavřít</button>
-                </div>
+    </form>
+    <div class="modal" id="modalOdeslano">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close closeBtn">&times;</span>
+                <h2>Specifikace č. </h2>
+            </div>
+            <div class="modal-body">
+                <h3>Specifikace byla úspěšně odeslána!</h3>
+                <p>Chcete ji vytisknout?</p>
+            </div>
+            <div class="modal-footer">
+                <form action="print_spec.php" method="post" target="printFrame">
+                    <input type="hidden" name="id" id="idHi" value="">
+                    <input type="hidden" name="typ_stroje" id="typHi" value="">
+                    <input type="submit" name="subTisk" value="Tisk" id="printBtn" class="defButt print"></button>                    
+                </form>
+                <iframe id="frame" name="printFrame" style="display: none;"></iframe>
+                <button class="defButt closeBtn">Zavřít</button>
             </div>
         </div>
-    </form>
+    </div>
     <style>
         h2{
             text-align: center;

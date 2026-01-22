@@ -198,7 +198,7 @@ $(document).ready(function() {
         }
     }
 
-    $(document).on('click', '#closeBtn', closeModal);
+    $(document).on('click', '.closeBtn', closeModal);
 
     $(document).on('click', '#logout', function() {
         if (confirm("Opravdu se chcete odhlásit?")) {
@@ -245,7 +245,8 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     $("#modalOdeslano h2").text("Specifikace č. " + response.data.c_spec);
-                    $("#modalOdeslano input[type=hidden]").val(response.data.id_spec);
+                    $("#modalOdeslano #idHi").val(response.data.id_spec);
+                    $("#modalOdeslano #typHi").val(response.data.typ_stroje);
                     $("#modalOdeslano").fadeIn(200).css("display", "flex");
                 } else {
                     alert("Chyba při odesílání specifikace:\n" +
@@ -705,6 +706,11 @@ $(document).ready(function() {
         date.setDate(date.getDate() - rozdil);
         window.location.href = `odtahy-tyden.php?date=${DateToString(date)}`;
     });
+    $(document).on('click', '.tyden-link', function(e) {
+        e.preventDefault();
+        const id_nav = $(this).data('id_nav');
+    });
+
 
     $(document).on('click', '#novyTydenButt', function() {
         $.ajax({

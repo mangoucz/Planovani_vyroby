@@ -138,35 +138,27 @@
                     $spec[] = $row;
                 }
             ?>
-
-            <form action="admin.php" method="post">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Sloupec</th>
-                            <th>Datový typ</th>
-                            <th>Max. vel.</th>
-                            <th>NULL</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php for ($j = 0; $j < count($spec); $j++) : ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sloupec</th>
+                        <th>Datový typ</th>
+                        <th>Max. vel.</th>
+                        <th>NULL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php for ($j = 0; $j < count($spec); $j++) : ?>
                         <tr>
                             <td><?= $spec[$j]['sloupec'] ?></td>
                             <td><?= $spec[$j]['typ'] ?></td>
                             <td><?= ($spec[$j]['max'] ??  $spec[$j]['max_num']) === ', ' ? '' : ($spec[$j]['max'] ?? $spec[$j]['max_num']) ?></td>
                             <td><?= $spec[$j]['povinne'] == 'NO' ? 'NE' : 'ANO' ?></td>
-                            <td style="text-align: center;"><img src="Update.png" class="editSpec" id="<?= $spec[$j]['sloupec'] ?>"></td>
-                            <td style="text-align: center;"><img src="Delete.png" class="delSpec" id="<?= $spec[$j]['sloupec'] ?>"></td>
                             <input type="hidden" name="tab_spec" value="<?= $tab_spec[$i]['tab'] ?>">
                         </tr>
-                        <?php endfor; ?>
-                    </tbody>
-                </table>
-                <button type="button" class="add" id="addSloupec">+</button>
-            </form>
+                    <?php endfor; ?>
+                </tbody>
+            </table>
         </div>
         <?php endfor; ?>
     </div>

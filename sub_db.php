@@ -171,7 +171,8 @@
                 echo json_encode(["success" => true, 
                                     "data" => [
                                         "id_spec" => $id_spec,
-                                        "c_spec" => $c_spec
+                                        "c_spec" => $c_spec,
+                                        "typ_stroje" => $id_typ_stroje
                                     ]
                                 ]);
                 exit;
@@ -257,7 +258,8 @@
             echo json_encode(["success" => true, 
                                 "data" => [
                                     "id_spec" => $id_spec,
-                                    "c_spec" => $c_spec
+                                    "c_spec" => $c_spec,
+                                    "typ_stroje" => $id_typ_stroje
                                 ]
                             ]);
             exit;

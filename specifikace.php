@@ -9,16 +9,16 @@
     require_once 'server.php';
 
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if(isset($_POST['subDel'])){
+        if(isset($_POST['id'])){
             $id_spec = $_POST['id'];
             $typ_stroje = $_POST['typ_stroje'];
 
             switch ($typ_stroje) {
                 case '1':
-                    $table = 'Spec_barmag';
+                    $table = 'Spec_stare';
                     break;
                 case '2':
-                    $table = 'Spec_stare';
+                    $table = 'Spec_barmag';
                     break;
                 case '3':
                     $table = 'Spec_nove';

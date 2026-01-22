@@ -40,6 +40,7 @@
             $zaznam = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
             sqlsrv_free_stmt($result);
 
+
             //region konstanty pro výpočty
             $z3 = 19;
             $z4 = 28;
