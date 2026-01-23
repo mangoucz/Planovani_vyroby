@@ -62,64 +62,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <div class="docHeader">
-        <div style="display: flex; flex-direction: column;">
-            <h4>ČASOVÉ SCHÉMA UKONČENÍ NÁVINU VLÁKNA VISCORD</h4>
-            <p>datum: <?= $date->format("d.m.Y") ?></p>
+    <div class="page">
+        <div class="docHeader">
+            <div style="display: flex; flex-direction: column;">
+                <h4>ČASOVÉ SCHÉMA UKONČENÍ NÁVINU VLÁKNA VISCORD</h4>
+                <p>datum: <?= $date->format("d.m.Y") ?></p>
+            </div>
+            <img src="Indorama.png" width="130px">
         </div>
-        <img src="Indorama.png" width="130px">
-    </div>
-    <div class="naviny">
-        <?php for($i=0; $i < 3; $i++): //počet tabulek?>
-            <table>
-                <thead>
-                    <tr><th rowspan="3"></th><th colspan="<?= $pocetSloupcu ?>"><?= $date->format("d.m.Y") ?></th></tr>
-                    <tr><th colspan="<?= $pocetSloupcu ?>"><?= $i == 0 ? 'ranní' : ($i == 1 ? 'odpolední' : 'noční') ?></th></tr>
-                    <tr>
-                        <?php for($j=0; $j<$pocetSloupcu; $j++) : ?>
-                            <th><?= $doby[$j]->format("H:i") ?></th>
-                        <?php endfor; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php for($j=0; $j<48; $j++) : //počet řádků ?>
+        <div class="naviny">
+            <?php for($i=0; $i < 3; $i++): //počet tabulek?>
+                <table>
+                    <thead>
+                        <tr><th rowspan="3"></th><th colspan="<?= $pocetSloupcu ?>"><?= $date->format("d.m.Y") ?></th></tr>
+                        <tr><th colspan="<?= $pocetSloupcu ?>"><?= $i == 0 ? 'ranní' : ($i == 1 ? 'odpolední' : 'noční') ?></th></tr>
                         <tr>
-                            <td><?= $cas->format("H:i") ?></td>
-                            <?php for($k=0; $k < $pocetSloupcu; $k++) : //počet sloupců ?>
-                                <?php // hledáme navin, který odpovídá tomuto řádku a sloupci
-                                    $obsah = "";
-                                    $barva = "#ffffff";
-                                    for($l=0; $l < count($naviny); $l++) {
-                                        if ($naviny[$l]['doba']->format("H:i") == $doby[$k]->format("H:i") && $naviny[$l]['konec']->format("H:i") == $cas->format("H:i")) {
-                                            $obsah = $naviny[$l]['nazev'];
-                                            break;
-                                        }
-                                    }
-                                ?>
-                                <td><?= $obsah ?></td>
+                            <?php for($j=0; $j<$pocetSloupcu; $j++) : ?>
+                                <th><?= $doby[$j]->format("H:i") ?></th>
                             <?php endfor; ?>
-                            <?php $cas->modify("+10 minutes"); ?>
                         </tr>
-                    <?php endfor; ?>
-                </tbody>
-            </table>
-        <?php endfor; ?>
-    </div>
-    <div class="docFooter">
-        <?php
-            $sql = "SELECT uziv_jmeno as uzivatel FROM Zamestnanci WHERE id_zam = ?;";
-            $params = [$uziv];
-            $result = sqlsrv_query($conn, $sql, $params);
-            if ($result === FALSE)
-                die(print_r(sqlsrv_errors(), true));    
-            $uzivatel = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)['uzivatel'];
-        ?>
-        <p><?= __FILE__ ?></p>
-        <p>Vytištěno: <?= date('d.m.Y H:i:s') ?> uživatelem: <?= $uzivatel ?></p>
+                    </thead>
+                    <tbody>
+                        <?php for($j=0; $j<48; $j++) : //počet řádků ?>
+                            <tr>
+                                <td><?= $cas->format("H:i") ?></td>
+                                <?php for($k=0; $k < $pocetSloupcu; $k++) : //počet sloupců ?>
+                                    <?php // hledáme navin, který odpovídá tomuto řádku a sloupci
+                                        $obsah = "";
+                                        $barva = "#ffffff";
+                                        for($l=0; $l < count($naviny); $l++) {
+                                            if ($naviny[$l]['doba']->format("H:i") == $doby[$k]->format("H:i") && $naviny[$l]['konec']->format("H:i") == $cas->format("H:i")) {
+                                                $obsah = $naviny[$l]['nazev'];
+                                                break;
+                                            }
+                                        }
+                                    ?>
+                                    <td><?= $obsah ?></td>
+                                <?php endfor; ?>
+                                <?php $cas->modify("+10 minutes"); ?>
+                            </tr>
+                        <?php endfor; ?>
+                    </tbody>
+                </table>
+            <?php endfor; ?>
+        </div>
+        <div class="docFooter">
+            <?php
+                $sql = "SELECT uziv_jmeno as uzivatel FROM Zamestnanci WHERE id_zam = ?;";
+                $params = [$uziv];
+                $result = sqlsrv_query($conn, $sql, $params);
+                if ($result === FALSE)
+                    die(print_r(sqlsrv_errors(), true));    
+                $uzivatel = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)['uzivatel'];
+            ?>
+            <p><?= __FILE__ ?></p>
+            <p>Vytištěno: <?= date('d.m.Y H:i:s') ?> uživatelem: <?= $uzivatel ?></p>
+        </div>
     </div>
     <style>
-        body{
+        * {
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+        }
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: white;
             font-family: Arial, Verdana, Sans-Serif;
+            font-size: 12pt;
+        }
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 10mm;
+            margin: 10mm auto;
+            border: 1px solid black;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
         td, th, h4{
             font-weight: bold;
@@ -165,8 +187,24 @@
 
         @page {
             size: A4;
-            margin: 1cm 0.5cm;
-        }   
+            margin: 0;
+        }
+        @media print {
+            html, body {
+                width: 210mm;
+                height: 297mm;        
+            }
+            .page {
+                margin: 0;
+                border: initial;
+                border-radius: initial;
+                width: initial;
+                min-height: initial;
+                box-shadow: initial;
+                background: initial;
+                page-break-after: always;
+            }
+        }  
     </style>
     <script>
         window.onload = function() {

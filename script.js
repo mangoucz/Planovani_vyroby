@@ -676,8 +676,8 @@ $(document).ready(function() {
         const date = new Date(new URLSearchParams(window.location.search).get('date'));
         const stroj = $(this).text();
         const id_nav = $(this).data('id');
-        $(".modal h2").text(`Vybraný stroj: ${stroj}`);
-        $("#navIDInput").val(id_nav);
+        $(".stroj h2").text(`Vybraný stroj: ${stroj}`);
+        $(".navIDInput").val(id_nav);
         $(".stroj").fadeIn(200).css("display", "flex");
     });
     $(document).on('click', '.print-blok', function(e) {

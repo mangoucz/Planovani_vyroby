@@ -9,10 +9,7 @@
         $min = $doba['min_doba']; 
         $max = $doba['max_doba']; 
 
-        $minuty = max($min, min($max, $minuty));
         $ratio = ($minuty - $min) / ($max - $min);
-
-        // HSL nastavení
         $sat = 80;
         $light = 65;
 

@@ -186,11 +186,11 @@
     <div class="modal stroj">
         <div class="modal-content">
             <div class="modal-header">
-                <span id="closeBtn" class="close">&times;</span>
+                <span class="close closeBtn">&times;</span>
                 <h2>Vybraný stroj:</h2>
             </div>
             <div class="modal-body">
-                <form action="print_pruvodka.php" method="post" target="printFrame">
+                <form action="print_pruvodka.php" method="post" target="printFrame" class="printBlokForm">
                     <label class="karta">
                         <input type="submit" value="PRŮVODNÍ LIST" name="pruvodni">
                         <div class="karta-nadpis">PRŮVODNÍ LIST</div>
@@ -199,7 +199,7 @@
                         </div>
                     </label>
                     <label class="karta">
-                        <input type="submit" value="BLOKOVANÁ VÝROBA" name="blokovana">
+                        <input type="submit" value="BLOKOVANÁ VÝROBA" name="blokovana" class="print-blok">
                         <div class="karta-nadpis">BLOKOVANÁ VÝROBA</div>
                         <div class="karta-podnadpis">
                             Tisk průvodky blokované výroby pro vybraný stroj
@@ -212,9 +212,10 @@
                             Tisk průvodky testovací výroby pro vybraný stroj
                         </div>
                     </label>
-                    <input type="hidden" name="id_nav" value="" id="navIDInput">
+                    <input type="hidden" name="id_nav" value="" class="navIDInput">
+                    <input type="hidden" name="duvod" value="" class="duvodInputBlok">
                 </form>
-                <form action="print_etiketa.php" method="post">
+                <form action="print_etiketa.php" method="post" target="printFrame">
                     <label class="karta">
                         <input type="submit" value="ETIKETY" name="etikety">
                         <div class="karta-nadpis">ETIKETY</div>
@@ -222,14 +223,15 @@
                             Tisk etiket pro vybraný stroj
                         </div>
                     </label>
-                </form>
+                    <input type="hidden" name="id_nav" value="" class="navIDInput">
+                </form> 
             </div>
         </div>
     </div>
     <div class="modal duvod">
         <div class="modal-content">
             <div class="modal-header">
-                <span id="closeDuvodBtn" class="close">&times;</span>
+                <span id="closeDuvodBtn" class="close closeBtn">&times;</span>
                 <h2>Důvod blokování výroby:</h2>
             </div>
             <div class="modal-body">

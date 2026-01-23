@@ -10,17 +10,27 @@
     require_once 'server.php';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if(isset($_POST['od']) && isset($_POST['do'])){
+        if(isset($_POST['duvod'])){
             $nadpis = "Blokovaná výroba";
-            $od = $_POST['od'];
-            $do = $_POST['do'];
+            $od = $_POST['od'] ?? '';
+            $do = $_POST['do'] ?? '';
             $duvod = $_POST['duvod'] ?? '';
+            $id_nav = $_POST['id_nav'] ?? '';
 
-            $sql = "SELECT sp.titr_skup, sp.c_spec, s.nazev, FORMAT(n.konec, 'HH:mm') as konec, n.serie
-                    FROM (Specifikace as sp JOIN Naviny as n ON sp.id_spec = n.id_spec) JOIN Stroje as s ON n.id_stroj = s.id_stroj JOIN Stav_stroje as ss ON ss.id_stav = n.stav_stroje
-                    WHERE ? <= n.konec AND n.konec <= ? AND stav_stroje = ? 
-                    ORDER BY n.konec, n.doba;";
-            $params = [$od, $do, 1];
+            if(isset($_POST['od']) && isset($_POST['do'])){
+                $sql = "SELECT sp.titr_skup, sp.c_spec, s.nazev, FORMAT(n.konec, 'HH:mm') as konec, n.serie
+                        FROM (Specifikace as sp JOIN Naviny as n ON sp.id_spec = n.id_spec) JOIN Stroje as s ON n.id_stroj = s.id_stroj JOIN Stav_stroje as ss ON ss.id_stav = n.stav_stroje
+                        WHERE ? <= n.konec AND n.konec <= ? AND stav_stroje = ? 
+                        ORDER BY n.konec, n.doba;";
+                $params = [$od, $do, 1];
+            }
+            else{
+                $sql = "SELECT sp.titr_skup, sp.c_spec, s.nazev, FORMAT(n.konec, 'HH:mm') as konec, n.serie
+                        FROM (Specifikace as sp JOIN Naviny as n ON sp.id_spec = n.id_spec) JOIN Stroje as s ON n.id_stroj = s.id_stroj JOIN Stav_stroje as ss ON ss.id_stav = n.stav_stroje
+                        WHERE n.id_nav = ? AND n.stav_stroje = ? 
+                        ORDER BY n.konec, n.doba;";
+                $params = [$id_nav, 1];
+            }
             $result = sqlsrv_query($conn, $sql, $params);
             if ($result === FALSE)
                 die(print_r(sqlsrv_errors(), true));

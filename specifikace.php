@@ -185,7 +185,7 @@
     <div class="modal">
         <div class="modal-content" style="width: 500px;">
             <div class="modal-header">
-                <span id="closeBtn" class="close">&times;</span>
+                <span class="close closeBtn">&times;</span>
                 <h2>Specifikace č. </h2>
             </div>
             <div class="modal-body">
