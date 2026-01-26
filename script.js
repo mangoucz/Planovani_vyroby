@@ -92,6 +92,10 @@ $(document).ready(function() {
         date.setDate(date.getDate() - rozdil);
         return date;
     }
+    function timeToMinutes(timeStr) {
+        const [hod, min] = timeStr.split(':').map(Number);
+        return hod * 60 + min;
+    }
     function initializeDatepicker(selector) {
         $('.date').attr('autocomplete', 'off');
         
@@ -218,6 +222,52 @@ $(document).ready(function() {
             initializeDatepicker(this);
         }
     });
+    $(document).on('input', '.time', function () { //doba 04:00 - 23:50
+        let value = $(this).val().replace(/[^0-9]/g, "");
+        
+        if (value.length >= 1) {
+            const hod1 = parseInt(value.substring(0, 1)); 
+            const hod2 = parseInt(value.substring(1, 2)) || "";
+            
+            if (hod1 >= 4)
+                value = "0" + hod1;
+            else if ((hod1 == 2 && hod2 > 3) || (hod1 == 0 && hod2 < 4)) 
+                value = value.substring(0, 1);
+            else if (hod1 === 3)
+                value = "";
+            
+            if (value.length > 2) {
+                const min1 = value.length >= 3 ? parseInt(value.substring(2, 3)) : ""; 
+                if (min1 > 5) 
+                    value = value.substring(0, 2);
+                else {
+                    const min2 = value.substring(3, 4) || "";
+                    if (min2 === "")
+                        value = value.substring(0, 2) + ":" + min1;
+                    else
+                        value = value.substring(0, 2) + ":" + min1 + 0;
+                }
+            }
+        }
+        $(this).val(value);
+    });
+    $(document).on('change', '.time', function () {
+        let v = $(this).val();
+
+        if (!v) return;
+
+        if (v == 0)
+            v = "04:00";
+
+        if (v.length === 1) 
+            v += "0:00";
+        else if (v.length === 2) 
+            v += ":00";
+        else if (v.length === 4) 
+            v += "0";
+
+        $(this).val(v);
+    });
 
     $(document).on('click', '#odeslat', function() {
         const form = document.querySelector("#form");
@@ -305,15 +355,6 @@ $(document).ready(function() {
         }
     });
         
-    $(document).on('change', '.time', function() {
-        const value = $(this).val();
-        
-        if (value.length == 2)
-            $(this).val(value + ":00");
-        else if(value.length == 1)
-            $(this).val("0" + value + ":00");
-    });
-
     $(document).on('change', '#selectStroj', function() {
         const id_stroj = $(this).val();
         const url = new URL(window.location.href);
@@ -709,8 +750,54 @@ $(document).ready(function() {
     $(document).on('click', '.tyden-link', function(e) {
         e.preventDefault();
         const id_nav = $(this).data('id_nav');
+
+        $.ajax({
+            url: "get_db.php",
+            type: "POST",
+            data: {id_nav: id_nav},
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    $(".zmena h3").text(`Změna stavu pro stroj: ${response.navin.nazev}`);
+                    $(".zmena h4").text(`Série: ${response.navin.serie}`)
+                    $(".zmena h5").text(`Původní doba návinu: ${response.navin.od} >> ${response.navin.do}`);
+                    $("#novaDoba").text(`Nová doba návinu: ${response.navin.od} >> ${response.navin.do}`);
+                    $("#doba_navinu").val(response.navin.doba);
+                    $("#doba_navinu").data("origo", response.navin.doba);
+                    $("#specifikace").empty();
+                    response.spec.forEach(function(spec) {
+                        $("#specifikace").append(`<option value="${spec.id_spec}" ${spec.id_spec == response.navin.id_spec ? "selected" : ""}>${spec.spec}</option>`)
+                    });
+                    // response.stavy.forEach(function(stavy) {
+                    //     $("#stavSelect").append(`<option value="${stavy.id_stav}">${stavy.stav}</option>`)
+                    // });
+                    $(".zmena").fadeIn(200).css("display", "flex");
+                }
+                else {
+                    alert("Chyba při načítání dat!");
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert("Chyba komunikace se serverem!");
+                alert(xhr.responseText);
+                alert(message);
+            }
+        });
     });
 
+    $(document).on('change', '#doba_navinu', function() {
+        const origoStr = $(this).data("origo");  
+        const novaStr = $(this).val();           
+        
+        const origoMinuty = timeToMinutes(origoStr);
+        const novaMinuty = timeToMinutes(novaStr);
+        
+        const rozdilMinuty = novaMinuty - origoMinuty;
+        
+        console.log(`Původní: ${origoStr}, Nový: ${novaStr}, Rozdíl: ${rozdilMinuty} minut`);
+        $("#novaDoba").text(`Nová doba návinu: ${response.navin.od} >> ${response.navin.do}`);
+    });
 
     $(document).on('click', '#novyTydenButt', function() {
         $.ajax({

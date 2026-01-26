@@ -167,6 +167,74 @@
             ]);
             exit;
         }
+        elseif(isset($_POST['id_nav'])){
+            $id_nav = $_POST['id_nav'];
+
+            $sql = "SELECT FORMAT(n.zacatek, 'dd.MM.yyyy HH:mm') as od, FORMAT(n.konec, 'dd.MM.yyyy HH:mm') as do, CONVERT(varchar(5), n.doba, 108) as doba, n.serie, n.id_spec, n.stav_stroje, s.nazev, s.id_typ
+                    FROM Naviny as n JOIN Stroje as s on n.id_stroj = s.id_stroj 
+                    WHERE n.id_nav = ?;";
+            $params = [$id_nav];
+            $result = sqlsrv_query($conn, $sql, $params);
+
+            if ($result === false) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Chyba SQL dotazu pro získání detailu návinu!",
+                    "error" => sqlsrv_errors()
+                ]);     
+                exit;
+            }            
+            $navin = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
+            sqlsrv_free_stmt($result);
+
+            $sql = "SELECT CONCAT(s.c_spec, ' - titr: ', s.titr_skup) as spec, s.id_spec FROM Specifikace as s WHERE s.id_typ_stroje = ?;";
+            $params = [$navin['id_typ']];
+            $result = sqlsrv_query($conn, $sql, $params);
+            if ($result === false) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Chyba SQL dotazu pro získání specifikací podle typu stroje!",
+                    "error" => sqlsrv_errors()
+                ]);     
+                exit;
+            }
+            $spec = [];
+            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                $spec[] = $row;
+            }
+            sqlsrv_free_stmt($result);
+
+            $sql = "SELECT CONCAT(zkratka, ' - ', nazev) as stav FROM Stav_stroje;";
+            $result = sqlsrv_query($conn, $sql);
+            if ($result === FALSE) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Chyba SQL dotazu pro SELECT stavů strojů!",
+                    "error" => sqlsrv_errors()
+                ]);
+                exit;
+            }
+            $stavy = [];
+            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                $stavy[] = $row;
+            }
+            sqlsrv_free_stmt($result);
+
+            if ($navin && $spec && $stavy) {
+                echo json_encode([
+                    "success" => true,
+                    "navin" => $navin,
+                    "spec" => $spec,
+                    "stavy" => $stavy
+                ]);
+                exit;                
+            }
+            else {
+                echo json_encode(["success" => false, "message" => "Záznam nenalezen"]);
+                exit;
+            }
+            sqlsrv_free_stmt($result);
+        }
         else {
             echo json_encode(["success" => false, "message" => "Chybí ID specifikace"]);
             exit;

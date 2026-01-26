@@ -317,6 +317,54 @@
                 <h2>Změna návinu</h2>
             </div>
             <div class="modal-body">
+                <div class="zmena-menu">
+                    <button type="button" class="defButt active">Doba návinu</button>
+                    <button type="button" class="defButt">Specifikace</button>
+                    <button type="button" class="defButt">Stav stroje</button>
+                    <button type="button" class="defButt">Posun začátku</button>
+                </div>
+                <div class="zmena-content doba-content" style="display: block;">
+                    <h3>Změna stavu pro stroj:</h3>
+                    <h4>série: 260126</h4>
+                    <h5>25.01.2026 15:45:00 > 26.01.2026 5:45:00</h5>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Doba návinu</td>
+                                <td><input type="text" name="doba_navinu" class="time" id="doba_navinu" placeholder="00:00" data-origo=""></td>
+                            </tr>
+                            <tr>
+                                <td>Specifikace</td>
+                                <td><select name="specifikace" id="specifikace"></select></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" id="novaDoba"></td>
+                            </tr> 
+                            <tr>
+                                <td colspan="2"><p>Změna se provede pro tento a všechny následující náviny</p></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="zmena-content spec-content">
+                    <h3>Stroj: od->do série:</h3>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Specifikace</td>
+                                <td><select name="specifikace_change" id="specifikace_change"></select></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- <button type="button" class="defButt">Tento návin</button>
+                <button type="button" class="defButt">Tento a všechny následující náviny</button>
+                <button type="button" class="defButt">Všechny následující náviny</button>
+                <button type="button" class="defButt">Následující náviny do daného dne</button>
+                <button type="button" class="defButt">Počet návinů</button> -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="defButt" id="ulozitZmenu">Uložit změny</button>
             </div>
         </div>
     </div>
@@ -379,7 +427,113 @@
         #novyTydenForm{
             display: flex;
         }
-        
+
+        .zmena .modal-body {
+            display: flex;
+            gap: 20px;
+        }
+
+        .zmena-menu {
+            display: flex;
+            flex-direction: column;
+            width: 200px;
+            gap: 10px;
+        }
+
+        .zmena-menu .defButt {
+            flex: auto;
+            text-align: left;
+            border: 1px solid #ccc;
+            background: #f5f5f5;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        .zmena-menu .defButt:hover {
+            background: #e9e9e9;
+        }
+        .zmena-menu .defButt.active {
+            background: #2f80ed;
+            color: #fff;
+            position: relative;
+        }
+        .zmena-menu .defButt.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: #000000;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .zmena-content {
+            display: none;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+        }
+
+        /* === NADPISY === */
+        .zmena-content h3 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+        }
+
+        .zmena-content h4 {
+            margin: 0 0 5px 0;
+            font-size: 15px;
+            color: #555;
+        }
+
+        .zmena-content h5 {
+            margin: 0 0 15px 0;
+            font-size: 13px;
+            color: #777;
+        }
+
+        /* === TABULKY === */
+        .zmena-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .zmena-content td {
+            padding: 8px;
+            vertical-align: middle;
+        }
+
+        .zmena-content td:first-child {
+            width: 40%;
+            font-weight: 600;
+        }
+
+        /* === INPUTY A SELECTY === */
+        .zmena-content input,
+        .zmena-content select {
+            width: 100%;
+            padding: 6px 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        /* === INFO TEXT === */
+        .zmena-content p {
+            margin: 10px 0 0 0;
+            font-size: 13px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* === SPECIÁLNÍ ŘÁDEK === */
+        #novaDoba {
+            font-weight: 600;
+            color: #2f80ed;
+        }
+
+
         .footer{
             display: none;
         }

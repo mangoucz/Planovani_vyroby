@@ -40,7 +40,6 @@ select {
     padding: 10px;
     width: 100%;
     font-size: 14px;
-    color: #2C3E50;
     cursor: pointer;
     margin-right: 20px;
     transition: border-color 0.3s ease;
@@ -79,7 +78,7 @@ li {
     color: white;
 }
 .active{
-    background-color: #5d99a3;
+    background-color: #5d99a3 !important;
     color: white !important; 
 }
 /* jQuery UI Datepicker */
