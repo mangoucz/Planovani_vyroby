@@ -318,10 +318,10 @@
             </div>
             <div class="modal-body">
                 <div class="zmena-menu">
-                    <button type="button" class="defButt active">Doba návinu</button>
-                    <button type="button" class="defButt">Specifikace</button>
-                    <button type="button" class="defButt">Stav stroje</button>
-                    <button type="button" class="defButt">Posun začátku</button>
+                    <button type="button" class="defButt active" data-target="doba-content">Doba návinu</button>
+                    <button type="button" class="defButt" data-target="spec-content">Specifikace</button>
+                    <button type="button" class="defButt" data-target="stav-content">Stav stroje</button>
+                    <button type="button" class="defButt" data-target="posun-content">Posun začátku</button>
                 </div>
                 <div class="zmena-content doba-content" style="display: block;">
                     <h3>Změna stavu pro stroj:</h3>
@@ -335,10 +335,10 @@
                             </tr>
                             <tr>
                                 <td>Specifikace</td>
-                                <td><select name="specifikace" id="specifikace"></select></td>
+                                <td><select name="specifikace" class="specifikace"></select></td>
                             </tr>
                             <tr>
-                                <td colspan="2" id="novaDoba"></td>
+                                <td colspan="2" id="novaDoba" data-od="" data-do=""></td>
                             </tr> 
                             <tr>
                                 <td colspan="2"><p>Změna se provede pro tento a všechny následující náviny</p></td>
@@ -347,12 +347,82 @@
                     </table>
                 </div>
                 <div class="zmena-content spec-content">
-                    <h3>Stroj: od->do série:</h3>
+                    <h3>Změna stavu pro stroj:</h3>
+                    <h4>série: 260126</h4>
+                    <h5>25.01.2026 15:45:00 > 26.01.2026 5:45:00</h5>
                     <table>
                         <tbody>
                             <tr>
                                 <td>Specifikace</td>
-                                <td><select name="specifikace_change" id="specifikace_change"></select></td>
+                                <td><select name="specifikace" class="specifikace"></select></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <fieldset>
+                        <input type="radio" name="navin_volba" id="tento_nav_spec" value="Tento návin" checked>
+                        <label for="tento_nav_spec">Tento návin</label>
+
+                        <input type="radio" name="navin_volba" id="nasl_nav_spec" value="Všechny následující náviny">
+                        <label for="nasl_nav_spec">Všechny následující náviny</label>
+
+                        <input type="radio" name="navin_volba" id="tento_nasl_nav_spec" value="Tento a všechny následující náviny">
+                        <label for="tento_nasl_nav_spec">Tento a všechny následující náviny</label>
+
+                        <input type="radio" name="navin_volba" id="pocet_nav_spec" value="Počet návinů">
+                        <label for="pocet_nav_spec">Počet návinů</label>
+
+                        <input type="radio" name="navin_volba" id="do_data_spec" value="Následující náviny do data">
+                        <label for="do_data_spec">Následující náviny do data</label>
+                    </fieldset>
+                </div>
+                <div class="zmena-content stav-content">
+                    <h3>Změna stavu pro stroj:</h3>
+                    <h4>série: 260126</h4>
+                    <h5>25.01.2026 15:45:00 > 26.01.2026 5:45:00</h5>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Stav stroje</td>
+                                <td><select name="stav" id="stavSelect"></select></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <fieldset>
+                        <input type="radio" name="navin_volba" id="tento_nav_stav" value="Tento návin" checked>
+                        <label for="tento_nav_stav">Tento návin</label>
+
+                        <input type="radio" name="navin_volba" id="nasl_nav_stav" value="Všechny následující náviny">
+                        <label for="nasl_nav_stav">Všechny následující náviny</label>
+
+                        <input type="radio" name="navin_volba" id="tento_nasl_nav_stav" value="Tento a všechny následující náviny">
+                        <label for="tento_nasl_nav_stav">Tento a všechny následující náviny</label>
+
+                        <input type="radio" name="navin_volba" id="pocet_nav_stav" value="Počet návinů">
+                        <label for="pocet_nav_stav">Počet návinů</label>
+
+                        <input type="radio" name="navin_volba" id="do_data_stav" value="Následující náviny do data">
+                        <label for="do_data_stav">Následující náviny do data</label>
+                    </fieldset>
+                </div>
+                <div class="zmena-content posun-content">
+                    <h3>Změna stavu pro stroj:</h3>
+                    <h4>série: 260126</h4>
+                    <h5>25.01.2026 15:45:00 > 26.01.2026 5:45:00</h5>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Posun začátku o</td>
+                                <td><input type="text" name="posun" class="time" id="posun" placeholder="00:00" data-origo=""></td>
+                            </tr>
+                            <tr>
+                                <td>Specifikace</td>
+                                <td><select name="specifikace" class="specifikace"></select></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" id="novaDoba" data-od="" data-do=""></td>
+                            </tr> 
+                            <tr>
+                                <td colspan="2"><p>Změna se provede pro tento a všechny následující náviny</p></td>
                             </tr>
                         </tbody>
                     </table>
@@ -368,6 +438,7 @@
             </div>
         </div>
     </div>
+
     <style>
         table {
             font-size: 12px;

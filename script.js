@@ -96,6 +96,14 @@ $(document).ready(function() {
         const [hod, min] = timeStr.split(':').map(Number);
         return hod * 60 + min;
     }
+    function formatDateTime(date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${day}.${month}.${year} ${hours}:${minutes}`;
+    }
     function initializeDatepicker(selector) {
         $('.date').attr('autocomplete', 'off');
         
@@ -161,12 +169,17 @@ $(document).ready(function() {
             }
         });
     }
+    function initializeRadio(selector) {
+        $(selector).checkboxradio();
+    }
     ochrana();
     initializeDatepicker('.date');
     //initializeRange('#riziko', '#rizikoValue', '#rizikoInput');
     initializeTitle("input");
     initializeTitle("textarea");
     initializeTitle("a");
+    initializeRadio("input[type=radio]");
+    $("fieldset").controlgroup();
 
     if($(".respons").css("display") == "none"){
         $(".respons input, .respons textarea").each(function() {
@@ -758,15 +771,20 @@ $(document).ready(function() {
             dataType: "json",
             success: function(response) {
                 if (response.success) {
-                    $(".zmena h3").text(`Změna stavu pro stroj: ${response.navin.nazev}`);
+                    $(".zmena h3").text(`Změna pro stroj: ${response.navin.nazev}`);
                     $(".zmena h4").text(`Série: ${response.navin.serie}`)
-                    $(".zmena h5").text(`Původní doba návinu: ${response.navin.od} >> ${response.navin.do}`);
+                    $(".zmena h5").text(`${response.navin.od} >> ${response.navin.do}`);
                     $("#novaDoba").text(`Nová doba návinu: ${response.navin.od} >> ${response.navin.do}`);
+                    $("#novaDoba").data("od", response.navin.zacatek);
+                    $("#novaDoba").data("do", response.navin.konec);
                     $("#doba_navinu").val(response.navin.doba);
                     $("#doba_navinu").data("origo", response.navin.doba);
-                    $("#specifikace").empty();
+                    $(".specifikace").empty();
                     response.spec.forEach(function(spec) {
-                        $("#specifikace").append(`<option value="${spec.id_spec}" ${spec.id_spec == response.navin.id_spec ? "selected" : ""}>${spec.spec}</option>`)
+                        $(".specifikace").append(`<option value="${spec.id_spec}" ${spec.id_spec == response.navin.id_spec ? "selected" : ""}>${spec.spec}</option>`)
+                    });
+                    response.stavy.forEach(function(stavy) {
+                        $("#stavSelect").append(`<option value="${stavy.id_stav}" ${stavy.id_stav == response.navin.id_stav ? "selected" : ""}>${stavy.stav}</option>`)
                     });
                     // response.stavy.forEach(function(stavy) {
                     //     $("#stavSelect").append(`<option value="${stavy.id_stav}">${stavy.stav}</option>`)
@@ -786,17 +804,27 @@ $(document).ready(function() {
         });
     });
 
+    $(document).on('click', '.zmena-menu button', function() {
+        $(this).each(function() {
+            $(this).siblings().removeClass("active");
+            $(this).addClass("active");
+            const target = $(this).data("target");
+            $(".zmena-content").hide();
+            $("." + target).show();
+        });
+    });
     $(document).on('change', '#doba_navinu', function() {
         const origoStr = $(this).data("origo");  
-        const novaStr = $(this).val();           
+        const dobaStr = $(this).val();  
+        const rozdilMinuty = timeToMinutes(dobaStr) - timeToMinutes(origoStr);
         
-        const origoMinuty = timeToMinutes(origoStr);
-        const novaMinuty = timeToMinutes(novaStr);
+        const navinOdDate = new Date($("#novaDoba").data("od"));
+        const navinDoDate = new Date($("#novaDoba").data("do"));        
         
-        const rozdilMinuty = novaMinuty - origoMinuty;
+        navinOdDate.setMinutes(navinOdDate.getMinutes() + rozdilMinuty);
+        navinDoDate.setMinutes(navinDoDate.getMinutes() + rozdilMinuty);
         
-        console.log(`Původní: ${origoStr}, Nový: ${novaStr}, Rozdíl: ${rozdilMinuty} minut`);
-        $("#novaDoba").text(`Nová doba návinu: ${response.navin.od} >> ${response.navin.do}`);
+        $("#novaDoba").text(`Nová doba návinu: ${formatDateTime(navinOdDate)} >> ${formatDateTime(navinDoDate)}`);
     });
 
     $(document).on('click', '#novyTydenButt', function() {

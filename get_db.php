@@ -170,7 +170,7 @@
         elseif(isset($_POST['id_nav'])){
             $id_nav = $_POST['id_nav'];
 
-            $sql = "SELECT FORMAT(n.zacatek, 'dd.MM.yyyy HH:mm') as od, FORMAT(n.konec, 'dd.MM.yyyy HH:mm') as do, CONVERT(varchar(5), n.doba, 108) as doba, n.serie, n.id_spec, n.stav_stroje, s.nazev, s.id_typ
+            $sql = "SELECT FORMAT(n.zacatek, 'dd.MM.yyyy HH:mm') as od, FORMAT(n.zacatek, 'yyyy-MM-dd HH:mm') as zacatek, FORMAT(n.konec, 'dd.MM.yyyy HH:mm') as do, FORMAT(n.konec, 'yyyy-MM-dd HH:mm') as konec, CONVERT(varchar(5), n.doba, 108) as doba, n.serie, n.id_spec, n.stav_stroje as id_stav, s.nazev, s.id_typ
                     FROM Naviny as n JOIN Stroje as s on n.id_stroj = s.id_stroj 
                     WHERE n.id_nav = ?;";
             $params = [$id_nav];
@@ -204,7 +204,7 @@
             }
             sqlsrv_free_stmt($result);
 
-            $sql = "SELECT CONCAT(zkratka, ' - ', nazev) as stav FROM Stav_stroje;";
+            $sql = "SELECT CONCAT(zkratka, ' - ', nazev) as stav, id_stav FROM Stav_stroje;";
             $result = sqlsrv_query($conn, $sql);
             if ($result === FALSE) {
                 echo json_encode([
