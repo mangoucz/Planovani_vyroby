@@ -64,13 +64,14 @@ $(document).ready(function() {
             .attr("data-index", index)
             .html(html);
     }
-    function closeModal() {
-        if($(".modal").is(":visible")) {
+    function closeModal(element) {
+        const $modal = element ? $(element).closest('.modal') : $(".modal");
+        if($modal.is(":visible")) {
             if(window.location.href.includes("spec_form.php")){
                 window.location.replace("specifikace.php");
                 return;
             }
-            $(".modal").fadeOut(200);
+            $modal.fadeOut(200);
         }
     }
     function CZToPC(date) {
@@ -235,7 +236,7 @@ $(document).ready(function() {
             initializeDatepicker(this);
         }
     });
-    $(document).on('input', '.time', function () { //doba 04:00 - 23:50
+    $(document).on('input', '.timeDoba', function () { //doba 04:00 - 23:50
         let value = $(this).val().replace(/[^0-9]/g, "");
         
         if (value.length >= 1) {
@@ -264,7 +265,7 @@ $(document).ready(function() {
         }
         $(this).val(value);
     });
-    $(document).on('change', '.time', function () {
+    $(document).on('change', '.timeDoba', function () {
         let v = $(this).val();
 
         if (!v) return;
@@ -281,6 +282,39 @@ $(document).ready(function() {
 
         $(this).val(v);
     });
+    $(document).on('input', '.time', function () {
+        let value = $(this).val().replace(/[^0-9]/g, "");
+        
+        if (value.length >= 1) {
+            const hod1 = parseInt(value.substring(0, 1)); 
+            const hod2 = parseInt(value.substring(1, 2)) || "";
+            
+            if (hod1 >= 3)
+                value = "0" + hod1;
+            else if (hod1 == 2 && hod2 > 3) 
+                value = value.substring(0, 1);
+            
+            if (value.length > 2) {
+                const min1 = value.length >= 3 ? parseInt(value.substring(2, 3)) : ""; 
+                if (min1 > 5) 
+                    value = value.substring(0, 2) + ":";
+                else {
+                    const min2 = value.substring(3, 4) || "";
+                    value = value.substring(0, 2) + ":" + min1 + min2;
+                }
+            }
+        }
+        $(this).val(value);
+    });
+    $(document).on('change', '.time', function() {
+        const value = $(this).val();
+        
+        if (value.length == 2)
+            $(this).val(value + ":00");
+        else if(value.length == 1)
+            $(this).val("0" + value + ":00");
+    });
+
 
     $(document).on('click', '#odeslat', function() {
         const form = document.querySelector("#form");
@@ -775,8 +809,10 @@ $(document).ready(function() {
                     $(".zmena h4").text(`Série: ${response.navin.serie}`)
                     $(".zmena h5").text(`${response.navin.od} >> ${response.navin.do}`);
                     $("#novaDoba").text(`Nová doba návinu: ${response.navin.od} >> ${response.navin.do}`);
+                    $("#novyZacatek").text(`Nový začátek návinu: ${response.navin.od}`);
                     $("#novaDoba").data("od", response.navin.zacatek);
                     $("#novaDoba").data("do", response.navin.konec);
+                    $("#novyZacatek").data("zacatek", response.navin.zacatek);
                     $("#doba_navinu").val(response.navin.doba);
                     $("#doba_navinu").data("origo", response.navin.doba);
                     $(".specifikace").empty();
@@ -817,14 +853,29 @@ $(document).ready(function() {
         const origoStr = $(this).data("origo");  
         const dobaStr = $(this).val();  
         const rozdilMinuty = timeToMinutes(dobaStr) - timeToMinutes(origoStr);
-        
         const navinOdDate = new Date($("#novaDoba").data("od"));
-        const navinDoDate = new Date($("#novaDoba").data("do"));        
-        
+        const navinDoDate = new Date($("#novaDoba").data("do"));  
+
+        if(dobaStr == ""){
+            $("#novaDoba").text(`Nová doba návinu: ${formatDateTime(navinOdDate)} >> ${formatDateTime(navinDoDate)}`);
+            return;
+        }
         navinOdDate.setMinutes(navinOdDate.getMinutes() + rozdilMinuty);
         navinDoDate.setMinutes(navinDoDate.getMinutes() + rozdilMinuty);
         
         $("#novaDoba").text(`Nová doba návinu: ${formatDateTime(navinOdDate)} >> ${formatDateTime(navinDoDate)}`);
+    });
+    $(document).on('change', '#posun_zacatku', function() {
+        const rozdilMinuty = timeToMinutes($(this).val());
+        const zacatekDate = new Date($("#novyZacatek").data("zacatek"));
+
+        if(isNaN(rozdilMinuty)){
+            $("#novyZacatek").text(`Nový začátek návinu: ${formatDateTime(zacatekDate)}`);
+            return;
+        }
+        zacatekDate.setMinutes(zacatekDate.getMinutes() + rozdilMinuty);
+
+        $("#novyZacatek").text(`Nový začátek návinu: ${formatDateTime(zacatekDate)}`);
     });
 
     $(document).on('click', '#novyTydenButt', function() {

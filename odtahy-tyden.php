@@ -284,7 +284,7 @@
     <div class="modal novy">
         <div class="modal-content">
             <div class="modal-header">
-                <span id="closeBtn" class="close">&times;</span>
+                <span class="close closeBtn">&times;</span>
                 <h2>Vytvoření nového týdne</h2>
             </div>
             <div class="modal-body">
@@ -302,7 +302,7 @@
     <div class="modal alert">
         <div class="modal-content">
             <div class="modal-header">
-                <span id="closeBtn" class="close">&times;</span>
+                <span class="close closeBtn">&times;</span>
                 <h2>Upozornění</h2>
             </div>
             <div class="modal-body">
@@ -313,7 +313,7 @@
     <div class="modal zmena">
         <div class="modal-content">
             <div class="modal-header">
-                <span id="closeBtn" class="close">&times;</span>
+                <span class="close closeBtn">&times;</span>
                 <h2>Změna návinu</h2>
             </div>
             <div class="modal-body">
@@ -331,14 +331,14 @@
                         <tbody>
                             <tr>
                                 <td>Doba návinu</td>
-                                <td><input type="text" name="doba_navinu" class="time" id="doba_navinu" placeholder="00:00" data-origo=""></td>
+                                <td><input type="text" name="doba_navinu" class="timeDoba" id="doba_navinu" placeholder="00:00" data-origo=""></td>
                             </tr>
                             <tr>
                                 <td>Specifikace</td>
                                 <td><select name="specifikace" class="specifikace"></select></td>
                             </tr>
                             <tr>
-                                <td colspan="2" id="novaDoba" data-od="" data-do=""></td>
+                                <td colspan="2" id="novaDoba" class="nove" data-od="" data-do=""></td>
                             </tr> 
                             <tr>
                                 <td colspan="2"><p>Změna se provede pro tento a všechny následující náviny</p></td>
@@ -359,19 +359,19 @@
                         </tbody>
                     </table>
                     <fieldset>
-                        <input type="radio" name="navin_volba" id="tento_nav_spec" value="Tento návin" checked>
+                        <input type="radio" name="navin_volba_spec" id="tento_nav_spec" value="Tento návin" checked>
                         <label for="tento_nav_spec">Tento návin</label>
 
-                        <input type="radio" name="navin_volba" id="nasl_nav_spec" value="Všechny následující náviny">
+                        <input type="radio" name="navin_volba_spec" id="nasl_nav_spec" value="Všechny následující náviny">
                         <label for="nasl_nav_spec">Všechny následující náviny</label>
 
-                        <input type="radio" name="navin_volba" id="tento_nasl_nav_spec" value="Tento a všechny následující náviny">
+                        <input type="radio" name="navin_volba_spec" id="tento_nasl_nav_spec" value="Tento a všechny následující náviny">
                         <label for="tento_nasl_nav_spec">Tento a všechny následující náviny</label>
 
-                        <input type="radio" name="navin_volba" id="pocet_nav_spec" value="Počet návinů">
+                        <input type="radio" name="navin_volba_spec" id="pocet_nav_spec" value="Počet návinů">
                         <label for="pocet_nav_spec">Počet návinů</label>
 
-                        <input type="radio" name="navin_volba" id="do_data_spec" value="Následující náviny do data">
+                        <input type="radio" name="navin_volba_spec" id="do_data_spec" value="Následující náviny do data">
                         <label for="do_data_spec">Následující náviny do data</label>
                     </fieldset>
                 </div>
@@ -388,19 +388,19 @@
                         </tbody>
                     </table>
                     <fieldset>
-                        <input type="radio" name="navin_volba" id="tento_nav_stav" value="Tento návin" checked>
+                        <input type="radio" name="navin_volba_stav" id="tento_nav_stav" value="Tento návin" checked>
                         <label for="tento_nav_stav">Tento návin</label>
 
-                        <input type="radio" name="navin_volba" id="nasl_nav_stav" value="Všechny následující náviny">
+                        <input type="radio" name="navin_volba_stav" id="nasl_nav_stav" value="Všechny následující náviny">
                         <label for="nasl_nav_stav">Všechny následující náviny</label>
 
-                        <input type="radio" name="navin_volba" id="tento_nasl_nav_stav" value="Tento a všechny následující náviny">
+                        <input type="radio" name="navin_volba_stav" id="tento_nasl_nav_stav" value="Tento a všechny následující náviny">
                         <label for="tento_nasl_nav_stav">Tento a všechny následující náviny</label>
 
-                        <input type="radio" name="navin_volba" id="pocet_nav_stav" value="Počet návinů">
+                        <input type="radio" name="navin_volba_stav" id="pocet_nav_stav" value="Počet návinů">
                         <label for="pocet_nav_stav">Počet návinů</label>
 
-                        <input type="radio" name="navin_volba" id="do_data_stav" value="Následující náviny do data">
+                        <input type="radio" name="navin_volba_stav" id="do_data_stav" value="Následující náviny do data">
                         <label for="do_data_stav">Následující náviny do data</label>
                     </fieldset>
                 </div>
@@ -412,14 +412,14 @@
                         <tbody>
                             <tr>
                                 <td>Posun začátku o</td>
-                                <td><input type="text" name="posun" class="time" id="posun" placeholder="00:00" data-origo=""></td>
+                                <td><input type="text" name="posun" class="time" id="posun_zacatku" placeholder="00:00"></td>
                             </tr>
                             <tr>
                                 <td>Specifikace</td>
                                 <td><select name="specifikace" class="specifikace"></select></td>
                             </tr>
                             <tr>
-                                <td colspan="2" id="novaDoba" data-od="" data-do=""></td>
+                                <td colspan="2" id="novyZacatek" class="nove" data-zacatek=""></td>
                             </tr> 
                             <tr>
                                 <td colspan="2"><p>Změna se provede pro tento a všechny následující náviny</p></td>
@@ -519,6 +519,7 @@
             font-weight: 600;
             border-radius: 6px;
             transition: all 0.2s ease;
+            max-height: 8vh;
         }
         .zmena-menu .defButt:hover {
             background: #e9e9e9;
@@ -545,6 +546,8 @@
             border: 1px solid #ddd;
             border-radius: 6px;
             background: #fff;
+            width: 25vw;
+            height: 60vh;
         }
 
         /* === NADPISY === */
@@ -599,7 +602,7 @@
         }
 
         /* === SPECIÁLNÍ ŘÁDEK === */
-        #novaDoba {
+        .nove {
             font-weight: 600;
             color: #2f80ed;
         }

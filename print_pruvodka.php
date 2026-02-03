@@ -10,7 +10,7 @@
     require_once 'server.php';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if(isset($_POST['duvod'])){
+        if(!isset($_POST['pruvodni']) && !isset($_POST['testovaci'])){
             $nadpis = "Blokovaná výroba";
             $od = $_POST['od'] ?? '';
             $do = $_POST['do'] ?? '';
@@ -44,8 +44,6 @@
         }else{
             if(isset($_POST['pruvodni']))
                 $nadpis = $_POST['pruvodni'];
-            else if(isset($_POST['blokovana']))
-                $nadpis = $_POST['blokovana'];
             else if (isset($_POST['testovaci']))
                 $nadpis = $_POST['testovaci'];
             else
