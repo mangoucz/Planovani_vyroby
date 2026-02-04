@@ -216,7 +216,7 @@ $(document).ready(function() {
         }
     }
 
-    $(document).on('click', '.closeBtn', closeModal);
+    $(document).on('click', '.closeBtn', function() {closeModal(this)});
 
     $(document).on('click', '#logout', function() {
         if (confirm("Opravdu se chcete odhlásit?")) {
@@ -315,7 +315,13 @@ $(document).ready(function() {
             $(this).val("0" + value + ":00");
     });
 
-
+    $(document).on('click', '#ulozitZmenu', function() {
+        $(".zmena-content").each(function () {
+            if($(this).is(":visible")){
+                $(this).find("form").submit();
+            }
+        });
+    });
     $(document).on('click', '#odeslat', function() {
         const form = document.querySelector("#form");
         
@@ -815,6 +821,8 @@ $(document).ready(function() {
                     $("#novyZacatek").data("zacatek", response.navin.zacatek);
                     $("#doba_navinu").val(response.navin.doba);
                     $("#doba_navinu").data("origo", response.navin.doba);
+                    $("#inputIdStroje").val(response.navin.id_stroj);
+                    $("#inputZacatek").val(response.navin.zacatek);
                     $(".specifikace").empty();
                     response.spec.forEach(function(spec) {
                         $(".specifikace").append(`<option value="${spec.id_spec}" ${spec.id_spec == response.navin.id_spec ? "selected" : ""}>${spec.spec}</option>`)
@@ -958,7 +966,6 @@ $(document).ready(function() {
             });
         }
     });
-
 
     if(window.location.href.includes("print_spec.php")){
         $("input").each(function() {

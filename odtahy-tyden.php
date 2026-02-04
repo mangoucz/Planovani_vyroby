@@ -327,53 +327,59 @@
                     <h3>Změna stavu pro stroj:</h3>
                     <h4>série: 260126</h4>
                     <h5>25.01.2026 15:45:00 > 26.01.2026 5:45:00</h5>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>Doba návinu</td>
-                                <td><input type="text" name="doba_navinu" class="timeDoba" id="doba_navinu" placeholder="00:00" data-origo=""></td>
-                            </tr>
-                            <tr>
-                                <td>Specifikace</td>
-                                <td><select name="specifikace" class="specifikace"></select></td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" id="novaDoba" class="nove" data-od="" data-do=""></td>
-                            </tr> 
-                            <tr>
-                                <td colspan="2"><p>Změna se provede pro tento a všechny následující náviny</p></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <form action="sub_db.php" method="post" id="formDoba">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>Doba návinu</td>
+                                    <td><input type="text" name="doba_navinu" class="timeDoba" id="doba_navinu" placeholder="00:00" data-origo=""></td>
+                                </tr>
+                                <tr>
+                                    <td>Specifikace</td>
+                                    <td><select name="id_spec" class="specifikace"></select></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" id="novaDoba" class="nove" data-od="" data-do=""></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><p>Změna se provede pro tento a všechny následující náviny</p></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <input type="hidden" name="id_stroj" id="inputIdStroje">
+                        <input type="hidden" name="zacatek" id="inputZacatek">
+                    </form>
                 </div>
                 <div class="zmena-content spec-content">
                     <h3>Změna stavu pro stroj:</h3>
                     <h4>série: 260126</h4>
                     <h5>25.01.2026 15:45:00 > 26.01.2026 5:45:00</h5>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>Specifikace</td>
-                                <td><select name="specifikace" class="specifikace"></select></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <fieldset>
-                        <input type="radio" name="navin_volba_spec" id="tento_nav_spec" value="Tento návin" checked>
-                        <label for="tento_nav_spec">Tento návin</label>
-
-                        <input type="radio" name="navin_volba_spec" id="nasl_nav_spec" value="Všechny následující náviny">
-                        <label for="nasl_nav_spec">Všechny následující náviny</label>
-
-                        <input type="radio" name="navin_volba_spec" id="tento_nasl_nav_spec" value="Tento a všechny následující náviny">
-                        <label for="tento_nasl_nav_spec">Tento a všechny následující náviny</label>
-
-                        <input type="radio" name="navin_volba_spec" id="pocet_nav_spec" value="Počet návinů">
-                        <label for="pocet_nav_spec">Počet návinů</label>
-
-                        <input type="radio" name="navin_volba_spec" id="do_data_spec" value="Následující náviny do data">
-                        <label for="do_data_spec">Následující náviny do data</label>
-                    </fieldset>
+                    <form action="sub_db.php" method="post" id="formSpec">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>Specifikace</td>
+                                    <td><select name="specifikace" class="specifikace"></select></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <fieldset>
+                            <input type="radio" name="navin_volba_spec" id="tento_nav_spec" value="Tento návin" checked>
+                            <label for="tento_nav_spec">Tento návin</label>
+    
+                            <input type="radio" name="navin_volba_spec" id="nasl_nav_spec" value="Všechny následující náviny">
+                            <label for="nasl_nav_spec">Všechny následující náviny</label>
+    
+                            <input type="radio" name="navin_volba_spec" id="tento_nasl_nav_spec" value="Tento a všechny následující náviny">
+                            <label for="tento_nasl_nav_spec">Tento a všechny následující náviny</label>
+    
+                            <input type="radio" name="navin_volba_spec" id="pocet_nav_spec" value="Počet návinů">
+                            <label for="pocet_nav_spec">Počet návinů</label>
+    
+                            <input type="radio" name="navin_volba_spec" id="do_data_spec" value="Následující náviny do data">
+                            <label for="do_data_spec">Následující náviny do data</label>
+                        </fieldset>
+                    </form>
                 </div>
                 <div class="zmena-content stav-content">
                     <h3>Změna stavu pro stroj:</h3>
@@ -427,18 +433,12 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- <button type="button" class="defButt">Tento návin</button>
-                <button type="button" class="defButt">Tento a všechny následující náviny</button>
-                <button type="button" class="defButt">Všechny následující náviny</button>
-                <button type="button" class="defButt">Následující náviny do daného dne</button>
-                <button type="button" class="defButt">Počet návinů</button> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="defButt" id="ulozitZmenu">Uložit změny</button>
             </div>
         </div>
     </div>
-
     <style>
         table {
             font-size: 12px;

@@ -31,7 +31,7 @@
     require_once 'server.php';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (isset($_POST['id_typ_stroje'])) {
+        if (isset($_POST['id_typ_stroje'])) { //specifikace (nová i editace)
             $sql = "";
             $params = [];
     
@@ -264,7 +264,7 @@
                             ]);
             exit;
         }
-        elseif (isset($_POST['id_vyr'])) {
+        elseif (isset($_POST['id_vyr'])) { //změna výrobku u specifikace
             $id_spec = $_POST['id_spec'];
             $id_vyr = $_POST['id_vyr'] == 0 ? null : $_POST['id_vyr']; 
 
@@ -282,7 +282,7 @@
             echo json_encode(["success" => true, "message" => "Výrobek byl úspěšně přiřazen."]);
             exit;
         }
-        elseif (isset($_POST['novyTyden'])){
+        elseif (isset($_POST['novyTyden'])){ //vytvoření nového týdne
             $stav = $_POST['stav_stroju'];
             $zac_nov_tydne = new DateTime($_POST['pondeli']); //první den nového týdne
             $kon_nov_tydne = (clone $zac_nov_tydne)->modify('monday next week'); //poslední den nového týdne
@@ -344,6 +344,64 @@
             sqlsrv_free_stmt($result);
             header("Location: odtahy-tyden.php?date=" . $zac_nov_tydne->format('Y-m-d'));
             exit;
+        }
+        elseif(isset($_POST['doba_navinu'])){ //změna doby návinů stroje
+            //Změna se provede pro tento a všechny následující náviny
+            $doba = $_POST['doba_navinu'];
+            $id_spec = $_POST['id_spec'];
+            $id_stroj = $_POST['id_stroj'];
+            $zacatek = $_POST['zacatek'];
+
+            sqlsrv_begin_transaction($conn);
+
+            // načtení návinů
+            $sql = "SELECT id_nav
+                    FROM Naviny
+                    WHERE id_stroj = ? AND zacatek >= ?
+                    ORDER BY zacatek ASC";
+            $params = [$id_stroj, $zacatek];
+            $result = sqlsrv_query($conn, $sql, $params);
+            if ($result === false) {
+                sqlsrv_free_stmt($result);
+                sqlsrv_rollback($conn);
+                die(print_r(sqlsrv_errors(), true));
+            }
+            $predchoziKonec = new DateTime($zacatek);
+            list($h, $m) = explode(':', $doba);
+
+            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                $novyZac = $predchoziKonec;
+                $novyKonec = (clone $novyZac)->modify('+ ' . $h . ' hours ' . $m . ' minutes');
+
+                $sql = "UPDATE Naviny SET 
+                            zacatek = ?,
+                            konec = ?,
+                            doba = ?,
+                            id_spec = ?
+                           WHERE id_nav = ?";
+                $params = [$novyZac, $novyKonec, $doba, $id_spec, $row['id_nav']];
+                $resultUpd = sqlsrv_query($conn, $sql, $params);
+                if ($resultUpd === false) {
+                    sqlsrv_rollback($conn);
+                    die(print_r(sqlsrv_errors(), true));
+                }
+                $predchoziKonec = $novyKonec;
+            }
+            sqlsrv_free_stmt($result);
+            sqlsrv_free_stmt($resultUpd);
+            sqlsrv_commit($conn);
+
+            header("Location: odtahy-tyden.php?date=" . $zacatek);
+            exit;
+        }
+        elseif(isset($_POST['specifikace'])){ //změna specifikace stroje
+
+        }
+        elseif(isset($_POST['stav'])){ //změna stavu stroje
+
+        }
+        elseif(isset($_POST['posun'])){ //posun začátku navinů stroje
+
         }
         else{
             echo json_encode([
