@@ -313,7 +313,7 @@
                         WHERE n.zacatek >= ? AND n.konec <= ? 
                         GROUP BY id_stroj) AS stroje
                     ON n.id_stroj = stroje.id_stroj AND n.konec = stroje.posledni
-                    ORDER BY n.id_stroj;"; //výběr posledních navinů pro každý stroj z posledního týdne
+                    ORDER BY n.id_stroj;"; //výběr posledních navinů pro každý stroj z posledně naplánovaného týdne
             $params = [$posl_zac_tydne->format('Y-m-d H:i'), $posl_konec_tydne->format('Y-m-d H:i')];
             $result = sqlsrv_query($conn, $sql, $params);
             if ($result === FALSE) 
@@ -351,14 +351,25 @@
             $id_spec = $_POST['id_spec'];
             $id_stroj = $_POST['id_stroj'];
             $zacatek = $_POST['zacatek'];
+            $stav = $_POST['stav'];
+
+            $sql = "SELECT MAX(n.zacatek) as posledni FROM Naviny as n;"; //zjištění posledního naplánovaného dne
+            $result = sqlsrv_query($conn, $sql);
+            if ($result === FALSE) 
+                die(print_r(sqlsrv_errors(), true));
+            $konec_tydne = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)['posledni'];
+            sqlsrv_free_stmt($result);
+
+            $konec_tydne = new DateTime($konec_tydne->format("Y-m-d"));
+            if ($konec_tydne->format('N') !== 1) 
+                $konec_tydne->modify('monday next week'); //poslední den posledně nalánovaného týdne
+            $konec_tydne->modify('+5 hours 35 minutes');
 
             sqlsrv_begin_transaction($conn);
 
-            // načtení návinů
-            $sql = "SELECT id_nav
-                    FROM Naviny
-                    WHERE id_stroj = ? AND zacatek >= ?
-                    ORDER BY zacatek ASC";
+            // Smazání dotčených návinů
+            $sql = "DELETE FROM Naviny
+                    WHERE id_stroj = ? AND zacatek >= ?";
             $params = [$id_stroj, $zacatek];
             $result = sqlsrv_query($conn, $sql, $params);
             if ($result === false) {
@@ -366,26 +377,21 @@
                 sqlsrv_rollback($conn);
                 die(print_r(sqlsrv_errors(), true));
             }
-            $predchoziKonec = new DateTime($zacatek);
             list($h, $m) = explode(':', $doba);
+            $predchoziKonec = new DateTime($zacatek); //předchozí konec = nový začátek
+            $novyKonec = (clone $predchoziKonec)->modify('+ ' . $h . ' hours ' . $m . ' minutes');
 
-            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                $novyZac = $predchoziKonec;
-                $novyKonec = (clone $novyZac)->modify('+ ' . $h . ' hours ' . $m . ' minutes');
-
-                $sql = "UPDATE Naviny SET 
-                            zacatek = ?,
-                            konec = ?,
-                            doba = ?,
-                            id_spec = ?
-                           WHERE id_nav = ?";
-                $params = [$novyZac, $novyKonec, $doba, $id_spec, $row['id_nav']];
+            while($novyKonec < $konec_tydne){
+                $sql = "INSERT INTO Naviny (id_stroj, serie, id_spec, zacatek, konec, doba, stav_stroje)
+                        VALUES (?, ?, ?, ?, ?, ?, ?);"; //Znovu naplánování dotčených návinů
+                $params = [$id_stroj, GenSerie($novyKonec), $id_spec, $predchoziKonec, $novyKonec, $doba, $stav];
                 $resultUpd = sqlsrv_query($conn, $sql, $params);
                 if ($resultUpd === false) {
                     sqlsrv_rollback($conn);
                     die(print_r(sqlsrv_errors(), true));
                 }
                 $predchoziKonec = $novyKonec;
+                $novyKonec = (clone $predchoziKonec)->modify('+ ' . $h . ' hours ' . $m . ' minutes');
             }
             sqlsrv_free_stmt($result);
             sqlsrv_free_stmt($resultUpd);
@@ -394,8 +400,18 @@
             header("Location: odtahy-tyden.php?date=" . $zacatek);
             exit;
         }
-        elseif(isset($_POST['specifikace'])){ //změna specifikace stroje
-
+        elseif(isset($_POST['id_spec'])){ //změna specifikace stroje
+            $id_spec = $_POST['id_spec'];
+            $cil = $_POST['navin_volba_spec'];
+            $id_stroj = $_POST['id_stroj'];
+            $zacatek = $_POST['zacatek']; 
+            
+            $sql = "UPDATE Naviny SET id_spec = ? WHERE zacatek = ?;";
+            $params = [$id_spec, $zacatek];
+            $result = sqlsrv_query($conn, $sql, $params);
+            if ($result === FALSE) 
+                die(print_r(sqlsrv_errors(), true));
+            sqlsrv_free_stmt($result);
         }
         elseif(isset($_POST['stav'])){ //změna stavu stroje
 

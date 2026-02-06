@@ -346,8 +346,9 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <input type="hidden" name="id_stroj" id="inputIdStroje">
-                        <input type="hidden" name="zacatek" id="inputZacatek">
+                        <input type="hidden" name="id_stroj" class="inputIdStroje">
+                        <input type="hidden" name="zacatek" class="inputZacatek">
+                        <input type="hidden" name="stav" id="inputStav">
                     </form>
                 </div>
                 <div class="zmena-content spec-content">
@@ -359,7 +360,7 @@
                             <tbody>
                                 <tr>
                                     <td>Specifikace</td>
-                                    <td><select name="specifikace" class="specifikace"></select></td>
+                                    <td><select name="id_spec" class="specifikace"></select></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -379,6 +380,8 @@
                             <input type="radio" name="navin_volba_spec" id="do_data_spec" value="Následující náviny do data">
                             <label for="do_data_spec">Následující náviny do data</label>
                         </fieldset>
+                        <input type="hidden" name="id_stroj" class="inputIdStroje">
+                        <input type="hidden" name="zacatek" class="inputZacatek">
                     </form>
                 </div>
                 <div class="zmena-content stav-content">

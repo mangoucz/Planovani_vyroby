@@ -821,8 +821,9 @@ $(document).ready(function() {
                     $("#novyZacatek").data("zacatek", response.navin.zacatek);
                     $("#doba_navinu").val(response.navin.doba);
                     $("#doba_navinu").data("origo", response.navin.doba);
-                    $("#inputIdStroje").val(response.navin.id_stroj);
-                    $("#inputZacatek").val(response.navin.zacatek);
+                    $(".inputIdStroje").val(response.navin.id_stroj);
+                    $(".inputZacatek").val(response.navin.zacatek);
+                    $("#inputStav").val(response.navin.id_stav);
                     $(".specifikace").empty();
                     response.spec.forEach(function(spec) {
                         $(".specifikace").append(`<option value="${spec.id_spec}" ${spec.id_spec == response.navin.id_spec ? "selected" : ""}>${spec.spec}</option>`)
