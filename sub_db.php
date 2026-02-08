@@ -405,13 +405,31 @@
             $cil = $_POST['navin_volba_spec'];
             $id_stroj = $_POST['id_stroj'];
             $zacatek = $_POST['zacatek']; 
+
+            if($cil < 4){
+                $ar = [
+                    '1' => '=', //tento návin
+                    '2' => '>', //všechny následující
+                    '3' => '>=' //tento a všechny násl.
+                ];
+                $zn = $ar[$cil];
+
+                $sql = "UPDATE Naviny SET id_spec = ? WHERE zacatek $zn ? AND id_stroj = ?;";
+                $params = [$id_spec, $zacatek, $id_stroj];
+                $result = sqlsrv_query($conn, $sql, $params);
+                if ($result === FALSE) 
+                    die(print_r(sqlsrv_errors(), true));
+                sqlsrv_free_stmt($result);
+            }
+            elseif($cil == 4){ //počet návinů
+                $pocet = $_POST['pocet'];
+            }
+            else{ //náviny do data
+                $do = $_POST['dat'];
+            }
             
-            $sql = "UPDATE Naviny SET id_spec = ? WHERE zacatek = ?;";
-            $params = [$id_spec, $zacatek];
-            $result = sqlsrv_query($conn, $sql, $params);
-            if ($result === FALSE) 
-                die(print_r(sqlsrv_errors(), true));
-            sqlsrv_free_stmt($result);
+            header("Location: odtahy-tyden.php?date=" . $zacatek);
+            exit;
         }
         elseif(isset($_POST['stav'])){ //změna stavu stroje
 

@@ -365,20 +365,26 @@
                             </tbody>
                         </table>
                         <fieldset>
-                            <input type="radio" name="navin_volba_spec" id="tento_nav_spec" value="Tento návin" checked>
+                            <input type="radio" name="navin_volba_spec" id="tento_nav_spec" value="1" checked>
                             <label for="tento_nav_spec">Tento návin</label>
     
-                            <input type="radio" name="navin_volba_spec" id="nasl_nav_spec" value="Všechny následující náviny">
+                            <input type="radio" name="navin_volba_spec" id="nasl_nav_spec" value="2">
                             <label for="nasl_nav_spec">Všechny následující náviny</label>
     
-                            <input type="radio" name="navin_volba_spec" id="tento_nasl_nav_spec" value="Tento a všechny následující náviny">
+                            <input type="radio" name="navin_volba_spec" id="tento_nasl_nav_spec" value="3">
                             <label for="tento_nasl_nav_spec">Tento a všechny následující náviny</label>
-    
-                            <input type="radio" name="navin_volba_spec" id="pocet_nav_spec" value="Počet návinů">
-                            <label for="pocet_nav_spec">Počet návinů</label>
-    
-                            <input type="radio" name="navin_volba_spec" id="do_data_spec" value="Následující náviny do data">
-                            <label for="do_data_spec">Následující náviny do data</label>
+
+                            <div class="vyberPul">
+                                <input type="radio" name="navin_volba_spec" id="pocet_nav_spec" value="4">
+                                <label for="pocet_nav_spec">Počet návinů</label>
+                                <input type="number" name="pocet" id="inputPocet" class="inputPul" min="1" disabled>
+                            </div>
+
+                            <div class="vyberPul">
+                                <input type="radio" name="navin_volba_spec" id="do_data_spec" value="5">
+                                <label for="do_data_spec">Následující náviny do data</label>
+                                <input type="text" name="dat" id="inputDat" class="date inputPul" disabled>
+                            </div>
                         </fieldset>
                         <input type="hidden" name="id_stroj" class="inputIdStroje">
                         <input type="hidden" name="zacatek" class="inputZacatek">
@@ -449,7 +455,7 @@
             color: #202020;
             width: 100%;
             max-width: 80vw;
-            margin: 20px auto;
+            margin: 10px auto;
             border-collapse: collapse;
             background: white;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -550,7 +556,7 @@
             border-radius: 6px;
             background: #fff;
             width: 25vw;
-            height: 60vh;
+            height: 68vh;
         }
 
         /* === NADPISY === */
@@ -608,6 +614,44 @@
         .nove {
             font-weight: 600;
             color: #2f80ed;
+        }
+
+        .vyberPul {
+            display: grid;
+            grid-template-columns: 1fr 120px;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border: 2px solid #cfd8dc;
+            border-radius: 10px;
+            background: #f8fbfc;
+            transition: 
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+        .inputPul {
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #cfd8dc;
+            font-size: 14px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .vyberPul:hover {
+            border-color: #5d99a3;
+        }   
+        .vyberPul input[type="radio"]:checked ~ label,
+        .vyberPul input[type="radio"]:checked ~ .inputPul {
+            background: #f8fbfc !important; 
+        }
+        .vyberPul input[type="radio"]:checked ~ .inputPul {
+            border-color: #5d99a3;
+            box-shadow: 0 0 0 2px rgba(93, 153, 163, 0.3);
+        }
+        .vyberPul:has(input[type="radio"]:checked) {
+            border-color: #5d99a3;
+            background: #e3f0f2;
+            box-shadow: 0 0 0 2px rgba(93, 153, 163, 0.25);
         }
 
 

@@ -315,13 +315,22 @@ $(document).ready(function() {
             $(this).val("0" + value + ":00");
     });
 
-    $(document).on('click', '#ulozitZmenu', function() {
+    $(document).on('click', '#ulozitZmenu', function () {
         $(".zmena-content").each(function () {
-            if($(this).is(":visible")){
-                $(this).find("form").submit();
+            if ($(this).is(":visible")) {
+                const form = $(this).find("form")[0]; // DOM element
+
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return false; // zastaví each
+                }
+
+                form.submit();
+                return false; 
             }
         });
     });
+
     $(document).on('click', '#odeslat', function() {
         const form = document.querySelector("#form");
         
@@ -874,6 +883,19 @@ $(document).ready(function() {
         
         $("#novaDoba").text(`Nová doba návinu: ${formatDateTime(navinOdDate)} >> ${formatDateTime(navinDoDate)}`);
     });
+    $(document).on('change', 'input[name="navin_volba_spec"]', function () {
+        $('.inputPul').prop('disabled', true);
+
+        if (this.id === 'pocet_nav_spec') {
+            $('#inputPocet').prop('disabled', false).focus();
+        }
+
+        if (this.id === 'do_data_spec') {
+            $('#inputDat').prop('disabled', false).focus();
+        }
+    });
+
+
     $(document).on('change', '#posun_zacatku', function() {
         const rozdilMinuty = timeToMinutes($(this).val());
         const zacatekDate = new Date($("#novyZacatek").data("zacatek"));
