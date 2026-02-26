@@ -175,7 +175,6 @@
                     WHERE n.id_nav = ?;";
             $params = [$id_nav];
             $result = sqlsrv_query($conn, $sql, $params);
-
             if ($result === false) {
                 echo json_encode([
                     "success" => false,
@@ -188,7 +187,7 @@
             sqlsrv_free_stmt($result);
 
             $sql = "SELECT CONCAT(s.c_spec, ' - titr: ', s.titr_skup) as spec, s.id_spec FROM Specifikace as s WHERE s.id_typ_stroje = ?;";
-            $params = [$navin['id_typ']];
+            $params = [$navin['id_typ'] >= 3 ? 3 : $navin['id_typ']]; 
             $result = sqlsrv_query($conn, $sql, $params);
             if ($result === false) {
                 echo json_encode([

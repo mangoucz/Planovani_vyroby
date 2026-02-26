@@ -117,7 +117,7 @@
             <button class="vyberButt TabSpecButt" id="addTabSpec">+</button>
         </div>
         <?php for ($i = 0; $i < count($tab_spec); $i++) : ?>
-        <div id="<?= $tab_spec[$i]['tab'] ?>" class="content specContent" style="width: 70%; <?= (isset($_SESSION['save']) && $_SESSION['save'] == $tab_spec[$i]['tab']) ? 'display: block;' : ''; ?>">
+        <div id="<?= $tab_spec[$i]['tab'] ?>" class="content specContent" style="width: 67vw; <?= (isset($_SESSION['save']) && $_SESSION['save'] == $tab_spec[$i]['tab']) ? 'display: block;' : ''; ?>">
             <h3>
                 <?= $tab_spec[$i]['tab'] ?>
                 <span class="action-buttons">
@@ -173,7 +173,7 @@
             <button class="vyberButt TypStrojButt" id="addTypStroj">+</button>
         </div>
         <?php for ($i = 0; $i < count($typy_stroju); $i++) : ?>
-        <div id="<?= $typy_stroju[$i]['id_typ'] ?>" class="content strojContent" style="width: 70%; <?= (isset($_SESSION['save']) && $_SESSION['save'] == $typy_stroju[$i]['id_typ']) ? 'display: block;' : ''; ?>">
+        <div id="<?= $typy_stroju[$i]['id_typ'] ?>" class="content strojContent" style="width: 67vw; <?= (isset($_SESSION['save']) && $_SESSION['save'] == $typy_stroju[$i]['id_typ']) ? 'display: block;' : ''; ?>">
             <h3>
                 <?= $typy_stroju[$i]['nazev'] ?>
                 <span class="action-buttons">
@@ -294,7 +294,7 @@
         .nadpis{
             background: #FFFFFF;
             border: 1px solid #ccc;
-            width: 100%;
+            width: calc(100% - 16px);
             margin: 20px 0 0;
             padding-left: 10px;
             border-left: 5px solid #007bff;

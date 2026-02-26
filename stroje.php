@@ -125,31 +125,31 @@
                     <td data-label="Příští odtah"><?= is_object($stroj['odtah']) ? $stroj['odtah']->format('d.m.Y H:i') : $stroj['odtah']; ?></td>
                 </tr>
             <?php endforeach; ?>
-            <tr style="text-align: center; font-weight: bold; background-color: #f1f1f1;">
-                <td>Celkem:</td>
-                <td><?= count($stroje); ?> strojů</td>
-                <td>-</td>
-                <td>-</td>
-                <td>
+            <tr class="souhrn">
+                <td class="none">Celkem:</td>
+                <td data-label="Celkem strojů:"><?= count($stroje); ?> strojů</td>
+                <td class="none">-</td>
+                <td class="none">-</td>
+                <td data-label="Celkem spotřeba viskózy:">
                     <?php
                         $sum_spotreba = array_sum(array_column($stroje, 'spotreba'));
                         echo $sum_spotreba . ' l/hod <br> ' . round($sum_spotreba/1000, 2) . ' m3/hod';
                     ?>
                 </td>
-                <td>
+                <td data-label="Celkem rychlost výr. [kg/hod]:">
                     <?php
                         $sum_rychlost_hod = array_sum(array_column($stroje, 'rychlost_hod'));
                         echo $sum_rychlost_hod . ' kg/hod';
                     ?>
                 </td>
-                <td>
+                <td data-label="Celkem rychlost výr. [kg/den]:">
                     <?php
                         $sum_rychlost_den = array_sum(array_column($stroje, 'rychlost_den'));
                         echo $sum_rychlost_den . ' kg/den';
                     ?>
                 </td>
-                <td>-</td>
-                <td>-</td>
+                <td class="none">-</td>
+                <td class="none">-</td>
             </tr>
         </tbody>
     </table>
@@ -188,16 +188,18 @@
         tbody tr:hover {
             background-color: #f8f9fa;
         }
+        .souhrn{
+            text-align: center; 
+            font-weight: bold; 
+            background-color: #f1f1f1;
+        }
 
         .footer{
             display: none;
         }
 
 
-        @media (max-width: 660px) {
-            table {
-                margin: 10px;
-            }
+        @media (max-width: 710px) {
             table, thead, tbody, th, td, tr {
                 display: block;
             }
@@ -226,6 +228,9 @@
                 white-space: nowrap;
                 font-weight: bold;
                 content: attr(data-label);
+            }
+            .none{
+                display: none;
             }
         }
     </style>

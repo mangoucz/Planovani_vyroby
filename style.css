@@ -229,7 +229,7 @@ fieldset input[type="radio"] {
 /* Label = karta */
 fieldset label {
     display: block !important;
-    padding: 14px 18px !important;
+    padding: 14px 10px !important;
     border: 2px solid #cfd8dc !important;
     border-radius: 10px !important;
     background: #f8fbfc !important;
@@ -312,6 +312,22 @@ fieldset input[type="radio"]:focus + label {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 60vw;
 } 
+.setting .date {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    min-width: 150px;
+}
+.setting .date:hover {
+    border-color: #999;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+.setting .defButt {
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+}
 
 .no-data {
     padding: 15px;
@@ -475,6 +491,19 @@ fieldset input[type="radio"]:focus + label {
         padding: 10px 5px;
         font-size: 14px;
     }
+    .setting {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 15px;
+    }
+    .setting .defButt,
+    .setting .date {
+        width: 100%;
+        text-align: center;
+        max-width: none;
+        margin: 0;
+    }
 }
 @media (max-width: 920px) {
     .header{
@@ -488,5 +517,13 @@ fieldset input[type="radio"]:focus + label {
     }
     .logo {
         display: none;
+    }
+    .setting {
+        justify-content: center;
+        width: 80vw;
+    }
+    .setting .defButt {
+        padding: 8px 14px;
+        font-size: 14px;
     }
 }

@@ -316,19 +316,21 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '#ulozitZmenu', function () {
-        $(".zmena-content").each(function () {
-            if ($(this).is(":visible")) {
-                const form = $(this).find("form")[0]; // DOM element
+        const $visibleForm = $(".zmena-content:visible").find("form");
+        const form = $visibleForm[0];
 
-                if (!form.checkValidity()) {
-                    form.reportValidity();
-                    return false; // zastaví each
-                }
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
 
-                form.submit();
-                return false; 
+        $visibleForm.find(".date").each(function () {
+            const val = this.value;
+            if (val) {
+                this.value = CZToPC(val);
             }
         });
+        form.submit();
     });
 
     $(document).on('click', '#odeslat', function() {
@@ -832,11 +834,13 @@ $(document).ready(function() {
                     $("#doba_navinu").data("origo", response.navin.doba);
                     $(".inputIdStroje").val(response.navin.id_stroj);
                     $(".inputZacatek").val(response.navin.zacatek);
-                    $("#inputStav").val(response.navin.id_stav);
+                    $(".inputStav").val(response.navin.id_stav);
+                    $("#inputDoba").val(response.navin.doba);
                     $(".specifikace").empty();
                     response.spec.forEach(function(spec) {
                         $(".specifikace").append(`<option value="${spec.id_spec}" ${spec.id_spec == response.navin.id_spec ? "selected" : ""}>${spec.spec}</option>`)
                     });
+                    $("#stavSelect").empty();
                     response.stavy.forEach(function(stavy) {
                         $("#stavSelect").append(`<option value="${stavy.id_stav}" ${stavy.id_stav == response.navin.id_stav ? "selected" : ""}>${stavy.stav}</option>`)
                     });
@@ -883,19 +887,22 @@ $(document).ready(function() {
         
         $("#novaDoba").text(`Nová doba návinu: ${formatDateTime(navinOdDate)} >> ${formatDateTime(navinDoDate)}`);
     });
-    $(document).on('change', 'input[name="navin_volba_spec"]', function () {
+    $(document).on('change', 'input[type="radio"]', function () {
         $('.inputPul').prop('disabled', true);
 
-        if (this.id === 'pocet_nav_spec') {
-            $('#inputPocet').prop('disabled', false).focus();
+        if(this.id === 'pocet_nav_spec') 
+            $('#inputPocetSpec').prop('disabled', false).focus();
+        else if(this.id === 'do_data_spec') {
+            $('#inputDatSpec, #inputCasSpec').prop('disabled', false);
+            $('#inputDatSpec').focus();
         }
-
-        if (this.id === 'do_data_spec') {
-            $('#inputDat').prop('disabled', false).focus();
+        else if(this.id === 'pocet_nav_stav')
+            $('#inputPocetStav').prop('disabled', false).focus();
+        else if(this.id === 'do_data_stav') {
+            $('#inputDatStav, #inputCasStav').prop('disabled', false);
+            $('#inputDatStav').focus();
         }
     });
-
-
     $(document).on('change', '#posun_zacatku', function() {
         const rozdilMinuty = timeToMinutes($(this).val());
         const zacatekDate = new Date($("#novyZacatek").data("zacatek"));
@@ -908,6 +915,7 @@ $(document).ready(function() {
 
         $("#novyZacatek").text(`Nový začátek návinu: ${formatDateTime(zacatekDate)}`);
     });
+
 
     $(document).on('click', '#novyTydenButt', function() {
         $.ajax({

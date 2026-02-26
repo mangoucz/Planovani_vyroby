@@ -257,7 +257,7 @@
                                                     $title = "Specifikace: " . $naviny[$m]['c_spec'] . ",\nZačátek: " . $naviny[$m]['zacatek']->format("H:i") . ",\nDoba: " . $naviny[$m]['doba']->format("H:i") . ",\nStav: " . $naviny[$m]['stav'];
                                                     $minuty = ((int)$naviny[$m]['doba']->format('H') * 60) + (int)$naviny[$m]['doba']->format('i');
                                                     $barva = dobaToColor($minuty, $doba);
-                                                    $class = $naviny[$m]['stav_stroje'] == 4 ? 'mimo' : '';
+                                                    $class = $naviny[$m]['stav_stroje'] == 1 ? '' : 'mimo';
                                                     $id_nav = $naviny[$m]['id_nav'];
                                                     break;
                                                 }   
@@ -348,7 +348,7 @@
                         </table>
                         <input type="hidden" name="id_stroj" class="inputIdStroje">
                         <input type="hidden" name="zacatek" class="inputZacatek">
-                        <input type="hidden" name="stav" id="inputStav">
+                        <input type="hidden" name="stav" class="inputStav">
                     </form>
                 </div>
                 <div class="zmena-content spec-content">
@@ -377,13 +377,16 @@
                             <div class="vyberPul">
                                 <input type="radio" name="navin_volba_spec" id="pocet_nav_spec" value="4">
                                 <label for="pocet_nav_spec">Počet návinů</label>
-                                <input type="number" name="pocet" id="inputPocet" class="inputPul" min="1" disabled>
+                                <input type="number" name="pocet" id="inputPocetSpec" class="inputPul" min="1" disabled>
                             </div>
 
                             <div class="vyberPul">
                                 <input type="radio" name="navin_volba_spec" id="do_data_spec" value="5">
                                 <label for="do_data_spec">Následující náviny do data</label>
-                                <input type="text" name="dat" id="inputDat" class="date inputPul" disabled>
+                                <div class="inputRow">
+                                    <input type="text" name="dat" id="inputDatSpec" class="date inputPul" placeholder="DD. MM. YYYY" disabled>
+                                    <input type="text" name="cas" id="inputCasSpec" class="time inputPul" placeholder="HH:MM" disabled>
+                                </div>
                             </div>
                         </fieldset>
                         <input type="hidden" name="id_stroj" class="inputIdStroje">
@@ -394,53 +397,72 @@
                     <h3>Změna stavu pro stroj:</h3>
                     <h4>série: 260126</h4>
                     <h5>25.01.2026 15:45:00 > 26.01.2026 5:45:00</h5>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>Stav stroje</td>
-                                <td><select name="stav" id="stavSelect"></select></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <fieldset>
-                        <input type="radio" name="navin_volba_stav" id="tento_nav_stav" value="Tento návin" checked>
-                        <label for="tento_nav_stav">Tento návin</label>
-
-                        <input type="radio" name="navin_volba_stav" id="nasl_nav_stav" value="Všechny následující náviny">
-                        <label for="nasl_nav_stav">Všechny následující náviny</label>
-
-                        <input type="radio" name="navin_volba_stav" id="tento_nasl_nav_stav" value="Tento a všechny následující náviny">
-                        <label for="tento_nasl_nav_stav">Tento a všechny následující náviny</label>
-
-                        <input type="radio" name="navin_volba_stav" id="pocet_nav_stav" value="Počet návinů">
-                        <label for="pocet_nav_stav">Počet návinů</label>
-
-                        <input type="radio" name="navin_volba_stav" id="do_data_stav" value="Následující náviny do data">
-                        <label for="do_data_stav">Následující náviny do data</label>
-                    </fieldset>
+                    <form action="sub_db.php" method="post" id="formStav">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>Stav stroje</td>
+                                    <td><select name="id_stav" id="stavSelect"></select></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <fieldset>
+                            <input type="radio" name="navin_volba_stav" id="tento_nav_stav" value="1" checked>
+                            <label for="tento_nav_stav">Tento návin</label>
+    
+                            <input type="radio" name="navin_volba_stav" id="nasl_nav_stav" value="2">
+                            <label for="nasl_nav_stav">Všechny následující náviny</label>
+    
+                            <input type="radio" name="navin_volba_stav" id="tento_nasl_nav_stav" value="3">
+                            <label for="tento_nasl_nav_stav">Tento a všechny následující náviny</label>
+    
+                            <div class="vyberPul">
+                                <input type="radio" name="navin_volba_stav" id="pocet_nav_stav" value="4">
+                                <label for="pocet_nav_stav">Počet návinů</label>
+                                <input type="number" name="pocet" id="inputPocetStav" class="inputPul" min="1" disabled>
+                            </div>
+    
+                            <div class="vyberPul">
+                                <input type="radio" name="navin_volba_stav" id="do_data_stav" value="5">
+                                <label for="do_data_stav">Následující náviny do data</label>
+                                <div class="inputRow">
+                                    <input type="text" name="dat" id="inputDatStav" class="date inputPul" placeholder="DD. MM. YYYY" disabled>
+                                    <input type="text" name="cas" id="inputCasStav" class="time inputPul" placeholder="HH:MM" disabled>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <input type="hidden" name="id_stroj" class="inputIdStroje">
+                        <input type="hidden" name="zacatek" class="inputZacatek">
+                    </form>
                 </div>
                 <div class="zmena-content posun-content">
                     <h3>Změna stavu pro stroj:</h3>
                     <h4>série: 260126</h4>
                     <h5>25.01.2026 15:45:00 > 26.01.2026 5:45:00</h5>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>Posun začátku o</td>
-                                <td><input type="text" name="posun" class="time" id="posun_zacatku" placeholder="00:00"></td>
-                            </tr>
-                            <tr>
-                                <td>Specifikace</td>
-                                <td><select name="specifikace" class="specifikace"></select></td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" id="novyZacatek" class="nove" data-zacatek=""></td>
-                            </tr> 
-                            <tr>
-                                <td colspan="2"><p>Změna se provede pro tento a všechny následující náviny</p></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <form action="sub_db.php" method="post" id="formPosun">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>Posun začátku o</td>
+                                    <td><input type="text" name="posun" class="time" id="posun_zacatku" placeholder="00:00"></td>
+                                </tr>
+                                <tr>
+                                    <td>Specifikace</td>
+                                    <td><select name="id_spec" class="specifikace"></select></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" id="novyZacatek" class="nove" data-zacatek=""></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><p>Změna se provede pro tento a všechny následující náviny</p></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <input type="hidden" name="id_stroj" class="inputIdStroje">
+                        <input type="hidden" name="zacatek" class="inputZacatek">
+                        <input type="hidden" name="stav" class="inputStav">
+                        <input type="hidden" name="doba" id="inputDoba">
+                    </form>
                 </div>
             </div>
             <div class="modal-footer">
@@ -556,6 +578,7 @@
             border-radius: 6px;
             background: #fff;
             width: 25vw;
+            min-width: 400px;
             height: 68vh;
         }
 
@@ -654,14 +677,71 @@
             box-shadow: 0 0 0 2px rgba(93, 153, 163, 0.25);
         }
 
-
         .footer{
             display: none;
         }
         
-        @media (max-width: 660px) {
-            
+        @media (max-width: 920px) {
+            .naviny {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .naviny table {
+                min-width: 1100px;
+                border-collapse: collapse;
+            }
+
+            .naviny th,
+            .naviny td {
+                font-size: 13px;
+                white-space: nowrap;
+            }
+            .naviny td{
+                padding: 6px 8px;
+            }
+
+            .naviny a.tyden-link {
+                display: block;
+                font-size: 12px;
+            }
+
+            .zmena-content{
+                width: 40vw;
+            }
+            .zmena-menu{
+                width: 25vw;
+            }
         }
+        @media (max-width: 710px) {
+            .modal-content {
+                width: 95vw;
+                max-width: 95vw;
+            }
+            .zmena .modal-body {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .zmena-menu {
+                flex-direction: row;
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+            .zmena-menu .defButt {
+                flex: 0 0 auto;
+                min-width: 120px;
+                text-align: center;
+            }
+            .zmena-content {
+                width: 100%;
+                min-width: 0;
+                height: auto;
+                max-height: none;
+            }
+        }    
     </style>
 </body>
 </html>
