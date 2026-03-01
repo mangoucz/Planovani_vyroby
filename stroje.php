@@ -127,22 +127,22 @@
             <?php endforeach; ?>
             <tr class="souhrn">
                 <td class="none">Celkem:</td>
-                <td data-label="Celkem strojů:"><?= count($stroje); ?> strojů</td>
+                <td data-label="Celkem:"><?= count($stroje); ?> strojů</td>
                 <td class="none">-</td>
                 <td class="none">-</td>
-                <td data-label="Celkem spotřeba viskózy:">
+                <td data-label="Spotřeba viskózy:">
                     <?php
                         $sum_spotreba = array_sum(array_column($stroje, 'spotreba'));
                         echo $sum_spotreba . ' l/hod <br> ' . round($sum_spotreba/1000, 2) . ' m3/hod';
                     ?>
                 </td>
-                <td data-label="Celkem rychlost výr. [kg/hod]:">
+                <td data-label="Rychlost výr. [kg/hod]:">
                     <?php
                         $sum_rychlost_hod = array_sum(array_column($stroje, 'rychlost_hod'));
                         echo $sum_rychlost_hod . ' kg/hod';
                     ?>
                 </td>
-                <td data-label="Celkem rychlost výr. [kg/den]:">
+                <td data-label="Rychlost výr. [kg/den]:">
                     <?php
                         $sum_rychlost_den = array_sum(array_column($stroje, 'rychlost_den'));
                         echo $sum_rychlost_den . ' kg/den';

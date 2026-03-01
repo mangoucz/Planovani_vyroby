@@ -136,7 +136,7 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    @media (max-width: 660px) {
+    @media (max-width: 710px) {
         body{
             display: flex;
             flex-direction: column;

@@ -158,6 +158,7 @@
             <div class="radek">
                 <label for="c_spec">Číslo specifikace</label>
                 <input type="number" id="c_spec" name="c_spec" required readonly value="<?= $c_spec ?? '' ?>">
+                <span class="jednotka"></span>
             </div>
             <div class="radek">
                 <label for="titr">Titr</label>
@@ -703,6 +704,25 @@
             display: flex;
             justify-content: center; 
             margin: 20px 0 100px 0; 
+        }
+        @media (max-width: 990px) {
+            .radek label {
+                flex: 0 0 120px;
+                font-size: 0.95rem;
+            }
+
+            .jednotka {
+                min-width: 80px;
+                font-size: 0.9rem;
+            }
+        }
+        @media (max-width: 710px) {
+            .setting{
+                max-width: none;
+            }
+            .double {
+                display: block;
+            }
         }
     </style>
 </body>

@@ -736,10 +736,11 @@
                 text-align: center;
             }
             .zmena-content {
-                width: 100%;
+                width: 90%;
                 min-width: 0;
                 height: auto;
                 max-height: none;
+                margin: auto;
             }
         }    
     </style>

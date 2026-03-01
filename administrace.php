@@ -106,25 +106,20 @@
             <?php if($_SESSION['admin']): ?><li><a href="administrace.php" class="active">Administrace</a></li><?php endif; ?>
         </ul>
     </div>
+    <p style="text-align: center; font-weight: bold;">Administrativní část slouží zatím jen pro čtení!</p>
     <div class="content-block clearfix">
         <div class="nadpis" id="specifikace">
             <h2>Specifikace</h2>
         </div>
-        <div class="vyber specifikace" style="<?= (isset($_SESSION['save']) && $_SESSION['save'] == "specifikace") ? 'display: block;' : 'display: none'; ?>">
+        <div class="vyber specifikace" style="<?= (isset($_SESSION['save']) && $_SESSION['save'] == "specifikace") ? 'display: flex;' : 'display: none'; ?>">
             <?php for ($i = 0; $i < count($tab_spec); $i++) : ?>
             <button class="vyberButt TabSpecButt" id="<?= $tab_spec[$i]['tab'] ?>"><?= $tab_spec[$i]['tab'] ?></button>
             <?php endfor; ?>
             <button class="vyberButt TabSpecButt" id="addTabSpec">+</button>
         </div>
         <?php for ($i = 0; $i < count($tab_spec); $i++) : ?>
-        <div id="<?= $tab_spec[$i]['tab'] ?>" class="content specContent" style="width: 67vw; <?= (isset($_SESSION['save']) && $_SESSION['save'] == $tab_spec[$i]['tab']) ? 'display: block;' : ''; ?>">
-            <h3>
-                <?= $tab_spec[$i]['tab'] ?>
-                <span class="action-buttons">
-                    <button class="edit" id="<?= $tab_spec[$i]['tab'] ?>">Upravit</button>
-                    <button class="del" id="<?= $tab_spec[$i]['tab'] ?>">Smazat</button>
-                </span>
-            </h3>
+        <div id="<?= $tab_spec[$i]['tab'] ?>" style="width: 67vw;" class="content specContent" <?= (isset($_SESSION['save']) && $_SESSION['save'] == $tab_spec[$i]['tab']) ? 'display: block;' : ''; ?>">
+            <h3><?= $tab_spec[$i]['tab'] ?></h3>
             <?php
                 $table = $tab_spec[$i]['tab'];
                 $sql = "SELECT COLUMN_NAME as sloupec, DATA_TYPE as typ, CHARACTER_MAXIMUM_LENGTH as max, CONCAT(NUMERIC_PRECISION, ', ', NUMERIC_SCALE) as max_num, IS_NULLABLE as povinne
@@ -166,14 +161,14 @@
         <div class="nadpis" id="stroje">
             <h2>Stroje</h2>
         </div>
-        <div class="vyber stroje" style="<?= (isset($_SESSION['save']) && $_SESSION['save'] == "stroje") ? 'display: block;' : 'display: none'; ?>">
+        <div class="vyber stroje" style="<?= (isset($_SESSION['save']) && $_SESSION['save'] == "stroje") ? 'display: flex;' : 'display: none'; ?>">
             <?php for ($i = 0; $i < count($typy_stroju); $i++) : ?>
             <button class="vyberButt TypStrojButt" id="<?= $typy_stroju[$i]['id_typ'] ?>"><?= $typy_stroju[$i]['nazev'] ?></button>
             <?php endfor; ?>
             <button class="vyberButt TypStrojButt" id="addTypStroj">+</button>
         </div>
         <?php for ($i = 0; $i < count($typy_stroju); $i++) : ?>
-        <div id="<?= $typy_stroju[$i]['id_typ'] ?>" class="content strojContent" style="width: 67vw; <?= (isset($_SESSION['save']) && $_SESSION['save'] == $typy_stroju[$i]['id_typ']) ? 'display: block;' : ''; ?>">
+        <div id="<?= $typy_stroju[$i]['id_typ'] ?>" style="width: 67vw;" class="content strojContent" <?= (isset($_SESSION['save']) && $_SESSION['save'] == $typy_stroju[$i]['id_typ']) ? 'display: block;' : ''; ?>">
             <h3>
                 <?= $typy_stroju[$i]['nazev'] ?>
                 <span class="action-buttons">
@@ -227,7 +222,7 @@
         <div class="nadpis" id="stavyStroju">
             <h2>Stavy strojů</h2>
         </div>
-        <div class="content stavyStroju" style="width: 95%;<?= (isset($_SESSION['save']) && $_SESSION['save'] == "stavyStroju") ? 'display: block;' : 'display: none'; ?>">
+        <div class="content stavyStroju" <?= (isset($_SESSION['save']) && $_SESSION['save'] == "stavyStroju") ? 'display: block;' : 'display: none'; ?>">
             <form action="admin.php" method="post">
                 <table>
                     <thead>
@@ -257,7 +252,7 @@
         <div class="nadpis" id="vyrobky">
             <h2>Výrobky</h2>
         </div>
-        <div class="content vyrobky" style="width: 95%;<?= (isset($_SESSION['save']) && $_SESSION['save'] == "vyrobky") ? 'display: block;' : 'display: none'; ?>">
+        <div class="content vyrobky" <?= (isset($_SESSION['save']) && $_SESSION['save'] == "vyrobky") ? 'display: block;' : 'display: none'; ?>">
             <form action="admin.php" method="post">
                 <table>
                     <thead>
@@ -302,6 +297,7 @@
         }
         .vyber {
             float: left;
+            flex-direction: column;
             border: 1px solid #ccc;
             border-left: 5px solid #ff0000;
             background-color: #ffffff;
@@ -342,8 +338,9 @@
             border-left: none;
             display: none;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            margin: 20px;
+            margin: 20px 0 20px 3.5%;
             padding: 20px;
+            width: 90%;
         }
         .content h3 {
             margin-top: 0;
@@ -455,8 +452,18 @@
             display: none;
         }
         
-        @media (max-width: 660px) {
-            
+        @media (max-width: 710px) {
+            .vyber{
+                display: flex;
+                flex-direction: row;
+                width: 98%;
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+            .content{
+                padding: 10px;
+                width: 90% !important;
+            }
         }
     </style>
 </body>
