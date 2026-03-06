@@ -854,11 +854,10 @@ $(document).ready(function() {
                     alert(response.message);
                 }
             },
-            error: function() {
-                alert("Chyba komunikace se serverem!");
+            error: function(xhr, message) {
+                alert("Chyba komunikace se serverem! " + message);
                 alert(xhr.responseText);
-                alert(message);
-            }
+            }   
         });
     });
 
